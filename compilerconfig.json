@@ -1,0 +1,7 @@
+﻿[
+  {
+    "outputFile": "wwwroot/css/default.css",
+    "inputFile": "Scss/default.scss",
+		"minify": { "enebled" : true}
+	}
+]
