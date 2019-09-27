@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Gride.Models;
 
 namespace Gride.Data
 {
@@ -12,5 +13,6 @@ namespace Gride.Data
             : base(options)
         {
         }
+        public DbSet<Gride.Models.EmployeeModel> EmployeeModel { get; set; }
     }
 }
