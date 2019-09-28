@@ -7,7 +7,7 @@ namespace Gride.Models
 {
 	public class EmployeeModel
 	{
-		public uint EmployeeModelID { get; set; }
+		public uint ID { get; set; }
 		public string Name{ get; set; }
 		public string LastName { get; set; }
 		public DateTime DoB { get; set; }

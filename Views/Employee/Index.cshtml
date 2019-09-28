@@ -1,107 +1,111 @@
-﻿@model IEnumerable<Gride.Models.EmployeeModel>
+﻿@model Gride.Models.EmployeeModel
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@if (!EmployeeModel.Equals(Model, null))
+{
+    <h1>@Model.Name @Model.LastName</h1>
+    <div class="row">
+        <div class="col-lg-6">
+            <table class="table">
+                <tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.Name)
+                    </td>
 
-<h1>Index</h1>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.LastName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.LastName)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.DoB)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.DoB)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.Gender)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.Gender)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.EMail)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.EMail)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.PhoneNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.PhoneNumber)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.Skills)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.Skills)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.Function)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.Function)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.Experience)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.Experience)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.Locations)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => Model.Locations)
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-lg-6">
+            @if (!String.IsNullOrEmpty(Model.ProfileImage))
+            {
+                <img class="img img-profile" src="images/@Model.ProfileImage" alt="Profile Image" />
+            }
+        </div>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+        
+} else
+{
+    <h1>Not logged in yet</h1>
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayNameFor(model => model.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @Html.DisplayNameFor(model => model.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @Html.DisplayNameFor(model => model.DoB)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DoB)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @Html.DisplayNameFor(model => model.Gender)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gender)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @Html.DisplayNameFor(model => model.EMail)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EMail)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @Html.DisplayNameFor(model => model.PhoneNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneNumber)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @Html.DisplayNameFor(model => model.Skills)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Skills)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @Html.DisplayNameFor(model => model.Function)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Function)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @Html.DisplayNameFor(model => model.Experience)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Experience)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @Html.DisplayNameFor(model => model.Locations)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Locations)
-            </td>
-        </tr>
-        <tr>
-            <td>
-                @Html.DisplayNameFor(model => model.ProfileImage)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProfileImage)
-            </td>
-        </tr>
-    }
-</table>
+    <p>Please create an account to view your personal information.</p>
+}
 

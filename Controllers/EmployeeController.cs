@@ -22,7 +22,12 @@ namespace Gride.Controllers
         // GET: Employee
         public async Task<IActionResult> Index()
         {
-            return View(await _context.EmployeeModel.ToListAsync());
+            var employees = from e in _context.EmployeeModel
+                           select e;
+
+            var employee = employees.FirstOrDefault(s => s.EMail.Equals(User.Identity.Name));
+
+            return View(employee);
         }
 
         // GET: Employee/Details/5
@@ -34,7 +39,7 @@ namespace Gride.Controllers
             }
 
             var employeeModel = await _context.EmployeeModel
-                .FirstOrDefaultAsync(m => m.EmployeeModelID == id);
+                .FirstOrDefaultAsync(m => m.ID == id);
             if (employeeModel == null)
             {
                 return NotFound();
@@ -88,7 +93,7 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(uint id, [Bind("EmployeeModelID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,Skills,Function,LoginID,Experience,Locations,ProfileImage")] EmployeeModel employeeModel)
         {
-            if (id != employeeModel.EmployeeModelID)
+            if (id != employeeModel.ID)
             {
                 return NotFound();
             }
@@ -102,7 +107,7 @@ namespace Gride.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployeeModelExists(employeeModel.EmployeeModelID))
+                    if (!EmployeeModelExists(employeeModel.ID))
                     {
                         return NotFound();
                     }
@@ -125,7 +130,7 @@ namespace Gride.Controllers
             }
 
             var employeeModel = await _context.EmployeeModel
-                .FirstOrDefaultAsync(m => m.EmployeeModelID == id);
+                .FirstOrDefaultAsync(m => m.ID == id);
             if (employeeModel == null)
             {
                 return NotFound();
@@ -147,7 +152,7 @@ namespace Gride.Controllers
 
         private bool EmployeeModelExists(uint id)
         {
-            return _context.EmployeeModel.Any(e => e.EmployeeModelID == id);
+            return _context.EmployeeModel.Any(e => e.ID == id);
         }
     }
 }
