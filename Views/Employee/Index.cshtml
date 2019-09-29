@@ -94,15 +94,22 @@
             </table>
         </div>
         <div class="col-lg-6">
-            @if (!String.IsNullOrEmpty(Model.ProfileImage))
-            {
-                <img class="img img-profile" src="images/@Model.ProfileImage" alt="Profile Image" />
-            }
+            <div class="row">
+                <div class="col-12">
+                    @if (!String.IsNullOrEmpty(Model.ProfileImage))
+                    {
+                        <img class="img img-profile" src="images/@Model.ProfileImage" alt="Profile Image" />
+                    }
+                </div>
+            </div>
         </div>
     </div>
 
-        
-} else
+    <div>
+        <a asp-action="Edit">Edit personal details</a>
+    </div>
+}
+else
 {
     <h1>Not logged in yet</h1>
 

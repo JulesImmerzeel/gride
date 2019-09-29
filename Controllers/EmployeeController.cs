@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Gride.Data;
 using Gride.Models;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace Gride.Controllers
 {
@@ -70,34 +72,27 @@ namespace Gride.Controllers
             return View(employeeModel);
         }
 
-        // GET: Employee/Edit/5
-        public async Task<IActionResult> Edit(uint? id)
+        // GET: Employee/Edit
+        public async Task<IActionResult> Edit()
         {
-            if (id == null)
-            {
+            var employees = from e in _context.EmployeeModel
+                            select e;
+
+            var employee = employees.FirstOrDefault(s => s.EMail.Equals(User.Identity.Name));
+            if (EmployeeModel.Equals(employee, null)){
                 return NotFound();
             }
 
-            var employeeModel = await _context.EmployeeModel.FindAsync(id);
-            if (employeeModel == null)
-            {
-                return NotFound();
-            }
-            return View(employeeModel);
+            return View(employee);
         }
 
-        // POST: Employee/Edit/5
+        // POST: Employee/Edit
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(uint id, [Bind("EmployeeModelID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,Skills,Function,LoginID,Experience,Locations,ProfileImage")] EmployeeModel employeeModel)
+        public async Task<IActionResult> Edit( [Bind("ID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,Skills,Function,LoginID,Experience,Locations,ProfileImage")] EmployeeModel employeeModel)
         {
-            if (id != employeeModel.ID)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
