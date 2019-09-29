@@ -26,7 +26,7 @@ namespace Gride.Controllers
         }
 
         // GET: SkillModels/Details/5
-        public async Task<IActionResult> Details(uint? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -66,7 +66,7 @@ namespace Gride.Controllers
         }
 
         // GET: SkillModels/Edit/5
-        public async Task<IActionResult> Edit(uint? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -86,7 +86,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(uint id, [Bind("SkillID,Name")] SkillModel skillModel)
+        public async Task<IActionResult> Edit(int id, [Bind("SkillID,Name")] SkillModel skillModel)
         {
             if (id != skillModel.SkillID)
             {
@@ -117,7 +117,7 @@ namespace Gride.Controllers
         }
 
         // GET: SkillModels/Delete/5
-        public async Task<IActionResult> Delete(uint? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
@@ -137,7 +137,7 @@ namespace Gride.Controllers
         // POST: SkillModels/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(uint id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var skillModel = await _context.SkillModel.FindAsync(id);
             _context.SkillModel.Remove(skillModel);
@@ -145,7 +145,7 @@ namespace Gride.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool SkillModelExists(uint id)
+        private bool SkillModelExists(int id)
         {
             return _context.SkillModel.Any(e => e.SkillID == id);
         }
