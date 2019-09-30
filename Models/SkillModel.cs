@@ -11,7 +11,7 @@ namespace Gride.Models
 	{
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public uint SkillID { get; set; }
+		public int SkillID { get; set; }
 
 		[Required]
 		[StringLength(50)]
