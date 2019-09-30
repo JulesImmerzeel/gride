@@ -14,14 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-<<<<<<< HEAD
-=======
     <Compile Remove="Data\Migrations\20190929195730_Migrations.cs" />
     <Compile Remove="Data\Migrations\20190929195730_Migrations.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
->>>>>>> 8709a467196fd9a8cc81c3bdf81bb3b4516d113c
     <Content Remove="compilerconfig.json" />
   </ItemGroup>
 
@@ -35,10 +29,5 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
-
-<<<<<<< HEAD
-=======
   </ItemGroup>
-
->>>>>>> 8709a467196fd9a8cc81c3bdf81bb3b4516d113c
 </Project>
