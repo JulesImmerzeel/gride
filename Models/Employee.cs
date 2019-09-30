@@ -5,8 +5,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Gride.Models
 {
@@ -43,7 +41,8 @@ namespace Gride.Models
 		public string ProfileImage { get; set; } = null;
 
         public virtual ICollection<Skill> Skills { get; set; }
-  }
+		public virtual ICollection<Function> Functions { get; set; }
+	}
 	public enum Gender
 	{
 		Male, Female, Not_Specified

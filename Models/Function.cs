@@ -7,17 +7,11 @@ using System.Threading.Tasks;
 
 namespace Gride.Models
 {
-	public class LocationModel
+	public class Function
 	{
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public uint LocationID { get; set; }
+		public uint FunctionID { get; set; }
 		public string Name { get; set; }
-		public string Street { get; set; }
-		public int StreetNumber { get; set; }
-		public string Aditions { get; set; }
-		public string Postalcode { get; set; }
-		public string City { get; set; }
-		public string Country { get; set; } = "NetherLands";
 	}
 }
