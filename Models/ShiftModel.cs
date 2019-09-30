@@ -17,7 +17,8 @@ namespace Gride.Models
 		[Key]
 		[ForeignKey("LocationModel")]
 		public uint LocationID { get; set; }
-		public ulong Skills { get; set; }
+		[Required]
+		public List<int> Skills { get; set; } = new List<int>();
 		[Key]
 		[ForeignKey("FunctionModel")]
 		public int FunctionID { get; set; }

@@ -30,7 +30,8 @@ namespace Gride.Models
 		[Phone]
 		public string PhoneNumber { get; set; }
 		public bool Admin { get; set; } = false;
-		public ulong Skills { get; set; }
+		[Required]
+		public List<int> Skills { get; set; } = new List<int>();
 		public int Function { get; set; }
 		public ulong LoginID { get; set; }
 		public float Experience { get; set; }
