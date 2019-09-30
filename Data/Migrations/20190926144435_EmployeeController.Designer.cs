@@ -4,14 +4,16 @@ using Gride.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Gride.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190926144435_EmployeeController")]
+    partial class EmployeeController
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -19,43 +21,16 @@ namespace Gride.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-<<<<<<< HEAD
             modelBuilder.Entity("Gride.Models.EmployeeModel", b =>
                 {
-                    b.Property<long>("EmployeeID")
-=======
-
-            modelBuilder.Entity("Gride.Models.SkillModel", b =>
-                {
-                    b.Property<int>("SkillID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50);
-
-                    b.HasKey("SkillID");
-
-                    b.ToTable("SkillModel");
-
-            modelBuilder.Entity("Gride.Models.EmployeeModel", b =>
-                {
-                    b.Property<long>("ID")
->>>>>>> 8709a467196fd9a8cc81c3bdf81bb3b4516d113c
+                    b.Property<long>("EmployeeModelID")
                         .ValueGeneratedOnAdd();
 
                     b.Property<bool>("Admin");
 
                     b.Property<DateTime>("DoB");
 
-<<<<<<< HEAD
-                    b.Property<string>("EMail")
-                        .IsRequired()
-                        .HasMaxLength(100);
-=======
                     b.Property<string>("EMail");
->>>>>>> 8709a467196fd9a8cc81c3bdf81bb3b4516d113c
 
                     b.Property<float>("Experience");
 
@@ -63,62 +38,25 @@ namespace Gride.Data.Migrations
 
                     b.Property<int>("Gender");
 
-<<<<<<< HEAD
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(50);
-=======
                     b.Property<string>("LastName");
->>>>>>> 8709a467196fd9a8cc81c3bdf81bb3b4516d113c
 
                     b.Property<long>("Locations");
 
                     b.Property<decimal>("LoginID")
                         .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
 
-<<<<<<< HEAD
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50);
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(12);
-=======
                     b.Property<string>("Name");
 
                     b.Property<string>("PhoneNumber");
->>>>>>> 8709a467196fd9a8cc81c3bdf81bb3b4516d113c
 
                     b.Property<string>("ProfileImage");
 
                     b.Property<decimal>("Skills")
                         .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
 
-<<<<<<< HEAD
-                    b.HasKey("EmployeeID");
+                    b.HasKey("EmployeeModelID");
 
                     b.ToTable("EmployeeModel");
-                });
-
-            modelBuilder.Entity("Gride.Models.SkillModel", b =>
-                {
-                    b.Property<long>("SkillID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50);
-
-                    b.HasKey("SkillID");
-
-                    b.ToTable("SkillModel");
-=======
-                    b.HasKey("ID");
-
-                    b.ToTable("EmployeeModel");
-
->>>>>>> 8709a467196fd9a8cc81c3bdf81bb3b4516d113c
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
