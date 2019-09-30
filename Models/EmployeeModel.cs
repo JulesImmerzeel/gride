@@ -32,7 +32,8 @@ namespace Gride.Models
 		public bool Admin { get; set; } = false;
 		[Required]
 		public List<int> Skills { get; set; } = new List<int>();
-		public int Function { get; set; }
+		[Required]
+		public List<int> Functions { get; set; } = new List<int>();
 		public ulong LoginID { get; set; }
 		public float Experience { get; set; }
 		public uint Locations { get; set; }
