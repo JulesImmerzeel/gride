@@ -4,14 +4,16 @@ using Gride.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Gride.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190927134822_EmployeeModelID")]
+    partial class EmployeeModelID
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,7 +23,7 @@ namespace Gride.Data.Migrations
 
             modelBuilder.Entity("Gride.Models.EmployeeModel", b =>
                 {
-                    b.Property<long>("ID")
+                    b.Property<long>("EmployeeModelID")
                         .ValueGeneratedOnAdd();
 
                     b.Property<bool>("Admin");
@@ -52,7 +54,7 @@ namespace Gride.Data.Migrations
                     b.Property<decimal>("Skills")
                         .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
 
-                    b.HasKey("ID");
+                    b.HasKey("EmployeeModelID");
 
                     b.ToTable("EmployeeModel");
                 });
