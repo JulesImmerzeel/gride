@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace Gride.Models
 {
-	public class SkillModel
+	public class Skill
 	{
-		[Key]
-		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int SkillID { get; set; }
 
 		[Required]

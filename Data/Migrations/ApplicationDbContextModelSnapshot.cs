@@ -20,20 +20,20 @@ namespace Gride.Data.Migrations
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
 
-			modelBuilder.Entity("Gride.Models.SkillModel", b =>
-				{
-					b.Property<int>("SkillID")
-						.ValueGeneratedOnAdd()
-						.HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+            modelBuilder.Entity("Gride.Models.SkillModel", b =>
+                {
+                    b.Property<int>("SkillID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-					b.Property<string>("Name")
-						.IsRequired()
-						.HasMaxLength(50);
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50);
 
-					b.HasKey("SkillID");
+                    b.HasKey("SkillID");
 
-					b.ToTable("SkillModel");
-				});
+                    b.ToTable("SkillModel");
+                });
             modelBuilder.Entity("Gride.Models.EmployeeModel", b =>
                 {
                     b.Property<long>("ID")
@@ -55,8 +55,8 @@ namespace Gride.Data.Migrations
 
                     b.Property<long>("Locations");
 
-					b.Property<decimal>("LoginID")
-						  .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
+                    b.Property<decimal>("LoginID")
+                        .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
 
                     b.Property<string>("Name");
 

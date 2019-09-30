@@ -35,15 +35,14 @@ namespace Gride.Models
     [Display(Name = "Phone Number")]
 		public string PhoneNumber { get; set; }
 		public bool Admin { get; set; } = false;
-		[Required]
-		public List<int> Skills { get; set; } = new List<int>();
-		[Required]
-		public List<int> Functions { get; set; } = new List<int>();
+		public int Function { get; set; }
 		public ulong LoginID { get; set; }
 		public float Experience { get; set; }
 		public uint Locations { get; set; }
 		[RegularExpression(@"(\\\\?([^\\/]*[\\/])*)([^\\/]+)$", ErrorMessage = "Path to ProfileImage is not a valid path")]
 		public string ProfileImage { get; set; } = null;
+
+        public virtual ICollection<Skill> Skills { get; set; }
   }
 	public enum Gender
 	{
