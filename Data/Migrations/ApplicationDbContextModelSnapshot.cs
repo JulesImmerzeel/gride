@@ -33,7 +33,7 @@ namespace Gride.Data.Migrations
                     b.HasKey("SkillID");
 
                     b.ToTable("SkillModel");
-
+                });
             modelBuilder.Entity("Gride.Models.EmployeeModel", b =>
                 {
                     b.Property<long>("ID")

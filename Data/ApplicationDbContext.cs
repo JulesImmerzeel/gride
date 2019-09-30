@@ -14,6 +14,6 @@ namespace Gride.Data
         {
         }
         public DbSet<Gride.Models.EmployeeModel> EmployeeModel { get; set; }
-        public DbSet<Gride.Models.SkillModel> SkillModel { get; set; }
+        public DbSet<Skill> Skill { get; set; }
     }
 }
