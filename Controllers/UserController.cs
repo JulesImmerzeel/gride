@@ -12,11 +12,11 @@ using System.IO;
 
 namespace Gride.Controllers
 {
-    public class EmployeeController : Controller
+    public class UserController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public EmployeeController(ApplicationDbContext context)
+        public UserController(ApplicationDbContext context)
         {
             _context = context;
         }
