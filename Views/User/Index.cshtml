@@ -64,34 +64,39 @@
                         @Html.DisplayNameFor(model => model.Skills)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => Model.Skills)
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        @Html.DisplayNameFor(model => model.Function)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => Model.Function)
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        @Html.DisplayNameFor(model => model.Experience)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => Model.Experience)
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        @Html.DisplayNameFor(model => model.Locations)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => Model.Locations)
-                    </td>
-                </tr>
-            </table>
+                        @foreach (var item in Model.Skills)
+                        {
+                            <p> 
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </p>
+                        }
+                        </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.DisplayNameFor(model => model.Function)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => Model.Function)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.DisplayNameFor(model => model.Experience)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => Model.Experience)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                @Html.DisplayNameFor(model => model.Locations)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => Model.Locations)
+                            </td>
+                        </tr>
+                    </table>
         </div>
         <div class="col-lg-6">
             <div class="row">

@@ -24,10 +24,10 @@ namespace Gride.Controllers
         // GET: Employee
         public async Task<IActionResult> Index()
         {
-            var employees = from e in _context.EmployeeModel
-                           select e;
-
-            var employee = employees.FirstOrDefault(s => s.EMail.Equals(User.Identity.Name));
+            EmployeeModel employee = await _context.EmployeeModel
+                                        .Include(e => e.Skills)
+                                        .AsNoTracking()
+                                        .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
 
             return View(employee);
         }
