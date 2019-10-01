@@ -7,14 +7,17 @@ using System.Threading.Tasks;
 
 namespace Gride.Models
 {
-	public class SkillModel
+	public class Work
 	{
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public int SkillID { get; set; }
-
-		[Required]
-		[StringLength(50)]
-		public string Name { get; set; }
+		public ulong WorkID { get; set; }
+		[Key]
+		[ForeignKey("Employee")]
+		public uint EmployeeID { get; set; }
+		[Key]
+		[ForeignKey("Shift")]
+		public ulong ShiftID { get; set; }
+		public int Difference { get; set; } = 0;
 	}
 }

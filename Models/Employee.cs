@@ -5,8 +5,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Gride.Models
 {
@@ -35,15 +33,16 @@ namespace Gride.Models
     [Display(Name = "Phone Number")]
 		public string PhoneNumber { get; set; }
 		public bool Admin { get; set; } = false;
-		[Required]
-		public List<int> Skills { get; set; } = new List<int>();
 		public int Function { get; set; }
 		public ulong LoginID { get; set; }
 		public float Experience { get; set; }
 		public uint Locations { get; set; }
 		[RegularExpression(@"(\\\\?([^\\/]*[\\/])*)([^\\/]+)$", ErrorMessage = "Path to ProfileImage is not a valid path")]
 		public string ProfileImage { get; set; } = null;
-  }
+
+        public virtual ICollection<Skill> Skills { get; set; }
+		public virtual ICollection<Function> Functions { get; set; }
+	}
 	public enum Gender
 	{
 		Male, Female, Not_Specified

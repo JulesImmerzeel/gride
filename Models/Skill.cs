@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace Gride.Models
 {
-	public class FunctionModel
+	public class Skill
 	{
-		[Key]
-		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public uint FunctionID { get; set; }
+		public int SkillID { get; set; }
+
+		[Required]
+		[StringLength(50)]
 		public string Name { get; set; }
 	}
 }

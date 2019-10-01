@@ -22,7 +22,7 @@ namespace Gride.Controllers
         // GET: SkillModels
         public async Task<IActionResult> Index()
         {
-            return View(await _context.SkillModel.ToListAsync());
+            return View(await _context.Skill.ToListAsync());
         }
 
         // GET: SkillModels/Details/5
@@ -33,7 +33,7 @@ namespace Gride.Controllers
                 return NotFound();
             }
 
-            var skillModel = await _context.SkillModel
+            var skillModel = await _context.Skill
                 .FirstOrDefaultAsync(m => m.SkillID == id);
             if (skillModel == null)
             {
@@ -54,7 +54,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SkillID,Name")] SkillModel skillModel)
+        public async Task<IActionResult> Create([Bind("SkillID,Name")] Skill skillModel)
         {
             if (ModelState.IsValid)
             {
@@ -73,7 +73,7 @@ namespace Gride.Controllers
                 return NotFound();
             }
 
-            var skillModel = await _context.SkillModel.FindAsync(id);
+            var skillModel = await _context.Skill.FindAsync(id);
             if (skillModel == null)
             {
                 return NotFound();
@@ -86,7 +86,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SkillID,Name")] SkillModel skillModel)
+        public async Task<IActionResult> Edit(int id, [Bind("SkillID,Name")] Skill skillModel)
         {
             if (id != skillModel.SkillID)
             {
@@ -102,7 +102,7 @@ namespace Gride.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SkillModelExists(skillModel.SkillID))
+                    if (!SkillExists(skillModel.SkillID))
                     {
                         return NotFound();
                     }
@@ -124,7 +124,7 @@ namespace Gride.Controllers
                 return NotFound();
             }
 
-            var skillModel = await _context.SkillModel
+            var skillModel = await _context.Skill
                 .FirstOrDefaultAsync(m => m.SkillID == id);
             if (skillModel == null)
             {
@@ -139,15 +139,15 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var skillModel = await _context.SkillModel.FindAsync(id);
-            _context.SkillModel.Remove(skillModel);
+            var skillModel = await _context.Skill.FindAsync(id);
+            _context.Skill.Remove(skillModel);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool SkillModelExists(int id)
+        private bool SkillExists(int id)
         {
-            return _context.SkillModel.Any(e => e.SkillID == id);
+            return _context.Skill.Any(e => e.SkillID == id);
         }
     }
 }
