@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Gride.Models
 {
-	public class ShiftModel
+	public class Shift
 	{
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -15,12 +15,12 @@ namespace Gride.Models
 		public DateTime Start { get; set; }
 		public DateTime End { get; set; }
 		[Key]
-		[ForeignKey("LocationModel")]
+		[ForeignKey("Location")]
 		public uint LocationID { get; set; }
 		[Required]
 		public List<int> Skills { get; set; } = new List<int>();
 		[Key]
-		[ForeignKey("FunctionModel")]
+		[ForeignKey("Function")]
 		public int FunctionID { get; set; }
 		public byte MaxEmployees { get; set; }
 	}

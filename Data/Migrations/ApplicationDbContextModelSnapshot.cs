@@ -34,7 +34,7 @@ namespace Gride.Data.Migrations
 
                     b.ToTable("SkillModel");
                 });
-
+                
             modelBuilder.Entity("Gride.Models.EmployeeModel", b =>
                 {
                     b.Property<long>("ID")
