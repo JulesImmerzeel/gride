@@ -16,6 +16,8 @@
   <ItemGroup>
     <Compile Remove="Data\Migrations\20190929195730_Migrations.cs" />
     <Compile Remove="Data\Migrations\20190929195730_Migrations.Designer.cs" />
+    <Compile Remove="Data\Migrations\20191001095931_tabelrename.cs" />
+    <Compile Remove="Data\Migrations\20191001095931_tabelrename.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
