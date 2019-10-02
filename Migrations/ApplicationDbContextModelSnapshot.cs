@@ -78,6 +78,35 @@ namespace Gride.Migrations
                     b.ToTable("Function");
                 });
 
+            modelBuilder.Entity("Gride.Models.Location", b =>
+                {
+                    b.Property<int>("LocationID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Additions");
+
+                    b.Property<string>("City");
+
+                    b.Property<string>("Country");
+
+                    b.Property<long>("EmployeeModelID");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<string>("Postalcode");
+
+                    b.Property<string>("Street")
+                        .HasMaxLength(100);
+
+                    b.Property<int>("StreetNumber");
+
+                    b.HasKey("LocationID");
+
+                    b.ToTable("Locations");
+                });
+
             modelBuilder.Entity("Gride.Models.Skill", b =>
                 {
                     b.Property<int>("SkillID")

@@ -29,7 +29,6 @@ namespace Gride.Data
                     Admin =true,
                     LoginID =0967844,
                     Experience =1,
-                    Locations =1,
                     ProfileImage ="profile_0967844.jpeg"
                 },
                 new EmployeeModel
@@ -44,7 +43,6 @@ namespace Gride.Data
                     Admin = false,
                     LoginID = 0123456,
                     Experience = 2,
-                    Locations = 1,
                     ProfileImage = "profile_0123456.jpeg"
                 }
             };
@@ -75,6 +73,17 @@ namespace Gride.Data
             foreach (Function f in functions)
             {
                 context.Function.Add(f);
+            }
+            context.SaveChanges();
+
+            var locations = new Location[]
+            {
+                new Location{Name="Wijnhaven",Street="Wijnhaven",StreetNumber=103,Postalcode="3011WN",City="Rotterdam",EmployeeModelID=1},
+                new Location{Name="Museumpark",Street="Museumpark",StreetNumber=40,Postalcode="3015CX",City="Rotterdam",EmployeeModelID=2}
+            };
+            foreach (Location l in locations)
+            {
+                context.Locations.Add(l);
             }
             context.SaveChanges();
         }

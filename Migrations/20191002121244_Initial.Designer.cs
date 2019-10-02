@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gride.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191002113423_Initial")]
+    [Migration("20191002121244_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -78,6 +78,35 @@ namespace Gride.Migrations
                     b.HasIndex("EmployeeModelID");
 
                     b.ToTable("Function");
+                });
+
+            modelBuilder.Entity("Gride.Models.Location", b =>
+                {
+                    b.Property<int>("LocationID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Additions");
+
+                    b.Property<string>("City");
+
+                    b.Property<string>("Country");
+
+                    b.Property<long>("EmployeeModelID");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<string>("Postalcode");
+
+                    b.Property<string>("Street")
+                        .HasMaxLength(100);
+
+                    b.Property<int>("StreetNumber");
+
+                    b.HasKey("LocationID");
+
+                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("Gride.Models.Skill", b =>

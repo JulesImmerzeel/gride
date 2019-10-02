@@ -70,6 +70,26 @@ namespace Gride.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Locations",
+                columns: table => new
+                {
+                    LocationID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: false),
+                    Street = table.Column<string>(maxLength: 100, nullable: true),
+                    StreetNumber = table.Column<int>(nullable: false),
+                    Additions = table.Column<string>(nullable: true),
+                    Postalcode = table.Column<string>(nullable: true),
+                    City = table.Column<string>(nullable: true),
+                    Country = table.Column<string>(nullable: true),
+                    EmployeeModelID = table.Column<long>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Locations", x => x.LocationID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -284,6 +304,9 @@ namespace Gride.Migrations
 
             migrationBuilder.DropTable(
                 name: "Function");
+
+            migrationBuilder.DropTable(
+                name: "Locations");
 
             migrationBuilder.DropTable(
                 name: "Skill");

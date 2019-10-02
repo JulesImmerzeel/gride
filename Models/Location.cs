@@ -7,17 +7,20 @@ using System.Threading.Tasks;
 
 namespace Gride.Models
 {
-	public class LocationModel
+	public class Location
 	{
-		[Key]
-		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public uint LocationID { get; set; }
+		public int LocationID { get; set; }
+        [Required]
 		public string Name { get; set; }
+        [StringLength(100)]
 		public string Street { get; set; }
+        [Display(Name="Street Number")]
 		public int StreetNumber { get; set; }
-		public string Aditions { get; set; }
+		public string Additions { get; set; }
 		public string Postalcode { get; set; }
 		public string City { get; set; }
 		public string Country { get; set; } = "NetherLands";
-	}
+        public uint EmployeeModelID { get; set; }
+
+    }
 }

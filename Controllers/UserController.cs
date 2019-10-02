@@ -27,6 +27,7 @@ namespace Gride.Controllers
             EmployeeModel employee = await _context.EmployeeModel
                                         .Include(e => e.Skills)
                                         .Include(f => f.Functions)
+                                        .Include(l => l.Locations)
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
 
