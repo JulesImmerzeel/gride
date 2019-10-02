@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gride.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191001222615_Initial")]
+    [Migration("20191002113423_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,8 +36,6 @@ namespace Gride.Migrations
 
                     b.Property<float>("Experience");
 
-                    b.Property<int>("Function");
-
                     b.Property<int>("Gender");
 
                     b.Property<string>("LastName")
@@ -62,6 +60,24 @@ namespace Gride.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("EmployeeModel");
+                });
+
+            modelBuilder.Entity("Gride.Models.Function", b =>
+                {
+                    b.Property<int>("FunctionID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long>("EmployeeModelID");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(50);
+
+                    b.HasKey("FunctionID");
+
+                    b.HasIndex("EmployeeModelID");
+
+                    b.ToTable("Function");
                 });
 
             modelBuilder.Entity("Gride.Models.Skill", b =>
@@ -246,6 +262,14 @@ namespace Gride.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("Gride.Models.Function", b =>
+                {
+                    b.HasOne("Gride.Models.EmployeeModel")
+                        .WithMany("Functions")
+                        .HasForeignKey("EmployeeModelID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Gride.Models.Skill", b =>

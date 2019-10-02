@@ -35,7 +35,6 @@ namespace Gride.Models
     [Display(Name = "Phone Number")]
 		public string PhoneNumber { get; set; }
 		public bool Admin { get; set; } = false;
-		public int Function { get; set; }
 		public ulong LoginID { get; set; }
 		public float Experience { get; set; }
 		public uint Locations { get; set; }
@@ -43,7 +42,8 @@ namespace Gride.Models
 		public string ProfileImage { get; set; } = null;
 
         public virtual ICollection<Skill> Skills { get; set; }
-  }
+        public virtual ICollection<Function> Functions { get; set; }
+    }
 	public enum Gender
 	{
 		Male, Female, Not_Specified

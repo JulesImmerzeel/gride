@@ -65,6 +65,18 @@ namespace Gride.Data
                 context.Skill.Add(s);
             }
             context.SaveChanges();
+
+            var functions = new Function[]
+            {
+                new Function{Name="Manager",EmployeeModelID=1},
+                new Function{Name="Floor",EmployeeModelID=1},
+                new Function{Name="Kitchen",EmployeeModelID=2}
+            };
+            foreach (Function f in functions)
+            {
+                context.Function.Add(f);
+            }
+            context.SaveChanges();
         }
     }
 }
