@@ -12,11 +12,9 @@ namespace Gride.Models
 		public ulong ID { get; set; }
 		public DateTime Start { get; set; }
 		public DateTime End { get; set; }
-		[Key]
-		[ForeignKey("Location")]
+		[Key, ForeignKey("Location")]
 		public uint LocationID { get; set; }
-		[Key]
-		[ForeignKey("Function")]
+		[Key, ForeignKey("Function")]
 		public int FunctionID { get; set; }
 		public byte MaxEmployees { get; set; }
 		public virtual ICollection<Skill> Skills { get; set; }

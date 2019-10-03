@@ -9,8 +9,7 @@ namespace Gride.Models
 {
 	public class Location
 	{
-		[Key]
-		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public uint LocationID { get; set; }
 		public string Name { get; set; }
 		public string Street { get; set; }

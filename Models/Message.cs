@@ -9,11 +9,9 @@ namespace Gride.Models
 {
 	public class Message
 	{
-		[Key]
-		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public ulong MessageID { get; set; }
-		[Key]
-		[ForeignKey("Employee")]
+		[Key, ForeignKey("Employee")]
 		public uint EmployeeID { get; set; }
 		[Required]
 		[StringLength(2000)]
