@@ -19,6 +19,22 @@ namespace Gride.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+
+            modelBuilder.Entity("Gride.Models.SkillModel", b =>
+                {
+                    b.Property<int>("SkillID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50);
+
+                    b.HasKey("SkillID");
+
+                    b.ToTable("SkillModel");
+                });
+                
             modelBuilder.Entity("Gride.Models.EmployeeModel", b =>
                 {
                     b.Property<long>("ID")
@@ -28,9 +44,7 @@ namespace Gride.Data.Migrations
 
                     b.Property<DateTime>("DoB");
 
-                    b.Property<string>("EMail")
-                        .IsRequired()
-                        .HasMaxLength(100);
+                    b.Property<string>("EMail");
 
                     b.Property<float>("Experience");
 
@@ -38,63 +52,26 @@ namespace Gride.Data.Migrations
 
                     b.Property<int>("Gender");
 
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(50);
+                    b.Property<string>("LastName");
 
                     b.Property<long>("Locations");
 
                     b.Property<decimal>("LoginID")
                         .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50);
+                    b.Property<string>("Name");
 
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(12);
+                    b.Property<string>("PhoneNumber");
 
                     b.Property<string>("ProfileImage");
+
+                    b.Property<decimal>("Skills")
+                        .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
 
                     b.HasKey("ID");
 
                     b.ToTable("EmployeeModel");
-                });
 
-            modelBuilder.Entity("Gride.Models.Function", b =>
-                {
-                    b.Property<long>("FunctionID")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<long?>("EmployeeModelID");
-
-                    b.Property<string>("Name");
-
-                    b.HasKey("FunctionID");
-
-                    b.HasIndex("EmployeeModelID");
-
-                    b.ToTable("Function");
-                });
-
-            modelBuilder.Entity("Gride.Models.Skill", b =>
-                {
-                    b.Property<int>("SkillID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<long?>("EmployeeModelID");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50);
-
-                    b.HasKey("SkillID");
-
-                    b.HasIndex("EmployeeModelID");
-
-                    b.ToTable("Skill");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -260,20 +237,6 @@ namespace Gride.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
-                });
-
-            modelBuilder.Entity("Gride.Models.Function", b =>
-                {
-                    b.HasOne("Gride.Models.EmployeeModel")
-                        .WithMany("Functions")
-                        .HasForeignKey("EmployeeModelID");
-                });
-
-            modelBuilder.Entity("Gride.Models.Skill", b =>
-                {
-                    b.HasOne("Gride.Models.EmployeeModel")
-                        .WithMany("Skills")
-                        .HasForeignKey("EmployeeModelID");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
