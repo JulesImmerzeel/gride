@@ -37,7 +37,6 @@ namespace Gride.Models
 		public bool Admin { get; set; } = false;
 		public ulong LoginID { get; set; }
 		public float Experience { get; set; }
-		[RegularExpression(@"(\\\\?([^\\/]*[\\/])*)([^\\/]+)$", ErrorMessage = "Path to ProfileImage is not a valid path")]
 		public string ProfileImage { get; set; } = null;
 
         public virtual ICollection<Skill> Skills { get; set; }
