@@ -2,30 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Gride.Data;
 using Gride.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gride.Controllers
 {
-    public class SkillModelsController : Controller
-    {
+    public class FunctionController : Controller { 
+
         private readonly ApplicationDbContext _context;
 
-        public SkillModelsController(ApplicationDbContext context)
+        public FunctionController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: SkillModels
+        // GET: Function
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Skill.ToListAsync());
+            return View(await _context.Function.ToListAsync());
         }
 
-        // GET: SkillModels/Details/5
+        // GET: Function/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +33,39 @@ namespace Gride.Controllers
                 return NotFound();
             }
 
-            var skillModel = await _context.Skill
-                .FirstOrDefaultAsync(m => m.SkillID == id);
-            if (skillModel == null)
+            var function = await _context.Function
+                .FirstOrDefaultAsync(m => m.FunctionID == id);
+            if (function == null)
             {
                 return NotFound();
             }
 
-            return View(skillModel);
+            return View(function);
         }
 
-        // GET: SkillModels/Create
+        // GET: Function/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: SkillModels/Create
+        // POST: Function/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SkillID,Name,EmployeeModelID")] Skill skillModel)
+        public async Task<IActionResult> Create([Bind("FunctionID,Name,EmployeeModelID")] Function function)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(skillModel);
+                _context.Add(function);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(skillModel);
+            return View(function);
         }
 
-        // GET: SkillModels/Edit/5
+        // GET: Function/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +73,22 @@ namespace Gride.Controllers
                 return NotFound();
             }
 
-            var skillModel = await _context.Skill.FindAsync(id);
-            if (skillModel == null)
+            var function = await _context.Function.FindAsync(id);
+            if (function == null)
             {
                 return NotFound();
             }
-            return View(skillModel);
+            return View(function);
         }
 
-        // POST: SkillModels/Edit/5
+        // POST: Function/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SkillID,Name")] Skill skillModel)
+        public async Task<IActionResult> Edit(int id, [Bind("FunctionID,Name,EmployeeID")] Function function)
         {
-            if (id != skillModel.SkillID)
+            if (id != function.FunctionID)
             {
                 return NotFound();
             }
@@ -97,12 +97,12 @@ namespace Gride.Controllers
             {
                 try
                 {
-                    _context.Update(skillModel);
+                    _context.Update(function);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SkillExists(skillModel.SkillID))
+                    if (!FunctionExists(function.FunctionID))
                     {
                         return NotFound();
                     }
@@ -113,10 +113,10 @@ namespace Gride.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(skillModel);
+            return View(function);
         }
 
-        // GET: SkillModels/Delete/5
+        // GET: Function/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,30 +124,30 @@ namespace Gride.Controllers
                 return NotFound();
             }
 
-            var skillModel = await _context.Skill
-                .FirstOrDefaultAsync(m => m.SkillID == id);
-            if (skillModel == null)
+            var function = await _context.Function
+                .FirstOrDefaultAsync(m => m.FunctionID == id);
+            if (function == null)
             {
                 return NotFound();
             }
 
-            return View(skillModel);
+            return View(function);
         }
 
-        // POST: SkillModels/Delete/5
+        // POST: Function/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var skillModel = await _context.Skill.FindAsync(id);
-            _context.Skill.Remove(skillModel);
+            var function = await _context.Function.FindAsync(id);
+            _context.Function.Remove(function);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool SkillExists(int id)
+        private bool FunctionExists(int id)
         {
-            return _context.Skill.Any(e => e.SkillID == id);
+            return _context.Function.Any(e => e.FunctionID == id);
         }
     }
 }
