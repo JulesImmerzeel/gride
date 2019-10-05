@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Pages\**" />
-    <Content Remove="Pages\**" />
-    <EmbeddedResource Remove="Pages\**" />
-    <None Remove="Pages\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="Data\Migrations\20190929195730_Migrations.cs" />
     <Compile Remove="Data\Migrations\20190929195730_Migrations.Designer.cs" />
     <Compile Remove="Data\Migrations\20191001095931_tabelrename.cs" />
@@ -39,6 +32,7 @@
 
 
   <ItemGroup>
+    <Folder Include="Page\" />
     <Folder Include="Views\Shifts\" />
   </ItemGroup>
 
