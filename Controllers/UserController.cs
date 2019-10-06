@@ -24,14 +24,30 @@ namespace Gride.Controllers
         // GET: Employee
         public async Task<IActionResult> Index()
         {
-            EmployeeModel employee = await _context.EmployeeModel
-                                        .Include(e => e.Skills)
-                                        .Include(f => f.Functions)
-                                        .Include(l => l.Locations)
-                                        .AsNoTracking()
-                                        .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
+            var employees = from e in _context.EmployeeModel
+                           select e;
+
+            var employee = employees.FirstOrDefault(s => s.EMail.Equals(User.Identity.Name));
 
             return View(employee);
+        }
+
+        // GET: Employee/Details/5
+        public async Task<IActionResult> Details(uint? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var employeeModel = await _context.EmployeeModel
+                .FirstOrDefaultAsync(m => m.ID == id);
+            if (employeeModel == null)
+            {
+                return NotFound();
+            }
+
+            return View(employeeModel);
         }
 
         // GET: Employee/Create
@@ -45,7 +61,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EmployeeModelID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,Skills,Functions,LoginID,Experience,Locations,ProfileImage")] EmployeeModel employeeModel)
+        public async Task<IActionResult> Create([Bind("EmployeeModelID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,Skills,Function,LoginID,Experience,Locations,ProfileImage")] EmployeeModel employeeModel)
         {
             if (ModelState.IsValid)
             {
@@ -59,13 +75,10 @@ namespace Gride.Controllers
         // GET: Employee/Edit
         public async Task<IActionResult> Edit()
         {
-            EmployeeModel employee = await _context.EmployeeModel
-                                        .Include(e => e.Skills)
-                                        .Include(f => f.Functions)
-                                        .Include(l => l.Locations)
-                                        .AsNoTracking()
-                                        .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
+            var employees = from e in _context.EmployeeModel
+                            select e;
 
+            var employee = employees.FirstOrDefault(s => s.EMail.Equals(User.Identity.Name));
             if (EmployeeModel.Equals(employee, null)){
                 return NotFound();
             }
@@ -78,7 +91,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("ID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage,Skills,Functions,Locations")] EmployeeModel employeeModel)
+        public async Task<IActionResult> Edit( [Bind("ID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,Skills,Function,LoginID,Experience,Locations,ProfileImage")] EmployeeModel employeeModel)
         {
             if (ModelState.IsValid)
             {
@@ -100,27 +113,6 @@ namespace Gride.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-
-            var employee = await _context.EmployeeModel
-                                        .Include(e => e.Skills)
-                                        .Include(f => f.Functions)
-                                        .Include(l => l.Locations)
-                                        .AsNoTracking()
-                                        .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
-
-            foreach (var s in employee.Skills)
-            {
-                employeeModel.Skills.Add(s);
-            }
-            foreach (var l in employee.Locations)
-            {
-                employeeModel.Locations.Add(l);
-            }
-            foreach (var f in employee.Functions)
-            {
-                employeeModel.Functions.Add(f);
-            }
-
             return View(employeeModel);
         }
 

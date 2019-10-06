@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Gride.Migrations
+namespace Gride.Data.Migrations
 {
-    public partial class Initial : Migration
+    public partial class CreateIdentitySchema : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -45,48 +45,6 @@ namespace Gride.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EmployeeModel",
-                columns: table => new
-                {
-                    ID = table.Column<long>(nullable: false),
-                    Name = table.Column<string>(maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(maxLength: 50, nullable: false),
-                    DoB = table.Column<DateTime>(nullable: false),
-                    Gender = table.Column<int>(nullable: false),
-                    EMail = table.Column<string>(maxLength: 100, nullable: false),
-                    PhoneNumber = table.Column<string>(maxLength: 12, nullable: false),
-                    Admin = table.Column<bool>(nullable: false),
-                    LoginID = table.Column<decimal>(nullable: false),
-                    Experience = table.Column<float>(nullable: false),
-                    Locations = table.Column<long>(nullable: false),
-                    ProfileImage = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmployeeModel", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Locations",
-                columns: table => new
-                {
-                    LocationID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(nullable: false),
-                    Street = table.Column<string>(maxLength: 100, nullable: true),
-                    StreetNumber = table.Column<int>(nullable: false),
-                    Additions = table.Column<string>(nullable: true),
-                    Postalcode = table.Column<string>(nullable: true),
-                    City = table.Column<string>(nullable: true),
-                    Country = table.Column<string>(nullable: true),
-                    EmployeeModelID = table.Column<long>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Locations", x => x.LocationID);
                 });
 
             migrationBuilder.CreateTable(
@@ -195,46 +153,6 @@ namespace Gride.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Function",
-                columns: table => new
-                {
-                    FunctionID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(maxLength: 50, nullable: true),
-                    EmployeeModelID = table.Column<long>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Function", x => x.FunctionID);
-                    table.ForeignKey(
-                        name: "FK_Function_EmployeeModel_EmployeeModelID",
-                        column: x => x.EmployeeModelID,
-                        principalTable: "EmployeeModel",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Skill",
-                columns: table => new
-                {
-                    SkillID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(maxLength: 50, nullable: false),
-                    EmployeeModelID = table.Column<long>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Skill", x => x.SkillID);
-                    table.ForeignKey(
-                        name: "FK_Skill_EmployeeModel_EmployeeModelID",
-                        column: x => x.EmployeeModelID,
-                        principalTable: "EmployeeModel",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -273,16 +191,6 @@ namespace Gride.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Function_EmployeeModelID",
-                table: "Function",
-                column: "EmployeeModelID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Skill_EmployeeModelID",
-                table: "Skill",
-                column: "EmployeeModelID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -303,22 +211,10 @@ namespace Gride.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Function");
-
-            migrationBuilder.DropTable(
-                name: "Locations");
-
-            migrationBuilder.DropTable(
-                name: "Skill");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "EmployeeModel");
         }
     }
 }
