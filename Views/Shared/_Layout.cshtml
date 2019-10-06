@@ -36,7 +36,7 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        @if (SignInManager.IsSignedIn(User))
+                        @if (false)
                         { 
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Employee</a>
@@ -65,7 +65,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2019 - Gride - <a asp-area="" asp-controller="Gride" asp-action="User">Personal Page</a>
+            &copy; 2019 - Gride - <a asp-area="" asp-controller="User" asp-action="Index">@User.Identity.Name</a>
         </div>
     </footer>
 
