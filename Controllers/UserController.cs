@@ -80,7 +80,7 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit([Bind("ID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage,Skills,Functions,Locations")] EmployeeModel employeeModel)
         {
-            if (ModelState.IsValid)
+             if (ModelState.IsValid)
             {
                 try
                 {
@@ -124,8 +124,34 @@ namespace Gride.Controllers
             return View(employeeModel);
         }
 
-        // GET: Employee/Delete/5
-        public async Task<IActionResult> Delete(uint? id)
+        //Get: Employee/Request/itemToChange
+        public async Task<IActionResult> Request(string item)
+        {
+            EmployeeModel employee = await _context.EmployeeModel
+                                        .Include(e => e.Skills)
+                                        .Include(f => f.Functions)
+                                        .Include(l => l.Locations)
+                                        .AsNoTracking()
+                                        .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
+
+            if (EmployeeModel.Equals(employee, null))
+            {
+                return NotFound();
+            }
+
+            return View(employee);
+        }
+
+        //Post: Employee/Request/itemToChange
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Request()
+        {
+            return RedirectToAction(nameof(Index));
+        }
+
+            // GET: Employee/Delete/5
+            public async Task<IActionResult> Delete(uint? id)
         {
             if (id == null)
             {
