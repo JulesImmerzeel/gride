@@ -9,18 +9,15 @@ namespace Gride.Models
 {
 	public class Shift
 	{
-		[Key]
-		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public ulong ShiftID { get; set; }
 		public DateTime Start { get; set; }
 		public DateTime End { get; set; }
-		[Key]
-		[ForeignKey("Location")]
+		[Key, ForeignKey("Location")]
 		public uint LocationID { get; set; }
 		[Required]
 		public List<int> Skills { get; set; } = new List<int>();
-		[Key]
-		[ForeignKey("Function")]
+		[Key, ForeignKey("Function")]
 		public int FunctionID { get; set; }
 		public byte MaxEmployees { get; set; }
 	}

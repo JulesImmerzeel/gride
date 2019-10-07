@@ -42,8 +42,6 @@ namespace Gride.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<long>("Locations");
-
                     b.Property<decimal>("LoginID")
                         .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
 
@@ -64,12 +62,14 @@ namespace Gride.Migrations
 
             modelBuilder.Entity("Gride.Models.Function", b =>
                 {
-                    b.Property<long>("FunctionID")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("FunctionID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("EmployeeModelID");
+                    b.Property<long>("EmployeeModelID");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .HasMaxLength(50);
 
                     b.HasKey("FunctionID");
 
@@ -78,13 +78,44 @@ namespace Gride.Migrations
                     b.ToTable("Function");
                 });
 
+            modelBuilder.Entity("Gride.Models.Location", b =>
+                {
+                    b.Property<int>("LocationID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Additions");
+
+                    b.Property<string>("City");
+
+                    b.Property<string>("Country");
+
+                    b.Property<long>("EmployeeModelID");
+
+                    b.Property<string>("Name")
+                        .IsRequired();
+
+                    b.Property<string>("Postalcode");
+
+                    b.Property<string>("Street")
+                        .HasMaxLength(100);
+
+                    b.Property<int>("StreetNumber");
+
+                    b.HasKey("LocationID");
+
+                    b.HasIndex("EmployeeModelID");
+
+                    b.ToTable("Locations");
+                });
+
             modelBuilder.Entity("Gride.Models.Skill", b =>
                 {
                     b.Property<int>("SkillID")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("EmployeeModelID");
+                    b.Property<long>("EmployeeModelID");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -266,14 +297,24 @@ namespace Gride.Migrations
                 {
                     b.HasOne("Gride.Models.EmployeeModel")
                         .WithMany("Functions")
-                        .HasForeignKey("EmployeeModelID");
+                        .HasForeignKey("EmployeeModelID")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Gride.Models.Location", b =>
+                {
+                    b.HasOne("Gride.Models.EmployeeModel")
+                        .WithMany("Locations")
+                        .HasForeignKey("EmployeeModelID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Gride.Models.Skill", b =>
                 {
                     b.HasOne("Gride.Models.EmployeeModel")
                         .WithMany("Skills")
-                        .HasForeignKey("EmployeeModelID");
+                        .HasForeignKey("EmployeeModelID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
