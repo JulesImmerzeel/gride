@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Gride.Models.Skill>
+﻿@model IEnumerable<Gride.Models.Function>
 
 @{
     ViewData["Title"] = "Index";
@@ -25,9 +25,9 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.SkillID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.SkillID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.SkillID">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.FunctionID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.FunctionID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.FunctionID">Delete</a>
             </td>
         </tr>
 }

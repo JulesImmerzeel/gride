@@ -9,9 +9,10 @@ namespace Gride.Models
 {
 	public class Function
 	{
-		[Key]
-		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public uint FunctionID { get; set; }
-		public string Name { get; set; }
+		public int FunctionID { get; set; }
+        [StringLength(50)]
+        [Display(Name = "Function")]
+        public string Name { get; set; }
+        public uint EmployeeModelID { get; set; }
 	}
 }

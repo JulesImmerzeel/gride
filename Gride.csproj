@@ -14,11 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Data\Migrations\20190929195730_Migrations.cs" />
-    <Compile Remove="Data\Migrations\20190929195730_Migrations.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Remove="compilerconfig.json" />
   </ItemGroup>
 
