@@ -109,6 +109,29 @@ namespace Gride.Migrations
                     b.ToTable("Locations");
                 });
 
+            modelBuilder.Entity("Gride.Models.Shift", b =>
+                {
+                    b.Property<long>("ShiftID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("LocationID");
+
+                    b.Property<int>("FunctionID");
+
+                    b.Property<DateTime>("End");
+
+                    b.Property<byte>("MaxEmployees");
+
+                    b.Property<DateTime>("Start");
+
+                    b.HasKey("ShiftID", "LocationID", "FunctionID");
+
+                    b.HasAlternateKey("FunctionID", "LocationID", "ShiftID");
+
+                    b.ToTable("Shift");
+                });
+
             modelBuilder.Entity("Gride.Models.Skill", b =>
                 {
                     b.Property<int>("SkillID")
@@ -121,9 +144,17 @@ namespace Gride.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
+                    b.Property<int?>("ShiftFunctionID");
+
+                    b.Property<long?>("ShiftID");
+
+                    b.Property<int?>("ShiftLocationID");
+
                     b.HasKey("SkillID");
 
                     b.HasIndex("EmployeeModelID");
+
+                    b.HasIndex("ShiftID", "ShiftLocationID", "ShiftFunctionID");
 
                     b.ToTable("Skill");
                 });
@@ -315,6 +346,10 @@ namespace Gride.Migrations
                         .WithMany("Skills")
                         .HasForeignKey("EmployeeModelID")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Gride.Models.Shift")
+                        .WithMany("Skills")
+                        .HasForeignKey("ShiftID", "ShiftLocationID", "ShiftFunctionID");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

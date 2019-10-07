@@ -70,6 +70,24 @@ namespace Gride.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Shift",
+                columns: table => new
+                {
+                    ShiftID = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    LocationID = table.Column<int>(nullable: false),
+                    FunctionID = table.Column<int>(nullable: false),
+                    Start = table.Column<DateTime>(nullable: false),
+                    End = table.Column<DateTime>(nullable: false),
+                    MaxEmployees = table.Column<byte>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Shift", x => new { x.ShiftID, x.LocationID, x.FunctionID });
+                    table.UniqueConstraint("AK_Shift_FunctionID_LocationID_ShiftID", x => new { x.FunctionID, x.LocationID, x.ShiftID });
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -228,7 +246,10 @@ namespace Gride.Migrations
                     SkillID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(maxLength: 50, nullable: false),
-                    EmployeeModelID = table.Column<long>(nullable: false)
+                    EmployeeModelID = table.Column<long>(nullable: false),
+                    ShiftFunctionID = table.Column<int>(nullable: true),
+                    ShiftID = table.Column<long>(nullable: true),
+                    ShiftLocationID = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -239,6 +260,12 @@ namespace Gride.Migrations
                         principalTable: "EmployeeModel",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Skill_Shift_ShiftID_ShiftLocationID_ShiftFunctionID",
+                        columns: x => new { x.ShiftID, x.ShiftLocationID, x.ShiftFunctionID },
+                        principalTable: "Shift",
+                        principalColumns: new[] { "ShiftID", "LocationID", "FunctionID" },
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -294,6 +321,11 @@ namespace Gride.Migrations
                 name: "IX_Skill_EmployeeModelID",
                 table: "Skill",
                 column: "EmployeeModelID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Skill_ShiftID_ShiftLocationID_ShiftFunctionID",
+                table: "Skill",
+                columns: new[] { "ShiftID", "ShiftLocationID", "ShiftFunctionID" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -330,6 +362,9 @@ namespace Gride.Migrations
 
             migrationBuilder.DropTable(
                 name: "EmployeeModel");
+
+            migrationBuilder.DropTable(
+                name: "Shift");
         }
     }
 }
