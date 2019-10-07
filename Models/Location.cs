@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Gride.Models
 {
-	public class LocationModel
+	public class Location
 	{
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]

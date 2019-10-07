@@ -7,17 +7,11 @@ using System.Threading.Tasks;
 
 namespace Gride.Models
 {
-	public class WorkModel
+	public class Function
 	{
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public ulong WorkID { get; set; }
-		[Key]
-		[ForeignKey("EmployeeModel")]
-		public uint EmployeeID { get; set; }
-		[Key]
-		[ForeignKey("ShiftModel")]
-		public ulong ShiftID { get; set; }
-		public int Difference { get; set; } = 0;
+		public uint FunctionID { get; set; }
+		public string Name { get; set; }
 	}
 }
