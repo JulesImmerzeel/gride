@@ -54,7 +54,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SkillID,Name,EmployeeModelID")] Skill skill)
+        public async Task<IActionResult> Create([Bind("SkillID,Name")] Skill skill)
         {
             if (ModelState.IsValid)
             {

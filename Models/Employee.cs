@@ -9,10 +9,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Gride.Models
 {
-	public class EmployeeModel
+	public class Employee
 	{
 		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public uint ID { get; set; }
+		public uint EmployeeID { get; set; }
 		[Required, StringLength(50)]
 		public string Name{ get; set; }
 		[Required, StringLength(50), Display(Name="Last Name")]
@@ -25,15 +25,10 @@ namespace Gride.Models
 		[Required, StringLength(12), Phone, Display(Name = "Phone Number")]
 		public string PhoneNumber { get; set; }
 		public bool Admin { get; set; } = false;
-		public int Function { get; set; }
 		public ulong LoginID { get; set; }
 		public float Experience { get; set; }
 		[RegularExpression(@"(\\\\?([^\\/]*[\\/])*)([^\\/]+)$", ErrorMessage = "Path to ProfileImage is not a valid path")]
 		public string ProfileImage { get; set; } = null;
-
-        public virtual ICollection<Skill> Skills { get; set; }
-		public virtual ICollection<Function> Functions { get; set; }
-		public virtual ICollection<Location> Locations { get; set; }
 	}
 	public enum Gender
 	{

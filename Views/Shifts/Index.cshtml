@@ -18,9 +18,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.End)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaxEmployees)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -34,12 +31,9 @@
                 @Html.DisplayFor(modelItem => item.End)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.MaxEmployees)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                @Html.ActionLink("Edit", "Edit", new { id=item.ShiftID }) |
+                @Html.ActionLink("Details", "Details", new { id=item.ShiftID }) |
+                @Html.ActionLink("Delete", "Delete", new { id=item.ShiftID })
             </td>
         </tr>
 }

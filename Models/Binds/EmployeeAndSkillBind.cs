@@ -5,14 +5,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Gride.Models
+namespace Gride.Models.Binds
 {
-	public class Skill
+	public class EmployeeAndSkillBind
 	{
-		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		[Key, ForeignKey("Employee")]
+		public uint EmployeeID { get; set; }
+
+		[Key, ForeignKey("Skill")]
 		public int SkillID { get; set; }
 
-		[Required, StringLength(50)]
-		public string Name { get; set; }
 	}
 }

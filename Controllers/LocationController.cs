@@ -55,7 +55,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("LocationId,Name,Street, StreetNumber, Additions, PostalCode, City, Country, EmployeeModelID")] Location location)
+        public async Task<IActionResult> Create([Bind("LocationId,Name,Street, StreetNumber, Additions, PostalCode, City, Country")] Location location)
         {
             if (ModelState.IsValid)
             {
@@ -87,7 +87,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("LocationId,Name,Street, StreetNumber, Additions, PostalCode, City, Country, EmployeeModelID")] Location location)
+        public async Task<IActionResult> Edit(int id, [Bind("LocationId,Name,Street, StreetNumber, Additions, PostalCode, City, Country")] Location location)
         {
             if (id != location.LocationID)
             {

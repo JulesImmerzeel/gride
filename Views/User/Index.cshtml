@@ -1,10 +1,10 @@
-﻿@model Gride.Models.EmployeeModel
+﻿@model Gride.Models.Employee
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@if (!EmployeeModel.Equals(Model, null))
+@if (!Employee.Equals(Model, null))
 {
     <h1>@Model.Name @Model.LastName</h1>
     <div class="row">
@@ -61,34 +61,10 @@
                 </tr>
                 <tr>
                     <td>
-                        @Html.DisplayNameFor(model => model.Skills)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => Model.Skills)
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        @Html.DisplayNameFor(model => model.Functions)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => Model.Functions)
-                    </td>
-                </tr>
-                <tr>
-                    <td>
                         @Html.DisplayNameFor(model => model.Experience)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => Model.Experience)
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        @Html.DisplayNameFor(model => model.Locations)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => Model.Locations)
                     </td>
                 </tr>
             </table>

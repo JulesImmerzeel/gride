@@ -9,6 +9,7 @@ namespace Gride.Models
 {
 	public class Location
 	{
+		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public int LocationID { get; set; }
         [Required]
 		public string Name { get; set; }
@@ -20,7 +21,5 @@ namespace Gride.Models
 		public string Postalcode { get; set; }
 		public string City { get; set; }
 		public string Country { get; set; } = "NetherLands";
-        public uint EmployeeModelID { get; set; }
-
     }
 }

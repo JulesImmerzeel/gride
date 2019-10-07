@@ -24,10 +24,7 @@ namespace Gride.Controllers
         // GET: Employee
         public async Task<IActionResult> Index()
         {
-            EmployeeModel employee = await _context.EmployeeModel
-                                        .Include(e => e.Skills)
-                                        .Include(f => f.Functions)
-                                        .Include(l => l.Locations)
+            Employee employee = await _context.Employee
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
 
@@ -45,28 +42,25 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EmployeeModelID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,Skills,Functions,LoginID,Experience,Locations,ProfileImage")] EmployeeModel employeeModel)
+        public async Task<IActionResult> Create([Bind("EmployeeID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage")] Employee Employee)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(employeeModel);
+                _context.Add(Employee);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(employeeModel);
+            return View(Employee);
         }
 
         // GET: Employee/Edit
         public async Task<IActionResult> Edit()
         {
-            EmployeeModel employee = await _context.EmployeeModel
-                                        .Include(e => e.Skills)
-                                        .Include(f => f.Functions)
-                                        .Include(l => l.Locations)
+            Employee employee = await _context.Employee
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
 
-            if (EmployeeModel.Equals(employee, null)){
+            if (Employee.Equals(employee, null)){
                 return NotFound();
             }
 
@@ -78,18 +72,18 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("ID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage,Skills,Functions,Locations")] EmployeeModel employeeModel)
+        public async Task<IActionResult> Edit([Bind("EmployeeID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage")] Employee Employee)
         {
              if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(employeeModel);
+                    _context.Update(Employee);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployeeModelExists(employeeModel.ID))
+                    if (!EmployeeExists(Employee.EmployeeID))
                     {
                         return NotFound();
                     }
@@ -101,40 +95,21 @@ namespace Gride.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var employee = await _context.EmployeeModel
-                                        .Include(e => e.Skills)
-                                        .Include(f => f.Functions)
-                                        .Include(l => l.Locations)
+            var employee = await _context.Employee
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
 
-            foreach (var s in employee.Skills)
-            {
-                employeeModel.Skills.Add(s);
-            }
-            foreach (var l in employee.Locations)
-            {
-                employeeModel.Locations.Add(l);
-            }
-            foreach (var f in employee.Functions)
-            {
-                employeeModel.Functions.Add(f);
-            }
-
-            return View(employeeModel);
+			return View(Employee);
         }
 
         //Get: Employee/Request/itemToChange
         public async Task<IActionResult> Request(string item)
         {
-            EmployeeModel employee = await _context.EmployeeModel
-                                        .Include(e => e.Skills)
-                                        .Include(f => f.Functions)
-                                        .Include(l => l.Locations)
+            Employee employee = await _context.Employee
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
 
-            if (EmployeeModel.Equals(employee, null))
+            if (Employee.Equals(employee, null))
             {
                 return NotFound();
             }
@@ -158,14 +133,14 @@ namespace Gride.Controllers
                 return NotFound();
             }
 
-            var employeeModel = await _context.EmployeeModel
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (employeeModel == null)
+            var Employee = await _context.Employee
+                .FirstOrDefaultAsync(m => m.EmployeeID == id);
+            if (Employee == null)
             {
                 return NotFound();
             }
 
-            return View(employeeModel);
+            return View(Employee);
         }
 
         // POST: Employee/Delete/5
@@ -173,15 +148,15 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(uint id)
         {
-            var employeeModel = await _context.EmployeeModel.FindAsync(id);
-            _context.EmployeeModel.Remove(employeeModel);
+            var Employee = await _context.Employee.FindAsync(id);
+            _context.Employee.Remove(Employee);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EmployeeModelExists(uint id)
+        private bool EmployeeExists(uint id)
         {
-            return _context.EmployeeModel.Any(e => e.ID == id);
+            return _context.Employee.Any(e => e.EmployeeID == id);
         }
     }
 }

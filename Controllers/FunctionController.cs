@@ -54,7 +54,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FunctionID,Name,EmployeeModelID")] Function function)
+        public async Task<IActionResult> Create([Bind("FunctionID,Name")] Function function)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FunctionID,Name,EmployeeID")] Function function)
+        public async Task<IActionResult> Edit(int id, [Bind("FunctionID,Name")] Function function)
         {
             if (id != function.FunctionID)
             {

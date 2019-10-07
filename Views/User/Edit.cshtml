@@ -1,4 +1,4 @@
-﻿@model Gride.Models.EmployeeModel
+﻿@model Gride.Models.Employee
 @using  System.IO
 
 @{
@@ -15,7 +15,7 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ID" />
+            <input type="hidden" asp-for="EmployeeID" />
             <input asp-for="ProfileImage" type="hidden" />
             <input asp-for="Name" type="hidden" />
             <input asp-for="LastName" type="hidden" />
@@ -43,23 +43,8 @@
                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
             <input type="hidden" asp-for="Admin" />
-            <div class="form-group">
-                <label asp-for="Skills" class="control-label"></label>
-                <input asp-for="Skills" class="form-control" />
-                <span asp-validation-for="Skills" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Functions" class="control-label"></label>
-                <input asp-for="Functions" class="form-control" />
-                <span asp-validation-for="Functions" class="text-danger"></span>
-            </div>
             <input asp-for="LoginID" type="hidden" />
             <input asp-for="Experience" type="hidden" />
-            <div class="form-group">
-                <label asp-for="Locations" class="control-label"></label>
-                <input asp-for="Locations" class="form-control" />
-                <span asp-validation-for="Locations" class="text-danger"></span>
-            </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

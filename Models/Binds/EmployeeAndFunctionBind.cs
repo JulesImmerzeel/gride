@@ -5,13 +5,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Gride.Models
+namespace Gride.Models.Binds
 {
-	public class Function
+	public class EmployeeAndFunctionBind
 	{
-		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		[Key, ForeignKey("Employee")]
+		public uint EmployeeID { get; set; }
+
+		[Key, ForeignKey("Function")]
 		public int FunctionID { get; set; }
-        [StringLength(50), Display(Name = "Function")]
-        public string Name { get; set; }
 	}
 }

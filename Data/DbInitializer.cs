@@ -11,15 +11,15 @@ namespace Gride.Data
             context.Database.EnsureCreated();
 
             // Look for any students.
-            if (context.EmployeeModel.Any())
+            if (context.Employee.Any())
             {
                 return;   // DB has been seeded
             }
 
-            var employees = new EmployeeModel[]
+            var employees = new Employee[]
             {
-                new EmployeeModel{
-                    ID=1,
+                new Employee{
+                    EmployeeID=1,
                     Name ="Guus",
                     LastName ="Joppe",
                     DoB =DateTime.Parse("1998-05-18"),
@@ -31,9 +31,9 @@ namespace Gride.Data
                     Experience =1,
                     ProfileImage ="profile_0967844.jpeg"
                 },
-                new EmployeeModel
+                new Employee
                 {
-                    ID = 2,
+                    EmployeeID = 2,
                     Name = "John",
                     LastName = "Doe",
                     DoB = DateTime.Parse("1997-01-01"),
@@ -46,17 +46,17 @@ namespace Gride.Data
                     ProfileImage = "profile_0123456.jpeg"
                 }
             };
-            foreach (EmployeeModel e in employees)
+            foreach (Employee e in employees)
             {
-                context.EmployeeModel.Add(e);
+                context.Employee.Add(e);
             }
             context.SaveChanges();
 
             var skills = new Skill[]
             {
-                new Skill{Name="Nederlands",EmployeeModelID=1},
-                new Skill{Name="Frans",EmployeeModelID=1},
-                new Skill{Name="Engels",EmployeeModelID=1}
+                new Skill{Name="Nederlands"},
+                new Skill{Name="Frans"},
+                new Skill{Name="Engels"}
             };
             foreach (Skill s in skills)
             {
@@ -66,9 +66,9 @@ namespace Gride.Data
 
             var functions = new Function[]
             {
-                new Function{Name="Manager",EmployeeModelID=1},
-                new Function{Name="Floor",EmployeeModelID=1},
-                new Function{Name="Kitchen",EmployeeModelID=2}
+                new Function{Name="Manager"},
+                new Function{Name="Floor"},
+                new Function{Name="Kitchen"}
             };
             foreach (Function f in functions)
             {
@@ -78,8 +78,8 @@ namespace Gride.Data
 
             var locations = new Location[]
             {
-                new Location{Name="Wijnhaven",Street="Wijnhaven",StreetNumber=103,Postalcode="3011WN",City="Rotterdam",EmployeeModelID=1},
-                new Location{Name="Museumpark",Street="Museumpark",StreetNumber=40,Postalcode="3015CX",City="Rotterdam",EmployeeModelID=2}
+                new Location{Name="Wijnhaven",Street="Wijnhaven",StreetNumber=103,Postalcode="3011WN",City="Rotterdam"},
+                new Location{Name="Museumpark",Street="Museumpark",StreetNumber=40,Postalcode="3015CX",City="Rotterdam"}
             };
             foreach (Location l in locations)
             {

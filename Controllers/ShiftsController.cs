@@ -54,7 +54,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ShiftID,Start,End,LocationID,FunctionID,MaxEmployees")] Shift shift)
+        public async Task<IActionResult> Create([Bind("ShiftID,Start,End,MaxEmployees")] Shift shift)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("ShiftID,Start,End,LocationID,FunctionID,MaxEmployees")] Shift shift)
+        public async Task<IActionResult> Edit(long id, [Bind("ShiftID,Start,End,MaxEmployees")] Shift shift)
         {
             if (id != shift.ShiftID)
             {
