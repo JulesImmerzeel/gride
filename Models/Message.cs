@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 
 namespace Gride.Models
 {
-	public class MessageModel
+	public class Message
 	{
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public ulong MessageID { get; set; }
 		[Key]
-		[ForeignKey("EmployeeModel")]
+		[ForeignKey("Employee")]
 		public uint EmployeeID { get; set; }
 		[Required]
 		[StringLength(2000)]
-		public string Message { get; set; }
+		public string Text { get; set; }
 		public DateTime Time { get; set; } = DateTime.Now;
 	}
 }

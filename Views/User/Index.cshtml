@@ -64,12 +64,7 @@
                         @Html.DisplayNameFor(model => model.Skills)
                     </td>
                     <td>
-                        @foreach (var item in Model.Skills)
-                        {
-                            <p> 
-                                @Html.DisplayFor(modelItem => item.Name)
-                            </p>
-                        }
+                        @Html.DisplayFor(modelItem => Model.Skills)
                     </td>
                 </tr>
                 <tr>
@@ -77,12 +72,7 @@
                         @Html.DisplayNameFor(model => model.Functions)
                     </td>
                     <td>
-                        @foreach (var item in Model.Functions)
-                        {
-                            <p>
-                                @Html.DisplayFor(modelItem => item.Name)
-                            </p>
-                        }
+                        @Html.DisplayFor(modelItem => Model.Functions)
                     </td>
                 </tr>
                 <tr>
@@ -90,7 +80,7 @@
                         @Html.DisplayNameFor(model => model.Experience)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => Model.Experience) year(s)
+                        @Html.DisplayFor(modelItem => Model.Experience)
                     </td>
                 </tr>
                 <tr>
@@ -98,12 +88,7 @@
                         @Html.DisplayNameFor(model => model.Locations)
                     </td>
                     <td>
-                        @foreach (var item in Model.Locations)
-                        {
-                            <p>
-                                @Html.DisplayFor(modelItem => item.Name)
-                            </p>
-                        }
+                        @Html.DisplayFor(modelItem => Model.Locations)
                     </td>
                 </tr>
             </table>
