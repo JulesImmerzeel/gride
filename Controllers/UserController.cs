@@ -108,20 +108,14 @@ namespace Gride.Controllers
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
 
-            foreach (var s in employee.Skills)
-            {
-                employeeModel.Skills.Add(s);
-            }
-            foreach (var l in employee.Locations)
-            {
-                employeeModel.Locations.Add(l);
-            }
-            foreach (var f in employee.Functions)
-            {
-                employeeModel.Functions.Add(f);
-            }
+            employeeModel.Skills = employee.Skills;
+            employeeModel.Functions = employee.Functions;
+            employeeModel.Locations = employee.Locations;
 
-            return View(employeeModel);
+            _context.Update(employeeModel);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         //Get: Employee/Request/itemToChange

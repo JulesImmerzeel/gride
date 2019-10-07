@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gride.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191007080250_Initial")]
+    [Migration("20191007090907_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,6 +35,8 @@ namespace Gride.Migrations
                         .HasMaxLength(100);
 
                     b.Property<float>("Experience");
+
+                    b.Property<int>("Function");
 
                     b.Property<int>("Gender");
 
