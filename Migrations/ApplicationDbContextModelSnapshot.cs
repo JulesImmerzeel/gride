@@ -40,8 +40,6 @@ namespace Gride.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<long>("Locations");
-
                     b.Property<decimal>("LoginID")
                         .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
 
@@ -103,6 +101,8 @@ namespace Gride.Migrations
                     b.Property<int>("StreetNumber");
 
                     b.HasKey("LocationID");
+
+                    b.HasIndex("EmployeeModelID");
 
                     b.ToTable("Locations");
                 });
@@ -295,6 +295,14 @@ namespace Gride.Migrations
                 {
                     b.HasOne("Gride.Models.EmployeeModel")
                         .WithMany("Functions")
+                        .HasForeignKey("EmployeeModelID")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Gride.Models.Location", b =>
+                {
+                    b.HasOne("Gride.Models.EmployeeModel")
+                        .WithMany("Locations")
                         .HasForeignKey("EmployeeModelID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

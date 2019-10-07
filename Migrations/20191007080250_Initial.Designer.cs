@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gride.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191002121244_Initial")]
+    [Migration("20191007080250_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,8 +41,6 @@ namespace Gride.Migrations
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50);
-
-                    b.Property<long>("Locations");
 
                     b.Property<decimal>("LoginID")
                         .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
@@ -105,6 +103,8 @@ namespace Gride.Migrations
                     b.Property<int>("StreetNumber");
 
                     b.HasKey("LocationID");
+
+                    b.HasIndex("EmployeeModelID");
 
                     b.ToTable("Locations");
                 });
@@ -297,6 +297,14 @@ namespace Gride.Migrations
                 {
                     b.HasOne("Gride.Models.EmployeeModel")
                         .WithMany("Functions")
+                        .HasForeignKey("EmployeeModelID")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Gride.Models.Location", b =>
+                {
+                    b.HasOne("Gride.Models.EmployeeModel")
+                        .WithMany("Locations")
                         .HasForeignKey("EmployeeModelID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
