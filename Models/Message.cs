@@ -16,5 +16,7 @@ namespace Gride.Models
 		[Required, StringLength(2000)]
 		public string Text { get; set; }
 		public DateTime Time { get; set; } = DateTime.Now;
+
+		public virtual Employee Employee { get; set; }
 	}
 }

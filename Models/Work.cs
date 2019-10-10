@@ -16,5 +16,8 @@ namespace Gride.Models
 		[Key, ForeignKey("Shift")]
 		public ulong ShiftID { get; set; }
 		public int Difference { get; set; } = 0;
+
+		public virtual Employee Employee { get; set; }
+		public virtual Shift Shift { get; set; }
 	}
 }

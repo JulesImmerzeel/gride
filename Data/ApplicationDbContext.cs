@@ -15,46 +15,76 @@ namespace Gride.Data
 		{
 		}
 
+		public DbSet<Availability> Availability { get; set; }
 		public DbSet<Employee> Employee { get; set; }
-		public DbSet<Skill> Skill { get; set; }
 		public DbSet<Function> Function { get; set; }
-		public DbSet<Location> Locations { get; set; }
+		public DbSet<Location> Location { get; set; }
+		public DbSet<Message> Message { get; set; }
 		public DbSet<Shift> Shift { get; set; }
+		public DbSet<Skill> Skill { get; set; }
+		public DbSet<Work> Work { get; set; }
+		public DbSet<ShiftAndFunctionBind> shiftAndFunctionBind { get; set; }
 
-		public DbSet<EmployeeAndSkillBind> EmployeeAndSkillBinds { get; set; }
-		public DbSet<EmployeeAndFunctionBind> EmployeeAndFunctionBinds { get; set; }
-		public DbSet<EmployeeAndLocationBind> EmployeeAndLocationBinds { get; set; }
-		public DbSet<ShiftAndSkillBind> ShiftAndSkillBinds { get; set; }
-		public DbSet<ShiftAndFunctionBind> ShiftAndFunctionBinds { get; set; }
+		protected override void OnModelCreating(ModelBuilder builder)
+		{
+			builder.Entity<Availability>(b =>
+			{
+				b.HasKey(x => x.EmployeeID);
+			});
 
-		protected override void OnModelCreating(ModelBuilder builder) {
-			builder.Entity<EmployeeAndSkillBind>().HasKey(x => new { x.EmployeeID, x.SkillID });
-			builder.Entity<EmployeeAndFunctionBind>().HasKey(x => new { x.EmployeeID, x.FunctionID });
-			builder.Entity<EmployeeAndLocationBind>().HasKey(x => new { x.EmployeeID, x.LocationID });
-			builder.Entity<ShiftAndSkillBind>().HasKey(x => new { x.ShiftID, x.SkillID });
-			builder.Entity<ShiftAndFunctionBind>().HasKey(x => new { x.ShiftID, x.FunctionID });
+			builder.Entity<Employee>(b =>
+			{
+				b.HasKey(x => x.EmployeeID);
+				b.HasOne<Availability>().WithOne("Employee").HasForeignKey<Availability>(x => x.EmployeeID);
+				b.HasOne<Message>().WithOne("Employee").HasForeignKey<Message>(x => x.EmployeeID);
+				b.HasOne<Work>().WithOne("Employee").HasForeignKey<Work>(x => x.EmployeeID);
+			});
 
-			builder.Entity<Shift>(b => {
+			builder.Entity<Shift>(b => 
+			{
 				b.HasKey(x => x.ShiftID);
 				b.HasAlternateKey(x => x.LocationID);
+				b.HasOne<Work>().WithOne("Shift").HasForeignKey<Work>(x => x.WorkID);
+				b.HasOne<ShiftAndFunctionBind>().WithOne("Shift").HasForeignKey<ShiftAndFunctionBind>(x => x.ShiftID);
 			});
 
 			builder.Entity<Location>(b =>
 			{
-				b.HasOne<Shift>().WithOne("LocationID").HasForeignKey<Shift>(x => x.LocationID);
-				b.HasOne<EmployeeAndLocationBind>().WithOne("LocationID").HasForeignKey<EmployeeAndLocationBind>(x => x.LocationID);
+				b.HasKey(x => x.LocationID);
+				b.HasOne<Shift>().WithOne("Location").HasForeignKey<Shift>(x => x.LocationID);
+				b.HasOne<Employee>().WithMany("Locations");
 			});
 
 			builder.Entity<Skill>(b =>
 			{
-				b.HasOne<EmployeeAndSkillBind>().WithOne("SkillID").HasForeignKey<EmployeeAndSkillBind>(x => x.SkillID);
-				b.HasOne<ShiftAndSkillBind>().WithOne("SkillID").HasForeignKey<ShiftAndSkillBind>(x => x.SkillID);
+				b.HasKey(x => x.SkillID);
+				b.HasOne<Shift>().WithMany("Skills");
+				b.HasOne<Employee>().WithMany("Skills");
 			});
 
 			builder.Entity<Function>(b =>
 			{
-				b.HasOne<EmployeeAndFunctionBind>().WithOne("FunctionID").HasForeignKey<EmployeeAndFunctionBind>(x => x.FunctionID);
-				b.HasOne<ShiftAndFunctionBind>().WithOne("FunctionID").HasForeignKey<ShiftAndFunctionBind>(x => x.FunctionID);
+				b.HasKey(x => x.FunctionID);
+				b.HasOne<Employee>().WithMany("Functions");
+				b.HasOne<ShiftAndFunctionBind>().WithOne("Function").HasForeignKey<ShiftAndFunctionBind>(x => x.FunctionID);
+			});
+
+			builder.Entity<Work>(b => 
+			{
+				b.HasKey(x => x.WorkID);
+				b.HasAlternateKey(x => new { x.ShiftID, x.EmployeeID });
+			});
+
+			builder.Entity<Message>(b =>
+			{
+				b.HasKey(x => x.MessageID);
+				b.HasAlternateKey(x => x.EmployeeID);
+			});
+
+			builder.Entity<ShiftAndFunctionBind>(b =>
+			{
+				b.HasKey(x => new { x.ShiftID, x.FunctionID });
+				b.HasOne<Shift>().WithMany("Functions");
 			});
 
 			base.OnModelCreating(builder);

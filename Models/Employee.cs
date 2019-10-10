@@ -29,6 +29,10 @@ namespace Gride.Models
 		public float Experience { get; set; }
 		[RegularExpression(@"(\\\\?([^\\/]*[\\/])*)([^\\/]+)$", ErrorMessage = "Path to ProfileImage is not a valid path")]
 		public string ProfileImage { get; set; } = null;
+
+		public virtual ICollection<Skill> Skills { get; set; }
+		public virtual ICollection<Function> Functions { get; set; }
+		public virtual ICollection<Location> Locations { get; set; }
 	}
 	public enum Gender
 	{

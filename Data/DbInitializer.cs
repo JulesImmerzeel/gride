@@ -83,7 +83,7 @@ namespace Gride.Data
             };
             foreach (Location l in locations)
             {
-                context.Locations.Add(l);
+                context.Location.Add(l);
             }
             context.SaveChanges();
         }

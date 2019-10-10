@@ -10,9 +10,14 @@ namespace Gride.Models.Binds
 	public class ShiftAndFunctionBind
 	{
 		[Key, ForeignKey("Shift")]
-		public long ShiftID { get; set; }
+		public ulong ShiftID { get; set; }
 
 		[Key, ForeignKey("Function")]
 		public int FunctionID { get; set; }
+
+		public byte maxEmployees { get; set; }
+
+		public virtual Shift Shift { get; set; }
+		public virtual Function Function { get; set; }
 	}
 }

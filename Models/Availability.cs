@@ -11,10 +11,12 @@ namespace Gride.Models
 {
 	public class Availability
 	{
-		[Key, ForeignKey("Employee")]
-		public uint Employee { get; set; }
+		[Key, ForeignKey("EmployeeID")]
+		public uint EmployeeID { get; set; }
 		public DateTime Start { get; set; }
 		public DateTime End { get; set; }
 		public bool Prefered { get; set; } = true;
+
+		public virtual Employee Employee { get; set; }
 	}
 }

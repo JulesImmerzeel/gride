@@ -23,11 +23,16 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.End)
         </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Location)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Location.Name)
+        </dd class>
     </dl>
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="ShiftID" />
-        <input type="hidden" asp-for="LocationID" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>

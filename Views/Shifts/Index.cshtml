@@ -18,6 +18,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.End)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Location)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -31,9 +34,12 @@
                 @Html.DisplayFor(modelItem => item.End)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id=item.ShiftID }) |
-                @Html.ActionLink("Details", "Details", new { id=item.ShiftID }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.ShiftID })
+                @Html.DisplayFor(modelItem => item.Location.Name)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ShiftID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ShiftID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ShiftID">Delete</a>
             </td>
         </tr>
 }

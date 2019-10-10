@@ -23,7 +23,7 @@ namespace Gride.Controllers
         // GET: Location
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Locations.ToListAsync());
+            return View(await _context.Location.ToListAsync());
         }
 
         // GET: Location/Details/5
@@ -34,7 +34,7 @@ namespace Gride.Controllers
                 return NotFound();
             }
 
-            var function = await _context.Locations
+            var function = await _context.Location
                 .FirstOrDefaultAsync(m => m.LocationID == id);
             if (function == null)
             {
@@ -74,7 +74,7 @@ namespace Gride.Controllers
                 return NotFound();
             }
 
-            var location = await _context.Locations.FindAsync(id);
+            var location = await _context.Location.FindAsync(id);
             if (location == null)
             {
                 return NotFound();
@@ -125,7 +125,7 @@ namespace Gride.Controllers
                 return NotFound();
             }
 
-            var function = await _context.Locations
+            var function = await _context.Location
                 .FirstOrDefaultAsync(m => m.LocationID == id);
             if (function == null)
             {
@@ -140,15 +140,15 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var location = await _context.Locations.FindAsync(id);
-            _context.Locations.Remove(location);
+            var location = await _context.Location.FindAsync(id);
+            _context.Location.Remove(location);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool LocationExists(int id)
         {
-            return _context.Locations.Any(e => e.LocationID == id);
+            return _context.Location.Any(e => e.LocationID == id);
         }
     }
 }

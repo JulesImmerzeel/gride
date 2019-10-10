@@ -22,11 +22,12 @@ namespace Gride.Controllers
         // GET: Shifts
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Shift.ToListAsync());
+            var applicationDbContext = _context.Shift.Include(s => s.Location);
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Shifts/Details/5
-        public async Task<IActionResult> Details(long? id)
+        public async Task<IActionResult> Details(ulong? id)
         {
             if (id == null)
             {
@@ -34,6 +35,7 @@ namespace Gride.Controllers
             }
 
             var shift = await _context.Shift
+                .Include(s => s.Location)
                 .FirstOrDefaultAsync(m => m.ShiftID == id);
             if (shift == null)
             {
@@ -46,6 +48,7 @@ namespace Gride.Controllers
         // GET: Shifts/Create
         public IActionResult Create()
         {
+            ViewData["LocationID"] = new SelectList(_context.Location, "LocationID", "Name");
             return View();
         }
 
@@ -54,7 +57,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ShiftID,Start,End,MaxEmployees")] Shift shift)
+        public async Task<IActionResult> Create([Bind("ShiftID,Start,End,LocationID")] Shift shift)
         {
             if (ModelState.IsValid)
             {
@@ -62,11 +65,12 @@ namespace Gride.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["LocationID"] = new SelectList(_context.Location, "LocationID", "Name", shift.LocationID);
             return View(shift);
         }
 
         // GET: Shifts/Edit/5
-        public async Task<IActionResult> Edit(long? id)
+        public async Task<IActionResult> Edit(ulong? id)
         {
             if (id == null)
             {
@@ -78,6 +82,7 @@ namespace Gride.Controllers
             {
                 return NotFound();
             }
+            ViewData["LocationID"] = new SelectList(_context.Location, "LocationID", "Name", shift.LocationID);
             return View(shift);
         }
 
@@ -86,7 +91,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("ShiftID,Start,End,MaxEmployees")] Shift shift)
+        public async Task<IActionResult> Edit(ulong id, [Bind("ShiftID,Start,End,LocationID")] Shift shift)
         {
             if (id != shift.ShiftID)
             {
@@ -113,11 +118,12 @@ namespace Gride.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["LocationID"] = new SelectList(_context.Location, "LocationID", "Name", shift.LocationID);
             return View(shift);
         }
 
         // GET: Shifts/Delete/5
-        public async Task<IActionResult> Delete(long? id)
+        public async Task<IActionResult> Delete(ulong? id)
         {
             if (id == null)
             {
@@ -125,6 +131,7 @@ namespace Gride.Controllers
             }
 
             var shift = await _context.Shift
+                .Include(s => s.Location)
                 .FirstOrDefaultAsync(m => m.ShiftID == id);
             if (shift == null)
             {
@@ -137,7 +144,7 @@ namespace Gride.Controllers
         // POST: Shifts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(long id)
+        public async Task<IActionResult> DeleteConfirmed(ulong id)
         {
             var shift = await _context.Shift.FindAsync(id);
             _context.Shift.Remove(shift);
@@ -145,7 +152,7 @@ namespace Gride.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ShiftExists(long id)
+        private bool ShiftExists(ulong id)
         {
             return _context.Shift.Any(e => e.ShiftID == id);
         }
