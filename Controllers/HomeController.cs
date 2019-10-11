@@ -12,7 +12,9 @@ namespace Gride.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            Schedule schedule = new Schedule();
+            schedule.setWeek(0);
+            return View(schedule);
         }
 
         public IActionResult Privacy()

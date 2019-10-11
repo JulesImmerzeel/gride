@@ -1,6 +1,5 @@
 ﻿@model Gride.Models.Schedule
-@{ var day = DateTime.Now.ToString("dd");
-    var kaas = "MON\r\ntest" + day;}
+@{ var day = DateTime.Now.ToString("dd");}
 <style>
     table.GeneratedTable {
         width: 100%;
@@ -21,6 +20,7 @@
 
         table.GeneratedTable thead {
             background-color: lightgray;
+            text-align: center;
         }
 
         table.GeneratedTable col {
@@ -36,13 +36,13 @@
 <table class="GeneratedTable">
     <thead>
         <tr>
-            <th>@kaas</th>
-            <th>TUE</th>
-            <th>WED</th>
-            <th>THU</th>
-            <th>FRI</th>
-            <th>SAT</th>
-            <th>SUN</th>
+            <th>MON<br />@Model.monday</th>
+            <th>TUE<br />@Model.tuesday</th>
+            <th>WED<br />@Model.wednesday</th>
+            <th>TUE<br />@Model.thursday</th>
+            <th>FRI<br />@Model.friday</th>
+            <th>SAT<br />@Model.saturday</th>
+            <th>SUN<br />@Model.sunday</th>
         </tr>
     </thead>
     <colgroup>
@@ -267,4 +267,3 @@
         </tr>
     </tbody>
 </table>
-@kaas
