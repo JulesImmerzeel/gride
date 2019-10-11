@@ -19,6 +19,8 @@ namespace Gride.Models
         public string friday;
         public string saturday;
         public string sunday;
+        public static DateTime now = DateTime.Now;
+      
 
         public void setWeek(int weeks)
         {
@@ -34,5 +36,6 @@ namespace Gride.Models
             sunday = now.AddDays(delta + 6).ToString("dd");
 
         }
+        
     }
 }

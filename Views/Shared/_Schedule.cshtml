@@ -1,5 +1,5 @@
 ﻿@model Gride.Models.Schedule
-@{ var day = DateTime.Now.ToString("dd");}
+@{ int day = (int)DateTime.Now.DayOfWeek; }
 <style>
     table.GeneratedTable {
         width: 100%;
@@ -36,13 +36,13 @@
 <table class="GeneratedTable">
     <thead>
         <tr>
-            <th>MON<br />@Model.monday</th>
-            <th>TUE<br />@Model.tuesday</th>
-            <th>WED<br />@Model.wednesday</th>
-            <th>TUE<br />@Model.thursday</th>
-            <th>FRI<br />@Model.friday</th>
-            <th>SAT<br />@Model.saturday</th>
-            <th>SUN<br />@Model.sunday</th>
+            <th id="1" class="head">MON<br />@Model.monday</th>
+            <th id="2" class="head">TUE<br />@Model.tuesday</th>
+            <th id="3" class="head">WED<br />@Model.wednesday</th>
+            <th id="4" class="head">TUE<br />@Model.thursday</th>
+            <th id="5" class="head">FRI<br />@Model.friday</th>
+            <th id="6" class="head">SAT<br />@Model.saturday</th>
+            <th id="7" class="head">SUN<br />@Model.sunday</th>
         </tr>
     </thead>
     <colgroup>
@@ -267,3 +267,10 @@
         </tr>
     </tbody>
 </table>
+<script>
+    var d = new Date();
+    var n = d.getDay();
+    let myElements = document.querySelectorAll(".head");
+	myElements[n - 1].style.backgroundColor = "gray";
+
+</script>
