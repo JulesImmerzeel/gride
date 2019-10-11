@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Gride.Models.Availability>
+
+@{
+    ViewData["Title"] = "Index";
+    string start = "";
+    string end = "";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Day
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Start)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.End)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @{
+                        start = item.Start.DayOfWeek.ToString();
+                    }
+                    @start
+                </td>
+                <td>
+                    @item.Start.TimeOfDay
+                </td>
+                <td>
+                    @item.End.TimeOfDay
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.AvailabilityID">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.AvailabilityID">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

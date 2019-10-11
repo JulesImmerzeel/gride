@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Gride.Migrations
 {
-    public partial class Initial : Migration
+    public partial class AddAvailability : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -48,10 +48,25 @@ namespace Gride.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Availabilities",
+                columns: table => new
+                {
+                    AvailabilityID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Start = table.Column<DateTime>(nullable: false),
+                    End = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Availabilities", x => x.AvailabilityID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EmployeeModel",
                 columns: table => new
                 {
-                    ID = table.Column<long>(nullable: false),
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(maxLength: 50, nullable: false),
                     LastName = table.Column<string>(maxLength: 50, nullable: false),
                     DoB = table.Column<DateTime>(nullable: false),
@@ -59,7 +74,6 @@ namespace Gride.Migrations
                     EMail = table.Column<string>(maxLength: 100, nullable: false),
                     PhoneNumber = table.Column<string>(maxLength: 12, nullable: false),
                     Admin = table.Column<bool>(nullable: false),
-                    Function = table.Column<int>(nullable: false),
                     LoginID = table.Column<decimal>(nullable: false),
                     Experience = table.Column<float>(nullable: false),
                     ProfileImage = table.Column<string>(nullable: true)
@@ -176,23 +190,50 @@ namespace Gride.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EmployeeAvailabilities",
+                columns: table => new
+                {
+                    EmployeeAvailabilityID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    EmployeeID = table.Column<int>(nullable: false),
+                    AvailabilityID = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeAvailabilities", x => x.EmployeeAvailabilityID);
+                    table.ForeignKey(
+                        name: "FK_EmployeeAvailabilities_Availabilities_AvailabilityID",
+                        column: x => x.AvailabilityID,
+                        principalTable: "Availabilities",
+                        principalColumn: "AvailabilityID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EmployeeAvailabilities_EmployeeModel_EmployeeID",
+                        column: x => x.EmployeeID,
+                        principalTable: "EmployeeModel",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Function",
                 columns: table => new
                 {
                     FunctionID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(maxLength: 50, nullable: true),
-                    EmployeeModelID = table.Column<long>(nullable: false)
+                    EmployeeModelID = table.Column<long>(nullable: false),
+                    EmployeeModelID1 = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Function", x => x.FunctionID);
                     table.ForeignKey(
-                        name: "FK_Function_EmployeeModel_EmployeeModelID",
-                        column: x => x.EmployeeModelID,
+                        name: "FK_Function_EmployeeModel_EmployeeModelID1",
+                        column: x => x.EmployeeModelID1,
                         principalTable: "EmployeeModel",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -208,17 +249,18 @@ namespace Gride.Migrations
                     Postalcode = table.Column<string>(nullable: true),
                     City = table.Column<string>(nullable: true),
                     Country = table.Column<string>(nullable: true),
-                    EmployeeModelID = table.Column<long>(nullable: false)
+                    EmployeeModelID = table.Column<long>(nullable: false),
+                    EmployeeModelID1 = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Locations", x => x.LocationID);
                     table.ForeignKey(
-                        name: "FK_Locations_EmployeeModel_EmployeeModelID",
-                        column: x => x.EmployeeModelID,
+                        name: "FK_Locations_EmployeeModel_EmployeeModelID1",
+                        column: x => x.EmployeeModelID1,
                         principalTable: "EmployeeModel",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -228,17 +270,18 @@ namespace Gride.Migrations
                     SkillID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(maxLength: 50, nullable: false),
-                    EmployeeModelID = table.Column<long>(nullable: false)
+                    EmployeeModelID = table.Column<long>(nullable: false),
+                    EmployeeModelID1 = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Skill", x => x.SkillID);
                     table.ForeignKey(
-                        name: "FK_Skill_EmployeeModel_EmployeeModelID",
-                        column: x => x.EmployeeModelID,
+                        name: "FK_Skill_EmployeeModel_EmployeeModelID1",
+                        column: x => x.EmployeeModelID1,
                         principalTable: "EmployeeModel",
                         principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -281,19 +324,29 @@ namespace Gride.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Function_EmployeeModelID",
+                name: "IX_EmployeeAvailabilities_AvailabilityID",
+                table: "EmployeeAvailabilities",
+                column: "AvailabilityID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeAvailabilities_EmployeeID",
+                table: "EmployeeAvailabilities",
+                column: "EmployeeID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Function_EmployeeModelID1",
                 table: "Function",
-                column: "EmployeeModelID");
+                column: "EmployeeModelID1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Locations_EmployeeModelID",
+                name: "IX_Locations_EmployeeModelID1",
                 table: "Locations",
-                column: "EmployeeModelID");
+                column: "EmployeeModelID1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Skill_EmployeeModelID",
+                name: "IX_Skill_EmployeeModelID1",
                 table: "Skill",
-                column: "EmployeeModelID");
+                column: "EmployeeModelID1");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -314,6 +367,9 @@ namespace Gride.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "EmployeeAvailabilities");
+
+            migrationBuilder.DropTable(
                 name: "Function");
 
             migrationBuilder.DropTable(
@@ -327,6 +383,9 @@ namespace Gride.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Availabilities");
 
             migrationBuilder.DropTable(
                 name: "EmployeeModel");

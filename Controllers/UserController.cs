@@ -173,7 +173,7 @@ namespace Gride.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EmployeeModelExists(uint id)
+        private bool EmployeeModelExists(int id)
         {
             return _context.EmployeeModel.Any(e => e.ID == id);
         }

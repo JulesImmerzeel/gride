@@ -11,14 +11,10 @@ namespace Gride.Models
 {
 	public class Availability
 	{
-		[Key]
-		[ForeignKey("Employee")]
-		public uint EmployeeID { get; set; }
+        public int AvailabilityID { get; set; }
 		public DateTime Start { get; set; }
 		public DateTime End { get; set; }
-		[Key]
-		[ForeignKey("Location")]
-		public uint LocationID { get; set; }
-		public bool Prefered { get; set; } = true;
+
+        public ICollection<EmployeeAvailability> EmployeeAvailabilities { get; set; }
 	}
 }
