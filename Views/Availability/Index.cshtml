@@ -2,8 +2,8 @@
 
 @{
     ViewData["Title"] = "Index";
+    string day = "Monday";
     string start = "";
-    string end = "";
 }
 
 <h1>Index</h1>
@@ -33,8 +33,12 @@
                 <td>
                     @{
                         start = item.Start.DayOfWeek.ToString();
+                        if (day != start)
+                        {
+                            day = start;
+                            <text>@day</text>
+                        }
                     }
-                    @start
                 </td>
                 <td>
                     @item.Start.TimeOfDay

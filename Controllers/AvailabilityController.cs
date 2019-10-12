@@ -42,7 +42,9 @@ namespace Gride.Controllers
             int weekNr = DateTime.Now.DayOfYear / 7;
             IEnumerable<Availability> availabilities = allAvailabilities.Where(a => (a.Start.DayOfYear / 7) == weekNr);
 
-            return View(availabilities);
+            IEnumerable<Availability> ordered = availabilities.OrderBy(a => a.Start);
+
+            return View(ordered);
         }
 
         // GET: Availability/Create
