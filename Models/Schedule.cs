@@ -20,9 +20,10 @@ namespace Gride.Models
         public string saturday;
         public string sunday;
         public static DateTime now = DateTime.Now;
+        public int y = 0;
       
 
-        public void setWeek(int weeks)
+        public void setWeek(int weeks = 0)
         {
             int x = weeks * 7;
             DateTime now = DateTime.Now;

@@ -10,13 +10,25 @@ namespace Gride.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        public int x = 0;
+        public Schedule schedule = new Schedule();
+        public IActionResult Index(int id)
         {
-            Schedule schedule = new Schedule();
-            schedule.setWeek(0);
+            int k = id;
+            if (k == 1)
+            {
+                schedule.y++;
+            }
+            if (k == -1)
+            {
+                schedule.y--;
+            }
+        
+            schedule.setWeek(schedule.y);
             return View(schedule);
         }
-
+       
+        
         public IActionResult Privacy()
         {
             return View();
@@ -27,6 +39,8 @@ namespace Gride.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
- 
+
+
+
     }
 }
