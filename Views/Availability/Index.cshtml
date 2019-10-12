@@ -21,16 +21,26 @@
 }
 
 <h1>Week @week</h1>
-<p>
-    <a asp-action="Index" asp-route-week="@previous">Previous week</a>
-</p>
-<p>
-    <a asp-action="Index" asp-route-week="@next">Next week</a>
-</p>
+<div class="row">
+    <div class="col-2">
+        <p>
+            <a asp-action="Index" asp-route-week="@previous">Previous week</a>
+        </p>
+    </div>
+    <div class="col-2">
+        <p>
+            <a asp-action="Index" asp-route-week="@next">Next week</a>
+        </p>
+    </div>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<div class="row">
+    <div class="col-12">
+        <p>
+            <a asp-action="Create">Create New</a>
+        </p>
+    </div>
+</div>
 <table class="table">
     <thead>
         <tr>
