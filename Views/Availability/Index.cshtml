@@ -12,12 +12,10 @@
     {
         week = DateTime.Now.DayOfYear / 7;
     }
-    int next = (week + 1) % 53;
+    int next = (week + 1) % 52;
     int previous = week - 1;
-    if (previous < 0)
-    {
-        previous = 52;
-    }
+    if (previous < 0) { previous = 51;}
+    week++;
 }
 
 <h1>Week @week</h1>
@@ -53,34 +51,40 @@
             <th>
                 @Html.DisplayNameFor(model => model.End)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Weekly)
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @{
-                        start = item.Start.DayOfWeek.ToString();
-                        if (day != start)
-                        {
-                            day = start;
-                            <text>@day</text>
-                        }
+        <tr>
+            <td>
+                @{
+                    start = item.Start.DayOfWeek.ToString();
+                    if (day != start)
+                    {
+                        day = start;
+                        <text>@day</text>
                     }
-                </td>
-                <td>
-                    @item.Start.TimeOfDay
-                </td>
-                <td>
-                    @item.End.TimeOfDay
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.AvailabilityID">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@item.AvailabilityID">Delete</a>
-                </td>
-            </tr>
+                }
+            </td>
+            <td>
+                @item.Start.TimeOfDay
+            </td>
+            <td>
+                @item.End.TimeOfDay
+            </td>
+            <td>
+                @item.Weekly
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.AvailabilityID">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.AvailabilityID">Delete</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>

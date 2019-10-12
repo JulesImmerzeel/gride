@@ -38,15 +38,30 @@ namespace Gride.Controllers
             {
                 allAvailabilities.Add(ea.Availability);
             }
+            int w = 0;
             if (week == null)
             {
-                week = DateTime.Now.DayOfYear / 7;
+                w = DateTime.Now.DayOfYear / 7;
+            } else
+            {
+                w = (int)week;
             }
-            IEnumerable<Availability> availabilities = allAvailabilities.Where(a => (a.Start.DayOfYear / 7) == week);
+            foreach (Availability a in allAvailabilities)
+            {
+                if (a.Weekly)
+                {
+                    int weekA = a.Start.DayOfYear / 7;
+                    int weekDif = w - weekA;
+                    double days = weekDif * 7;
+                    a.Start = a.Start.AddDays(days);
+                    a.End = a.End.AddDays(days);
+                }
+            }
+            IEnumerable<Availability> availabilities = allAvailabilities.Where(a => (a.Start.DayOfYear / 7) == w);
 
             IEnumerable<Availability> ordered = availabilities.OrderBy(a => a.Start);
 
-            ViewBag.week = week;
+            ViewBag.week = w;
             return View(ordered);
         }
 
@@ -61,7 +76,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AvailabilityID,Start, End")] Availability availability)
+        public async Task<IActionResult> Create([Bind("AvailabilityID,Start, End, Weekly")] Availability availability)
         {
             if (ModelState.IsValid)
             {
@@ -107,7 +122,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AvailabilityID,Start,End")] Availability availability)
+        public async Task<IActionResult> Edit(int id, [Bind("AvailabilityID,Start,End, Weekly")] Availability availability)
         {
             if (id != availability.AvailabilityID)
             {

@@ -52,12 +52,12 @@ namespace Gride.Data
 
             var availabilities = new Availability[]
             {
-                new Availability{ Start = DateTime.Parse("2019/10/10 10:00"), End = DateTime.Parse("2019/10/10 12:00")},
+                new Availability{ Start = DateTime.Parse("2019/10/10 10:00"), End = DateTime.Parse("2019/10/10 12:00"), Weekly = true },
                 new Availability{ Start = DateTime.Parse("2019/10/10 12:00"), End = DateTime.Parse("2019/10/10 14:00")},
                 new Availability{ Start = DateTime.Parse("2019/10/11 12:00"), End = DateTime.Parse("2019/10/11 14:00")},
-                new Availability{ Start = DateTime.Parse("2019/10/12 18:00"), End = DateTime.Parse("2019/10/12 20:00")},
+                new Availability{ Start = DateTime.Parse("2019/10/12 18:00"), End = DateTime.Parse("2019/10/12 20:00"), Weekly = true},
                 new Availability{ Start = DateTime.Parse("2019/11/10 10:00"), End = DateTime.Parse("2019/11/10 12:00")},
-                new Availability{ Start = DateTime.Parse("2019/11/10 12:00"), End = DateTime.Parse("2019/11/10 14:00")},
+                new Availability{ Start = DateTime.Parse("2019/11/10 12:00"), End = DateTime.Parse("2019/11/10 14:00"), Weekly = true},
                 new Availability{ Start = DateTime.Parse("2019/11/10 18:00"), End = DateTime.Parse("2019/11/10 20:00")}
             };
             foreach (Availability a in availabilities)
