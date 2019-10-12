@@ -20,7 +20,7 @@ namespace Gride.Controllers
         }
 
         // GET: Availability
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? week)
         {
             EmployeeModel employee = _context.EmployeeModel
                 .Single(e => e.EMail == User.Identity.Name);
@@ -38,12 +38,15 @@ namespace Gride.Controllers
             {
                 allAvailabilities.Add(ea.Availability);
             }
-
-            int weekNr = DateTime.Now.DayOfYear / 7;
-            IEnumerable<Availability> availabilities = allAvailabilities.Where(a => (a.Start.DayOfYear / 7) == weekNr);
+            if (week == null)
+            {
+                week = DateTime.Now.DayOfYear / 7;
+            }
+            IEnumerable<Availability> availabilities = allAvailabilities.Where(a => (a.Start.DayOfYear / 7) == week);
 
             IEnumerable<Availability> ordered = availabilities.OrderBy(a => a.Start);
 
+            ViewBag.week = week;
             return View(ordered);
         }
 

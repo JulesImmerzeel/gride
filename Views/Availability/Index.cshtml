@@ -4,9 +4,29 @@
     ViewData["Title"] = "Index";
     string day = "Monday";
     string start = "";
+    int week = 1;
+    if (ViewBag.week != null)
+    {
+        week = ViewBag.week;
+    } else
+    {
+        week = DateTime.Now.DayOfYear / 7;
+    }
+    int next = (week + 1) % 53;
+    int previous = week - 1;
+    if (previous < 0)
+    {
+        previous = 52;
+    }
 }
 
-<h1>Index</h1>
+<h1>Week @week</h1>
+<p>
+    <a asp-action="Index" asp-route-week="@previous">Previous week</a>
+</p>
+<p>
+    <a asp-action="Index" asp-route-week="@next">Next week</a>
+</p>
 
 <p>
     <a asp-action="Create">Create New</a>
