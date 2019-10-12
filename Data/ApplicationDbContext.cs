@@ -18,5 +18,8 @@ namespace Gride.Data
         public DbSet<Skill> Skill { get; set; }
         public DbSet<Function> Function { get; set; }
         public DbSet<Location> Locations { get; set; }
+        public DbSet<Availability> Availabilities { get; set; }
+        public DbSet<EmployeeAvailability> EmployeeAvailabilities { get; set; }
+
     }
 }

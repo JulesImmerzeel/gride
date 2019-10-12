@@ -19,7 +19,6 @@ namespace Gride.Data
             var employees = new EmployeeModel[]
             {
                 new EmployeeModel{
-                    ID=1,
                     Name ="Guus",
                     LastName ="Joppe",
                     DoB =DateTime.Parse("1998-05-18"),
@@ -29,11 +28,10 @@ namespace Gride.Data
                     Admin =true,
                     LoginID =0967844,
                     Experience =1,
-                    ProfileImage ="profile_0967844.jpeg"
+                    ProfileImage ="profile_0967844.jpeg",
                 },
                 new EmployeeModel
                 {
-                    ID = 2,
                     Name = "John",
                     LastName = "Doe",
                     DoB = DateTime.Parse("1997-01-01"),
@@ -52,40 +50,38 @@ namespace Gride.Data
             }
             context.SaveChanges();
 
-            var skills = new Skill[]
+            var availabilities = new Availability[]
             {
-                new Skill{Name="Nederlands",EmployeeModelID=1},
-                new Skill{Name="Frans",EmployeeModelID=1},
-                new Skill{Name="Engels",EmployeeModelID=1}
+                new Availability{ Start = DateTime.Parse("2019/10/10 10:00"), End = DateTime.Parse("2019/10/10 12:00"), Weekly = true },
+                new Availability{ Start = DateTime.Parse("2019/10/10 12:00"), End = DateTime.Parse("2019/10/10 14:00")},
+                new Availability{ Start = DateTime.Parse("2019/10/11 12:00"), End = DateTime.Parse("2019/10/11 14:00")},
+                new Availability{ Start = DateTime.Parse("2019/10/12 18:00"), End = DateTime.Parse("2019/10/12 20:00"), Weekly = true},
+                new Availability{ Start = DateTime.Parse("2019/11/10 10:00"), End = DateTime.Parse("2019/11/10 12:00")},
+                new Availability{ Start = DateTime.Parse("2019/11/10 12:00"), End = DateTime.Parse("2019/11/10 14:00"), Weekly = true},
+                new Availability{ Start = DateTime.Parse("2019/11/10 18:00"), End = DateTime.Parse("2019/11/10 20:00")}
             };
-            foreach (Skill s in skills)
+            foreach (Availability a in availabilities)
             {
-                context.Skill.Add(s);
+                context.Availabilities.Add(a);
             }
             context.SaveChanges();
 
-            var functions = new Function[]
+            var employeeAvailabilities = new EmployeeAvailability[]
             {
-                new Function{Name="Manager",EmployeeModelID=1},
-                new Function{Name="Floor",EmployeeModelID=1},
-                new Function{Name="Kitchen",EmployeeModelID=2}
+                new EmployeeAvailability{ AvailabilityID=1, EmployeeID= employees.Single(e => e.Name == "Guus").ID},
+                new EmployeeAvailability{ AvailabilityID=2, EmployeeID= employees.Single(e => e.Name == "Guus").ID},
+                new EmployeeAvailability{ AvailabilityID=3, EmployeeID= employees.Single(e => e.Name == "Guus").ID},
+                new EmployeeAvailability{ AvailabilityID=4, EmployeeID= employees.Single(e => e.Name == "Guus").ID},
+                new EmployeeAvailability{ AvailabilityID=5, EmployeeID= employees.Single(e => e.Name == "Guus").ID},
+                new EmployeeAvailability{ AvailabilityID=6, EmployeeID= employees.Single(e => e.Name == "Guus").ID},
+                new EmployeeAvailability{ AvailabilityID=7, EmployeeID= employees.Single(e => e.Name == "Guus").ID}
             };
-            foreach (Function f in functions)
+            foreach (EmployeeAvailability ea in employeeAvailabilities)
             {
-                context.Function.Add(f);
+                context.EmployeeAvailabilities.Add(ea);
             }
             context.SaveChanges();
-
-            var locations = new Location[]
-            {
-                new Location{Name="Wijnhaven",Street="Wijnhaven",StreetNumber=103,Postalcode="3011WN",City="Rotterdam",EmployeeModelID=1},
-                new Location{Name="Museumpark",Street="Museumpark",StreetNumber=40,Postalcode="3015CX",City="Rotterdam",EmployeeModelID=2}
-            };
-            foreach (Location l in locations)
-            {
-                context.Locations.Add(l);
-            }
-            context.SaveChanges();
+            
         }
     }
 }

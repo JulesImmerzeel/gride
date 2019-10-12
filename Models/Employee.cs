@@ -10,7 +10,7 @@ namespace Gride.Models
 {
 	public class EmployeeModel
 	{
-		public uint ID { get; set; }
+		public int ID { get; set; }
 		[Required]
 		[StringLength(50)]
 		public string Name{ get; set; }
@@ -36,13 +36,13 @@ namespace Gride.Models
 		public ulong LoginID { get; set; }
 		public float Experience { get; set; }
 		
-		[RegularExpression(@"(\\\\?([^\\/]*[\\/])*)([^\\/]+)$", ErrorMessage = "Path to ProfileImage is not a valid path")]
 		public string ProfileImage { get; set; } = null;
 
         public  ICollection<Skill> Skills { get; set; }
 		public ICollection<Function> Functions { get; set; }
         public ICollection<Location> Locations { get; set; }
-	}
+        public ICollection<EmployeeAvailability> EmployeeAvailabilities { get; set; }
+    }
 	public enum Gender
 	{
 		Male, Female, Not_Specified

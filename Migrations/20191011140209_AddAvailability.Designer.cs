@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gride.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191007090907_Initial")]
-    partial class Initial
+    [Migration("20191011140209_AddAvailability")]
+    partial class AddAvailability
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,10 +21,45 @@ namespace Gride.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Gride.Models.Availability", b =>
+                {
+                    b.Property<int>("AvailabilityID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("End");
+
+                    b.Property<DateTime>("Start");
+
+                    b.HasKey("AvailabilityID");
+
+                    b.ToTable("Availabilities");
+                });
+
+            modelBuilder.Entity("Gride.Models.EmployeeAvailability", b =>
+                {
+                    b.Property<int>("EmployeeAvailabilityID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AvailabilityID");
+
+                    b.Property<int>("EmployeeID");
+
+                    b.HasKey("EmployeeAvailabilityID");
+
+                    b.HasIndex("AvailabilityID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("EmployeeAvailabilities");
+                });
+
             modelBuilder.Entity("Gride.Models.EmployeeModel", b =>
                 {
-                    b.Property<long>("ID")
-                        .ValueGeneratedOnAdd();
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<bool>("Admin");
 
@@ -35,8 +70,6 @@ namespace Gride.Migrations
                         .HasMaxLength(100);
 
                     b.Property<float>("Experience");
-
-                    b.Property<int>("Function");
 
                     b.Property<int>("Gender");
 
@@ -70,12 +103,14 @@ namespace Gride.Migrations
 
                     b.Property<long>("EmployeeModelID");
 
+                    b.Property<int?>("EmployeeModelID1");
+
                     b.Property<string>("Name")
                         .HasMaxLength(50);
 
                     b.HasKey("FunctionID");
 
-                    b.HasIndex("EmployeeModelID");
+                    b.HasIndex("EmployeeModelID1");
 
                     b.ToTable("Function");
                 });
@@ -94,6 +129,8 @@ namespace Gride.Migrations
 
                     b.Property<long>("EmployeeModelID");
 
+                    b.Property<int?>("EmployeeModelID1");
+
                     b.Property<string>("Name")
                         .IsRequired();
 
@@ -106,7 +143,7 @@ namespace Gride.Migrations
 
                     b.HasKey("LocationID");
 
-                    b.HasIndex("EmployeeModelID");
+                    b.HasIndex("EmployeeModelID1");
 
                     b.ToTable("Locations");
                 });
@@ -119,13 +156,15 @@ namespace Gride.Migrations
 
                     b.Property<long>("EmployeeModelID");
 
+                    b.Property<int?>("EmployeeModelID1");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50);
 
                     b.HasKey("SkillID");
 
-                    b.HasIndex("EmployeeModelID");
+                    b.HasIndex("EmployeeModelID1");
 
                     b.ToTable("Skill");
                 });
@@ -295,28 +334,38 @@ namespace Gride.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("Gride.Models.EmployeeAvailability", b =>
+                {
+                    b.HasOne("Gride.Models.Availability", "Availability")
+                        .WithMany("EmployeeAvailabilities")
+                        .HasForeignKey("AvailabilityID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Gride.Models.EmployeeModel", "Employee")
+                        .WithMany("EmployeeAvailabilities")
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("Gride.Models.Function", b =>
                 {
                     b.HasOne("Gride.Models.EmployeeModel")
                         .WithMany("Functions")
-                        .HasForeignKey("EmployeeModelID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("EmployeeModelID1");
                 });
 
             modelBuilder.Entity("Gride.Models.Location", b =>
                 {
                     b.HasOne("Gride.Models.EmployeeModel")
                         .WithMany("Locations")
-                        .HasForeignKey("EmployeeModelID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("EmployeeModelID1");
                 });
 
             modelBuilder.Entity("Gride.Models.Skill", b =>
                 {
                     b.HasOne("Gride.Models.EmployeeModel")
                         .WithMany("Skills")
-                        .HasForeignKey("EmployeeModelID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("EmployeeModelID1");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
