@@ -40,8 +40,11 @@ namespace Gride.Controllers
 
             var shift = await _context.Shift
                 .Include(s => s.Location)
+				.Include(s => s.Skills)
                 .FirstOrDefaultAsync(m => m.ShiftID == id);
-            if (shift == null)
+			var sh = shift.Skills;
+			ViewData["Skills"] = sh;
+			if (shift == null)
             {
                 return NotFound();
             }
@@ -68,8 +71,18 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ShiftID,Start,End,LocationID,Skills,Functions")] Shift shift)
         {
-			shift.Skills = HttpContext.Session.Get<List<Skill>>("Skills");
-            if (ModelState.IsValid)
+			var s = HttpContext.Session.Get<List<Skill>>("Skills");
+
+			if (shift.Skills == null)
+				shift.Skills = new List<Skill>();
+			else
+				shift.Skills.Clear();
+
+			// Me trying to fix an identity error using the exact same objects (so also the same hash codes) in the database
+			foreach (Skill skill in s)
+				shift.Skills.Add(_context.Skill.ToList().Find(x => skill.Name == x.Name && skill.SkillID == x.SkillID));
+
+			if (ModelState.IsValid)
             {
                 _context.Add(shift);
                 await _context.SaveChangesAsync();
@@ -85,7 +98,7 @@ namespace Gride.Controllers
 		public async void AddSkill([Bind("SkillID,Name")] Skill skill)
 		{
 			List<Skill> skills = HttpContext.Session.Get<List<Skill>>("Skills");
-			skills.Add(_context.Skill.ToList().Find(x => skill.Name == x.Name && skill.SkillID == x.SkillID));
+			skills.Add(skill);
 			HttpContext.Session.Set("Skills", skills);
 		}
 
