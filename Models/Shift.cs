@@ -12,7 +12,7 @@ namespace Gride.Models
 	public class Shift
 	{
 		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public ulong ShiftID { get; set; }
+		public long ShiftID { get; set; }
 		public DateTime Start { get; set; }
 		public DateTime End { get; set; }
 		[Key, ForeignKey("Location")]

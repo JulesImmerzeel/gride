@@ -10,7 +10,7 @@ namespace Gride.Models.Binds
 	public class EmployeeAndLocationBind
 	{
 		[Key, ForeignKey("Employee")]
-		public uint EmployeeID { get; set; }
+		public long EmployeeID { get; set; }
 
 		[Key, ForeignKey("Location")]
 		public int LocationID { get; set; }

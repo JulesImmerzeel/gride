@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Gride.Models;
 using Gride.Models.Binds;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Gride.Data
 {
@@ -34,6 +35,10 @@ namespace Gride.Data
 
 			builder.Entity<Employee>(b =>
 			{
+				b.Property<long>(x => x.EmployeeID)
+					.ValueGeneratedOnAdd()
+					.HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
 				b.HasKey(x => x.EmployeeID);
 				b.HasOne<Availability>().WithOne("Employee").HasForeignKey<Availability>(x => x.EmployeeID);
 				b.HasOne<Message>().WithOne("Employee").HasForeignKey<Message>(x => x.EmployeeID);
@@ -44,7 +49,7 @@ namespace Gride.Data
 			{
 				b.HasKey(x => x.ShiftID);
 				b.HasAlternateKey(x => x.LocationID);
-				b.HasOne<Work>().WithOne("Shift").HasForeignKey<Work>(x => x.WorkID);
+				b.HasOne<Work>().WithOne("Shift").HasForeignKey<Work>(x => x.ShiftID);
 				b.HasOne<ShiftAndFunctionBind>().WithOne("Shift").HasForeignKey<ShiftAndFunctionBind>(x => x.ShiftID);
 			});
 

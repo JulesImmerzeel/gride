@@ -1,0 +1,70 @@
+﻿<div>
+	<table id="AddedSkills" class="table">
+		<thead>
+			<tr>
+				<th>
+					Name
+				</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (Skill skill in (List<Skill>)ViewBag.Skills)
+			{
+				<tr id="@skill.Name@skill.SkillID">
+					<td>
+						@skill.Name
+					</td>
+					<td>
+						<a href="javascript:Delete('@skill.Name', @skill.SkillID)">Delete</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<div id="AddSkillLine" class="form-group">
+		@Html.DropDownList("Skills", (SelectList)ViewBag.Skill, new { @class = "form-control" })
+		<div class="form-group" style="margin-top: 10px;">
+			<input value="Add" id="SkillConfirm" class="btn btn-secondary" type="button" />
+			<input value="Cancel" id="SkillCancel" class="btn btn-secondary" type="button" />
+		</div>
+	</div>
+	<div id="AddSkill" class="form-group">
+		<input value="Add Skill" id="AddSkillButton" class="btn btn-secondary" type="button" />
+	</div>
+</div>
+
+<script>
+	$("#AddSkillLine").hide();
+
+	$("#SkillConfirm").click(function () {
+		$("#AddSkillLine").hide();
+		$("#AddSkill").show();
+		var selected = $("select#Skills").children("option:selected");
+		var name = selected.text();
+		var value = selected.val();
+		var table = $("#AddedSkills").children("tbody");
+		$.post("AddSkill", { SkillID: value, Name: name }, function () {
+			selected.remove();
+			table.append("<tr id=\"" + name + value + "\"><td>" + name + "</td><td><a href=\"javascript:Delete('" + name + "'," + value + ")\">Delete</a></td></tr>");
+		});
+	});
+
+	$("#SkillCancel").click(function () {
+		$("#AddSkillLine").hide();
+		$("#AddSkill").show();
+	});
+
+	$("#AddSkillButton").click(function () {
+		$("#AddSkill").hide();
+		$("#AddSkillLine").show();
+	});
+
+	function Delete(name, ID) {
+		$.post("DeleteSkill", { SkillID: ID, Name: name }, function () {
+			$("tr#" + name + ID).remove();
+			$("select#Skills").append("<option value\"" + ID + "\">" + name + "</option>");
+		});
+	}
+
+</script>

@@ -10,7 +10,7 @@ namespace Gride.Models.Binds
 	public class ShiftAndFunctionBind
 	{
 		[Key, ForeignKey("Shift")]
-		public ulong ShiftID { get; set; }
+		public long ShiftID { get; set; }
 
 		[Key, ForeignKey("Function")]
 		public int FunctionID { get; set; }

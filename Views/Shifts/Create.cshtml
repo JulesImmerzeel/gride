@@ -26,6 +26,9 @@
                 <label asp-for="LocationID" class="control-label"></label>
                 <select asp-for="LocationID" class ="form-control" asp-items="ViewBag.LocationID"></select>
             </div>
+			<div class="form-group">
+				<partial name="Partials/AddSkillsPartial"/>
+			</div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

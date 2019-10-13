@@ -36,13 +36,11 @@ namespace Gride.Migrations
 
             modelBuilder.Entity("Gride.Models.Binds.ShiftAndFunctionBind", b =>
                 {
-                    b.Property<decimal>("ShiftID")
-                        .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
+                    b.Property<long>("ShiftID");
 
                     b.Property<int>("FunctionID");
 
-                    b.Property<decimal?>("ShiftID1")
-                        .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
+                    b.Property<long?>("ShiftID1");
 
                     b.Property<byte>("maxEmployees");
 
@@ -64,7 +62,8 @@ namespace Gride.Migrations
             modelBuilder.Entity("Gride.Models.Employee", b =>
                 {
                     b.Property<long>("EmployeeID")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<bool>("Admin");
 
@@ -82,8 +81,7 @@ namespace Gride.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<decimal>("LoginID")
-                        .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
+                    b.Property<long>("LoginID");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -151,9 +149,9 @@ namespace Gride.Migrations
 
             modelBuilder.Entity("Gride.Models.Message", b =>
                 {
-                    b.Property<decimal>("MessageID")
+                    b.Property<long>("MessageID")
                         .ValueGeneratedOnAdd()
-                        .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<long>("EmployeeID");
 
@@ -174,9 +172,9 @@ namespace Gride.Migrations
 
             modelBuilder.Entity("Gride.Models.Shift", b =>
                 {
-                    b.Property<decimal>("ShiftID")
+                    b.Property<long>("ShiftID")
                         .ValueGeneratedOnAdd()
-                        .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("End");
 
@@ -205,8 +203,7 @@ namespace Gride.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<decimal?>("ShiftID")
-                        .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
+                    b.Property<long?>("ShiftID");
 
                     b.HasKey("SkillID");
 
@@ -219,16 +216,15 @@ namespace Gride.Migrations
 
             modelBuilder.Entity("Gride.Models.Work", b =>
                 {
-                    b.Property<decimal>("WorkID")
+                    b.Property<long>("WorkID")
                         .ValueGeneratedOnAdd()
-                        .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("Difference");
 
                     b.Property<long>("EmployeeID");
 
-                    b.Property<decimal>("ShiftID")
-                        .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
+                    b.Property<long>("ShiftID");
 
                     b.HasKey("WorkID");
 
@@ -237,6 +233,9 @@ namespace Gride.Migrations
                     b.HasAlternateKey("EmployeeID", "ShiftID", "WorkID");
 
                     b.HasIndex("EmployeeID")
+                        .IsUnique();
+
+                    b.HasIndex("ShiftID")
                         .IsUnique();
 
                     b.ToTable("Work");
@@ -482,7 +481,7 @@ namespace Gride.Migrations
 
                     b.HasOne("Gride.Models.Shift", "Shift")
                         .WithOne()
-                        .HasForeignKey("Gride.Models.Work", "WorkID")
+                        .HasForeignKey("Gride.Models.Work", "ShiftID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

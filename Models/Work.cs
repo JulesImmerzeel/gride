@@ -10,11 +10,11 @@ namespace Gride.Models
 	public class Work
 	{
 		[Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public ulong WorkID { get; set; }
+		public long WorkID { get; set; }
 		[Key, ForeignKey("Employee")]
-		public uint EmployeeID { get; set; }
+		public long EmployeeID { get; set; }
 		[Key, ForeignKey("Shift")]
-		public ulong ShiftID { get; set; }
+		public long ShiftID { get; set; }
 		public int Difference { get; set; } = 0;
 
 		public virtual Employee Employee { get; set; }

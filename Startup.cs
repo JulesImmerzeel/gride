@@ -42,6 +42,14 @@ namespace Gride
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+			services.AddDistributedMemoryCache();
+			services.AddSession(options =>
+			{
+				options.IdleTimeout = TimeSpan.FromMinutes(20);
+				options.Cookie.HttpOnly = true;
+				options.Cookie.IsEssential = true;
+			});
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -63,6 +71,7 @@ namespace Gride
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+			app.UseSession();
 
             app.UseAuthentication();
 

@@ -126,7 +126,7 @@ namespace Gride.Controllers
         }
 
             // GET: Employee/Delete/5
-            public async Task<IActionResult> Delete(uint? id)
+            public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
             {
@@ -146,7 +146,7 @@ namespace Gride.Controllers
         // POST: Employee/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(uint id)
+        public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var Employee = await _context.Employee.FindAsync(id);
             _context.Employee.Remove(Employee);
@@ -154,7 +154,7 @@ namespace Gride.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EmployeeExists(uint id)
+        private bool EmployeeExists(long id)
         {
             return _context.Employee.Any(e => e.EmployeeID == id);
         }
