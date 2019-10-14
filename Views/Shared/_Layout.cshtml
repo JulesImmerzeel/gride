@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
+@inject ApplicationDbContext _context
 
 <!DOCTYPE html>
 <html>
@@ -33,20 +34,32 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <partial name="_LoginPartial" />
                     <ul class="navbar-nav flex-grow-1">
-                        @if (false)
+                        @if (SignInManager.IsSignedIn(User) && _context.EmployeeModel.FirstOrDefault(x => x.EMail == User.Identity.Name).Admin)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="SkillModels" asp-action="Index">Skills</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="SkillModels" asp-action="Index">Roster</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Function" asp-action="Index">Functions</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Function" asp-action="Index">Shifts</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Location" asp-action="Index">Locations</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Location" asp-action="Index">Personal Page</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Availability" asp-action="Index">Employees</a>
                             </li>
                         }
-                        else
+                        @if (SignInManager.IsSignedIn(User) && !_context.EmployeeModel.FirstOrDefault(x => x.EMail == User.Identity.Name).Admin)
                         {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="SkillModels" asp-action="Index">Roster</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Function" asp-action="Index">Shifts</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Location" asp-action="Index">Personal Page</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Availability" asp-action="Index">Availabilities</a>
                             </li>

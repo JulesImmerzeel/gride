@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gride.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191011140209_AddAvailability")]
-    partial class AddAvailability
+    [Migration("20191014125208_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,6 +30,8 @@ namespace Gride.Migrations
                     b.Property<DateTime>("End");
 
                     b.Property<DateTime>("Start");
+
+                    b.Property<bool>("Weekly");
 
                     b.HasKey("AvailabilityID");
 
