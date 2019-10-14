@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Gride.Models;
+using System.Web;
 
 namespace Gride.Controllers
 {
@@ -14,15 +15,8 @@ namespace Gride.Controllers
         public Schedule schedule = new Schedule();
         public IActionResult Index(int id)
         {
-            int k = id;
-            if (k == 1)
-            {
-                schedule.y++;
-            }
-            if (k == -1)
-            {
-                schedule.y--;
-            }
+            
+            schedule.y  += id;
         
             schedule.setWeek(schedule.y);
             return View(schedule);
