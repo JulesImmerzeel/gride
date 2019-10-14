@@ -1,0 +1,19 @@
+﻿<table id="AddedSkills" class="table">
+	<thead>
+		<tr>
+			<th>
+				Name
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (Skill skill in (ICollection<Skill>)ViewBag.Skills)
+		{
+			<tr id="@skill.Name@skill.SkillID">
+				<td>
+					@skill.Name
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

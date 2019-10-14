@@ -1,0 +1,79 @@
+﻿<div>
+	<table id="AddedFuncs" class="table">
+		<thead>
+			<tr>
+				<th>
+					Name
+				</th>
+				<th>
+					Max Employees
+				</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (ShiftAndFunctionBind functionBind in (ICollection<ShiftAndFunctionBind>)ViewBag.FunctionBinds)
+			{
+				<tr id="@functionBind.Function.Name@functionBind.FunctionID">
+					<td>
+						@functionBind.Function.Name
+					</td>
+					<td>
+						@functionBind.maxEmployees
+					</td>
+					<td>
+						<a href="javascript:DeleteFunc('@functionBind.Function.Name', @functionBind.FunctionID, @functionBind.maxEmployees)">Delete</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<div id="AddFuncLine" class="form-group">
+		@Html.DropDownList("Functions", (SelectList)ViewBag.Function, new { @class = "form-control" })
+		<input id="MaxEmp" value="1" class="form-control" type="number" name="Max Employees" min="1" max="255"/>
+		<div class="form-group" style="margin-top: 10px;">
+			<input value="Add" id="FuncConfirm" class="btn btn-secondary" type="button" />
+			<input value="Cancel" id="FuncCancel" class="btn btn-secondary" type="button" />
+		</div>
+	</div>
+	<div id="AddFunc" class="form-group">
+		<input value="Add Function" id="AddFuncButton" class="btn btn-secondary" type="button" />
+	</div>
+</div>
+
+<script>
+	$("#AddFuncLine").hide();
+
+	$("#FuncConfirm").click(function () {
+		$("#AddFuncLine").hide();
+		$("#AddFunc").show();
+		var selected = $("select#Functions").children("option:selected");
+		var name = selected.text();
+		var value = selected.val();
+		var MaxEmpObj = $("#MaxEmp");
+		var MaxEmp = MaxEmpObj.val();
+		var table = $("#AddedFuncs").children("tbody");
+		$.post("AddFunc", { Function: { FunctionID: value, Name: name }, ShiftID: 0, FunctionID: value, maxEmployees: MaxEmp }, function () {
+			selected.remove();
+			MaxEmpObj.val(1);
+			table.append("<tr id=\"" + name + value + "\"><td>" + name + "</td><td>" + MaxEmp + "</td><td><a href=\"javascript:DeleteFunc('" + name + "'," + value + ", " + MaxEmp + ")\">Delete</a></td></tr>");
+		});
+	});
+
+	$("#FuncCancel").click(function () {
+		$("#AddFuncLine").hide();
+		$("#AddFunc").show();
+	});
+
+	$("#AddFuncButton").click(function () {
+		$("#AddFunc").hide();
+		$("#AddFuncLine").show();
+	});
+
+	function DeleteFunc(name, ID, maxEmp) {
+		$.post("DeleteFunc", {Function : { FunctionID: ID, Name: name }, ShiftID : 0, FunctionID: ID, maxEmployees : maxEmp }, function () {
+			$("tr#" + name + ID).remove();
+			$("select#Funcs").append("<option value\"" + ID + "\">" + name + "</option>");
+		});
+	}
+</script>

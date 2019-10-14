@@ -9,14 +9,14 @@
 			</tr>
 		</thead>
 		<tbody>
-			@foreach (Skill skill in (List<Skill>)ViewBag.Skills)
+			@foreach (Skill skill in (ICollection<Skill>)ViewBag.Skills)
 			{
 				<tr id="@skill.Name@skill.SkillID">
 					<td>
 						@skill.Name
 					</td>
 					<td>
-						<a href="javascript:Delete('@skill.Name', @skill.SkillID)">Delete</a>
+						<a href="javascript:DeleteSkill('@skill.Name', @skill.SkillID)">Delete</a>
 					</td>
 				</tr>
 			}
@@ -46,7 +46,7 @@
 		var table = $("#AddedSkills").children("tbody");
 		$.post("AddSkill", { SkillID: value, Name: name }, function () {
 			selected.remove();
-			table.append("<tr id=\"" + name + value + "\"><td>" + name + "</td><td><a href=\"javascript:Delete('" + name + "'," + value + ")\">Delete</a></td></tr>");
+			table.append("<tr id=\"" + name + value + "\"><td>" + name + "</td><td><a href=\"javascript:DeleteSkill('" + name + "'," + value + ")\">Delete</a></td></tr>");
 		});
 	});
 
@@ -60,7 +60,7 @@
 		$("#AddSkillLine").show();
 	});
 
-	function Delete(name, ID) {
+	function DeleteSkill(name, ID) {
 		$.post("DeleteSkill", { SkillID: ID, Name: name }, function () {
 			$("tr#" + name + ID).remove();
 			$("select#Skills").append("<option value\"" + ID + "\">" + name + "</option>");

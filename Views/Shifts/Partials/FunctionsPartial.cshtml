@@ -1,0 +1,25 @@
+﻿<table id="AddedFuncs" class="table">
+	<thead>
+		<tr>
+			<th>
+				Name
+			</th>
+			<th>
+				Max Employees
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (ShiftAndFunctionBind functionBind in (ICollection<ShiftAndFunctionBind>)ViewBag.FunctionBinds)
+		{
+			<tr id="@functionBind.Function.Name@functionBind.FunctionID">
+				<td>
+					@functionBind.Function.Name
+				</td>
+				<td>
+					@functionBind.maxEmployees
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

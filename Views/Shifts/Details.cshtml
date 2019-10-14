@@ -29,25 +29,8 @@
 			@Html.DisplayFor(model => model.Location.Name)
 		</dd>
 	</dl>
-	<table id="AddedSkills" class="table">
-		<thead>
-			<tr>
-				<th>
-					Name
-				</th>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (Skill skill in (ICollection<Skill>)ViewBag.Skills)
-			{
-				<tr id="@skill.Name@skill.SkillID">
-					<td>
-						@skill.Name
-					</td>
-				</tr>
-			}
-		</tbody>
-	</table>
+	<partial name="Partials/SkillsPartial" />
+	<partial name="Partials/FunctionsPartial" />
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.ShiftID">Edit</a> |
