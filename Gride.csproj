@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <None Include="compilerconfig.json" />
+    <None Include="Pages\_ValidationScriptsPartial.cshtml" />
     <None Include="wwwroot\images\profile_0967844.jpeg" />
   </ItemGroup>
 
