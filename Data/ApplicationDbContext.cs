@@ -13,7 +13,13 @@ namespace Gride.Data
             : base(options)
         {
         }
-        public DbSet<Gride.Models.EmployeeModel> EmployeeModel { get; set; }
+
+        public DbSet<EmployeeModel> EmployeeModel { get; set; }
         public DbSet<Skill> Skill { get; set; }
+        public DbSet<Function> Function { get; set; }
+        public DbSet<Location> Locations { get; set; }
+        public DbSet<Availability> Availabilities { get; set; }
+        public DbSet<EmployeeAvailability> EmployeeAvailabilities { get; set; }
+
     }
 }

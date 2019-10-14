@@ -1,4 +1,4 @@
-﻿@model Gride.Models.Skill
+﻿@model Gride.Models.Location
 
 @{
     ViewData["Title"] = "Delete";
@@ -20,7 +20,7 @@
     </dl>
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="SkillID" />
+        <input type="hidden" asp-for="LocationID" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>
