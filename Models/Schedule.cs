@@ -20,12 +20,16 @@ namespace Gride.Models
         public string saturday;
         public string sunday;
         public static DateTime now = DateTime.Now;
-        public int y = 0;
-      
+        public int showingWeekNumber = now.DayOfYear / 7 + 1;
+        public Shift[][] week = new Shift[7][];
+        public int weekNumber = now.DayOfYear / 7 + 1;
 
-        public void setWeek(int weeks = 0)
+
+
+        public void setWeek(int weeks)
         {
-            int x = weeks * 7;
+
+            int x = (weeks - weekNumber) * 7;
             DateTime now = DateTime.Now;
             int delta = DayOfWeek.Monday - now.DayOfWeek + x;
             monday = now.AddDays(delta).ToString("dd");
@@ -35,8 +39,21 @@ namespace Gride.Models
             friday = now.AddDays(delta + 4).ToString("dd");
             saturday = now.AddDays(delta + 5).ToString("dd");
             sunday = now.AddDays(delta + 6).ToString("dd");
+            
 
         }
-        
+     
+    public void setShifts()
+        {
+            week[0] = new Shift[24];
+            week[1] = new Shift[24];
+            week[2] = new Shift[24];
+            week[3] = new Shift[24];
+            week[4] = new Shift[24];
+            week[5] = new Shift[24];
+            week[6] = new Shift[24];
+        }
+
+
     }
 }
