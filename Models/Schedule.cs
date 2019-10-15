@@ -59,6 +59,7 @@ namespace Gride.Models
                 {
                     week[day][hour] = null;
                     week[3][7] = "donderdag 8 uur";
+                    week[4][3] = "nog een test";
                 }
             }
         }
