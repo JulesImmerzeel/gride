@@ -21,7 +21,7 @@ namespace Gride.Models
         public string sunday;
         public static DateTime now = DateTime.Now;
         public int showingWeekNumber = now.DayOfYear / 7 + 1;
-        public Shift[][] week = new Shift[7][];
+        public string[][] week = new string[7][];
         public int weekNumber = now.DayOfYear / 7 + 1;
 
 
@@ -45,13 +45,22 @@ namespace Gride.Models
      
     public void setShifts()
         {
-            week[0] = new Shift[24];
-            week[1] = new Shift[24];
-            week[2] = new Shift[24];
-            week[3] = new Shift[24];
-            week[4] = new Shift[24];
-            week[5] = new Shift[24];
-            week[6] = new Shift[24];
+            week[0] = new string[24];
+            week[1] = new string[24];
+            week[2] = new string[24];
+            week[3] = new string[24];
+            week[4] = new string[24];
+            week[5] = new string[24];
+            week[6] = new string[24];
+
+            for (int day = 0; day < week.Length; day++)
+            {
+                for (int hour = 0; hour < week[day].Length; hour++)
+                {
+                    week[day][hour] = null;
+                    week[3][7] = "donderdag 8 uur";
+                }
+            }
         }
 
 

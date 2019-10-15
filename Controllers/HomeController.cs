@@ -13,6 +13,7 @@ namespace Gride.Controllers
     {
         public int x = 0;
         public Schedule schedule = new Schedule();
+
         public IActionResult Index(int? id)
         {
             if (id == null)
@@ -22,7 +23,7 @@ namespace Gride.Controllers
 
             schedule.showingWeekNumber = (int)id;
             schedule.setWeek(schedule.showingWeekNumber);
-            
+            schedule.setShifts();
            
             return View(schedule);
         }
