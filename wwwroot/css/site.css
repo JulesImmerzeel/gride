@@ -12,6 +12,11 @@ a.navbar-brand {
     height: auto;
 }
 
+.card{
+    margin-bottom: 50px;
+    padding: 20px;
+}
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {

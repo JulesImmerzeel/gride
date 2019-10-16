@@ -81,7 +81,6 @@ namespace Gride.Data
                 context.EmployeeAvailabilities.Add(ea);
             }
             context.SaveChanges();
-            
         }
     }
 }

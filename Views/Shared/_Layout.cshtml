@@ -45,10 +45,13 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Location" asp-action="Index">Locations</a>
                             </li>
                         }
-                        else
+                        else if (SignInManager.IsSignedIn(User))
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Availability" asp-action="Index">Availabilities</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Message" asp-action="Index">Messages</a>
                             </li>
                         }
                     </ul>
