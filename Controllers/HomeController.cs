@@ -18,11 +18,11 @@ namespace Gride.Controllers
         {
             if (id == null)
             {
-                id = schedule.weekNumber;
+                id = schedule._weekNumber;
             }
 
-            schedule.showingWeekNumber = (int)id;
-            schedule.setWeek(schedule.showingWeekNumber);
+            schedule.currentWeek = (int)id;
+            schedule.setWeek((int)id);
             schedule.setShifts();
            
             return View(schedule);

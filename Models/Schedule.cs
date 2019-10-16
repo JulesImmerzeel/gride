@@ -2,48 +2,61 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace Gride.Models
 {
     public class Schedule
     {
-        //public static DateTime now = DateTime.Now;
-        //public static int delta = DayOfWeek.Monday - now.DayOfWeek;
-        //public DateTime monday = now.AddDays(delta);
-
-        //@Html.IdFor(m => m.User.Surname) handig voor later om id van html te bepalen
-        public string monday;
-        public string tuesday;
-        public string wednesday;
-        public string thursday;
-        public string friday;
-        public string saturday;
-        public string sunday;
+        public DateTime[] days = new DateTime[7];
         public static DateTime now = DateTime.Now;
-        public int showingWeekNumber = now.DayOfYear / 7 + 1;
         public string[][] week = new string[7][];
-        public int weekNumber = now.DayOfYear / 7 + 1;
-
+        public int currentWeek = getWeek(now);
+        public int _weekNumber;
+        public string month;
 
 
         public void setWeek(int weeks)
         {
-
-            int x = (weeks - weekNumber) * 7;
-            DateTime now = DateTime.Now;
-            int delta = DayOfWeek.Monday - now.DayOfWeek + x;
-            monday = now.AddDays(delta).ToString("dd");
-            tuesday = now.AddDays(delta + 1).ToString("dd");
-            wednesday = now.AddDays(delta + 2).ToString("dd");
-            thursday = now.AddDays(delta + 3).ToString("dd");
-            friday = now.AddDays(delta + 4).ToString("dd");
-            saturday = now.AddDays(delta + 5).ToString("dd");
-            sunday = now.AddDays(delta + 6).ToString("dd");
             
+            int x = (weeks - _weekNumber) * 7;
+            int delta = DayOfWeek.Monday - now.DayOfWeek + x;
 
+            days[0] = now.AddDays(delta);
+
+            for (int i = 0; i < 7; i++)
+            {
+                days[i] = days[0].AddDays(i); 
+            }
+
+
+           //checked of de week een maand wisseling bevat en ze daarna de juiste maand(en)
+           string monthMa = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(days[0].Month);
+           string monthSun = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(days[6].Month);
+           if (monthMa == monthSun)
+           {
+                month = monthMa;
+           }
+           else
+           {
+                month = monthMa + " - " + monthSun;
+           }
+
+            _weekNumber = getWeek(days[0]);
         }
-     
-    public void setShifts()
+
+        //returned weeknummerals int
+        public static int getWeek(DateTime time)
+        {
+            DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(time);
+            if (day >= DayOfWeek.Monday && day <= DayOfWeek.Wednesday)
+            {
+                time = time.AddDays(3);
+            }
+            return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+        }
+
+        public void setShifts()
         {
             week[0] = new string[24];
             week[1] = new string[24];

@@ -1,87 +1,76 @@
 ﻿@model Gride.Models.Schedule
 @{ int day = (int)DateTime.Now.DayOfWeek; }
-    <style>
-                table.GeneratedTable {
-                    width: 100%;
-                    background-color: #ffffff;
-                    border-collapse: collapse;
-                    border-width: 2px;
-                    border-color: lightgray;
-                    border-style: solid;
-                    color: #000000;
-                }
+<style>
+    table.GeneratedTable {
+        width: 100%;
+        background-color: #ffffff;
+        border-collapse: collapse;
+        border-width: 2px;
+        border-color: lightgray;
+        border-style: solid;
+        color: #000000;
+    }
 
-                    table.GeneratedTable td, table.GeneratedTable th {
-                        border-width: 2px;
-                        border-color: lightgray;
-                        border-style: solid;
-                        padding: 3px;
-                    }
+        table.GeneratedTable td, table.GeneratedTable th {
+            border-width: 2px;
+            border-color: lightgray;
+            border-style: solid;
+            padding: 3px;
+        }
 
-                    table.GeneratedTable thead {
-                        background-color: lightgray;
-                        text-align: center;
-                    }
+        table.GeneratedTable thead {
+            background-color: lightgray;
+            text-align: center;
+        }
 
-                    table.GeneratedTable col {
-                        width: 14.29%;
-                    }
+        table.GeneratedTable col {
+            width: 14.29%;
+        }
 
-                    table.GeneratedTable td {
-                        height: 75px;
-                        padding-top: 0px;
-                        padding-bottom: 0px;
-                        vertical-align: top;
-                        
-
-
-                }
-    </style>
-@Html.ActionLink("back", "Index", new { id = Model.showingWeekNumber - 1 }, null)
-@Html.ActionLink("forward", "Index", new { id = Model.showingWeekNumber + 1 }, null)
+        table.GeneratedTable td {
+            height: 75px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+            vertical-align: top;
+        }
+</style>
+@Html.ActionLink("back", "Index", new { id = Model.currentWeek - 1 }, null)
+@Html.ActionLink("forward", "Index", new { id = Model.currentWeek + 1 }, null)
+@Model._weekNumber
+@Model.month
 <table class="GeneratedTable">
     <thead>
         <tr>
-            <th id="1" class="head">MON<br />@Model.monday</th>
-            <th id="2" class="head">TUE<br />@Model.tuesday</th>
-            <th id="3" class="head">WED<br />@Model.wednesday</th>
-            <th id="4" class="head">TUE<br />@Model.thursday</th>
-            <th id="5" class="head">FRI<br />@Model.friday</th>
-            <th id="6" class="head">SAT<br />@Model.saturday</th>
-            <th id="7" class="head">SUN<br />@Model.sunday</th>
+            @for (int i = 0; i < 7; i++)
+            {
+                <th class="head">@Model.days[i].ToString("dddd") <br />@Model.days[i].ToString("dd")</th>
+            }
+
         </tr>
     </thead>
     <colgroup>
         <col span="7" style="width: 14.29%;">
     </colgroup>
     <tbody>
-        @for (int tdHour = 0; tdHour < 24; tdHour++) {
-        <tr id="@(tdHour)">
-            @{int[] tdDays = new int[] { 0, 1, 2, 3, 4, 5, 6 }; }
-            @foreach (int d in tdDays)
-            {
-                <td id="@(d.ToString() + tdHour.ToString())">@Model.week[d][tdHour]</td>
-                <script>
-                cell = document.getElementById("@(d.ToString() + tdHour.ToString())");
-                if (cell.innerText != "") {
+        @for (int tdHour = 0; tdHour < 24; tdHour++)
+        {
+            <tr id="@(tdHour)">
+                @{int[] tdDays = new int[] { 0, 1, 2, 3, 4, 5, 6 };
+                }
+                @foreach (int d in tdDays)
+                {
+                    <td id="@(d.ToString() + tdHour.ToString())">@Model.week[d][tdHour]</td>
+                    <script>
+            cell = document.getElementById("@(d.ToString() + tdHour.ToString())");
+                if (cell.innerText != "")
+                {
                     cell.style.backgroundColor = "red";
                 }
-                </script>
-            }
-        </tr>
+                    </script>
+                }
+            </tr>
         }
-        
+
     </tbody>
 </table>
-@Model.week[4][2]
-<script>
-   if (@Model.showingWeekNumber == @Model.weekNumber){ 
-    var d = new Date();
-    var n = d.getDay();
-
-    let myElements = document.querySelectorAll(".head");
-    myElements[n - 1].style.backgroundColor = "gray";
-         
-    }
-
-</script>
+@Model._weekNumber
