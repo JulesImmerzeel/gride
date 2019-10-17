@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Gride.Migrations
 {
-    public partial class AddAvailability : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -54,7 +54,8 @@ namespace Gride.Migrations
                     AvailabilityID = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Start = table.Column<DateTime>(nullable: false),
-                    End = table.Column<DateTime>(nullable: false)
+                    End = table.Column<DateTime>(nullable: false),
+                    Weekly = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
