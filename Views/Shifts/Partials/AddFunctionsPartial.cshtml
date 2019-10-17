@@ -57,6 +57,12 @@
 			selected.remove();
 			MaxEmpObj.val(1);
 			table.append("<tr id=\"" + name + value + "\"><td>" + name + "</td><td>" + MaxEmp + "</td><td><a href=\"javascript:DeleteFunc('" + name + "'," + value + ", " + MaxEmp + ")\">Delete</a></td></tr>");
+		}).fail(function () {
+			$.post("../AddFunc", { Function: { FunctionID: value, Name: name }, ShiftID: 0, FunctionID: value, maxEmployees: MaxEmp }, function () {
+				selected.remove();
+				MaxEmpObj.val(1);
+				table.append("<tr id=\"" + name + value + "\"><td>" + name + "</td><td>" + MaxEmp + "</td><td><a href=\"javascript:DeleteFunc('" + name + "'," + value + ", " + MaxEmp + ")\">Delete</a></td></tr>");
+			})
 		});
 	});
 
@@ -71,9 +77,14 @@
 	});
 
 	function DeleteFunc(name, ID, maxEmp) {
-		$.post("DeleteFunc", {Function : { FunctionID: ID, Name: name }, ShiftID : 0, FunctionID: ID, maxEmployees : maxEmp }, function () {
+		$.post("DeleteFunc", { Function: { FunctionID: ID, Name: name }, ShiftID: 0, FunctionID: ID, maxEmployees: maxEmp }, function () {
 			$("tr#" + name + ID).remove();
 			$("select#Funcs").append("<option value\"" + ID + "\">" + name + "</option>");
+		}).fail(function () {
+			$.post("../DeleteFunc", { Function: { FunctionID: ID, Name: name }, ShiftID: 0, FunctionID: ID, maxEmployees: maxEmp }, function () {
+				$("tr#" + name + ID).remove();
+				$("select#Funcs").append("<option value\"" + ID + "\">" + name + "</option>");
+			})
 		});
 	}
 </script>

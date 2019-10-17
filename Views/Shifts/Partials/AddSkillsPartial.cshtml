@@ -47,7 +47,11 @@
 		$.post("AddSkill", { SkillID: value, Name: name }, function () {
 			selected.remove();
 			table.append("<tr id=\"" + name + value + "\"><td>" + name + "</td><td><a href=\"javascript:DeleteSkill('" + name + "'," + value + ")\">Delete</a></td></tr>");
-		});
+		}).fail(function () {
+			$.post("../AddSkill", { SkillID: value, Name: name }, function () {
+				selected.remove();
+				table.append("<tr id=\"" + name + value + "\"><td>" + name + "</td><td><a href=\"javascript:DeleteSkill('" + name + "'," + value + ")\">Delete</a></td></tr>");
+		})});
 	});
 
 	$("#SkillCancel").click(function () {
@@ -64,6 +68,11 @@
 		$.post("DeleteSkill", { SkillID: ID, Name: name }, function () {
 			$("tr#" + name + ID).remove();
 			$("select#Skills").append("<option value\"" + ID + "\">" + name + "</option>");
+		}).fail(function () {
+			$.post("../DeleteSkill", { SkillID: ID, Name: name }, function () {
+				$("tr#" + name + ID).remove();
+				$("select#Skills").append("<option value\"" + ID + "\">" + name + "</option>");
+			})
 		});
 	}
 
