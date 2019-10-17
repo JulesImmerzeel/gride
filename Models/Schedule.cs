@@ -13,7 +13,6 @@ namespace Gride.Models
         public int _weekNumber;
         public string[][] week = new string[7][];
         public int currentWeek = getWeek(now);
-
         public string month;
 
 
@@ -60,7 +59,6 @@ namespace Gride.Models
         public void setShifts()
         {
             List<Shift> shifts = new List<Shift>();
-
             for (int i = 0; i < 7; i++)
             {
                 week[i] = new string[24];
