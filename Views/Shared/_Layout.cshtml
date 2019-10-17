@@ -49,6 +49,7 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Availability" asp-action="Index">Employees</a>
                             </li>
                         }
+
                         @if (SignInManager.IsSignedIn(User) && !_context.EmployeeModel.FirstOrDefault(x => x.EMail == User.Identity.Name).Admin)
                         {
                             <li class="nav-item">
@@ -62,6 +63,9 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Availability" asp-action="Index">Availabilities</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Message" asp-action="Index">Messages</a>
                             </li>
                         }
                     </ul>

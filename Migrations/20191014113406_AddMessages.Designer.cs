@@ -4,14 +4,16 @@ using Gride.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Gride.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191014113406_AddMessages")]
+    partial class AddMessages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,31 +36,6 @@ namespace Gride.Migrations
                     b.HasKey("AvailabilityID");
 
                     b.ToTable("Availabilities");
-                });
-
-            modelBuilder.Entity("Gride.Models.Comment", b =>
-                {
-                    b.Property<int>("CommentID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("EmployeeID");
-
-                    b.Property<int?>("MessageID");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasMaxLength(2000);
-
-                    b.Property<DateTime>("Time");
-
-                    b.HasKey("CommentID");
-
-                    b.HasIndex("EmployeeID");
-
-                    b.HasIndex("MessageID");
-
-                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Gride.Models.EmployeeAvailability", b =>
@@ -181,6 +158,8 @@ namespace Gride.Migrations
 
                     b.Property<int?>("EmployeeID");
 
+                    b.Property<int?>("MessageID1");
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasMaxLength(2000);
@@ -190,6 +169,8 @@ namespace Gride.Migrations
                     b.HasKey("MessageID");
 
                     b.HasIndex("EmployeeID");
+
+                    b.HasIndex("MessageID1");
 
                     b.ToTable("Messages");
                 });
@@ -380,17 +361,6 @@ namespace Gride.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Gride.Models.Comment", b =>
-                {
-                    b.HasOne("Gride.Models.EmployeeModel", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeID");
-
-                    b.HasOne("Gride.Models.Message")
-                        .WithMany("Comments")
-                        .HasForeignKey("MessageID");
-                });
-
             modelBuilder.Entity("Gride.Models.EmployeeAvailability", b =>
                 {
                     b.HasOne("Gride.Models.Availability", "Availability")
@@ -423,6 +393,10 @@ namespace Gride.Migrations
                     b.HasOne("Gride.Models.EmployeeModel", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeID");
+
+                    b.HasOne("Gride.Models.Message")
+                        .WithMany("Comments")
+                        .HasForeignKey("MessageID1");
                 });
 
             modelBuilder.Entity("Gride.Models.Skill", b =>

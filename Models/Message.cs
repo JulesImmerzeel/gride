@@ -9,15 +9,12 @@ namespace Gride.Models
 {
 	public class Message
 	{
-		[Key]
-		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-		public ulong MessageID { get; set; }
-		[Key]
-		[ForeignKey("Employee")]
-		public uint EmployeeID { get; set; }
+		public int MessageID { get; set; }
 		[Required]
 		[StringLength(2000)]
 		public string Text { get; set; }
 		public DateTime Time { get; set; } = DateTime.Now;
-	}
+        public ICollection<Comment> Comments { get; set; } 
+        public EmployeeModel Employee { get; set; }
+    }
 }
