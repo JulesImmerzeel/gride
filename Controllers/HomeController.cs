@@ -15,14 +15,10 @@ namespace Gride.Controllers
         public Schedule schedule = new Schedule();
 
         public IActionResult Index(int? id)
-        {
-            if (id == null)
-            {
-                id = schedule._weekNumber;
-            }
+        { 
 
-            schedule.currentWeek = (int)id;
-            schedule.setWeek((int)id);
+            schedule.currentWeek = id ?? schedule._weekNumber;
+            schedule.setWeek(id ?? schedule._weekNumber);
             schedule.setShifts();
            
             return View(schedule);
