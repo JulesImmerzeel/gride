@@ -37,29 +37,29 @@
                         @if (SignInManager.IsSignedIn(User) && _context.EmployeeModel.FirstOrDefault(x => x.EMail == User.Identity.Name).Admin)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="SkillModels" asp-action="Index">Roster</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Roster" asp-action="Index">Roster</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Function" asp-action="Index">Shifts</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Shifts" asp-action="Index">Shifts</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Location" asp-action="Index">Personal Page</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Availability" asp-action="Index">Availabilities</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Availability" asp-action="Index">Employees</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="EmployeeModels" asp-action="Index">Employees</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Message" asp-action="Index">Messages</a>
                             </li>
                         }
 
                         @if (SignInManager.IsSignedIn(User) && !_context.EmployeeModel.FirstOrDefault(x => x.EMail == User.Identity.Name).Admin)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="SkillModels" asp-action="Index">Roster</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Roster" asp-action="Index">Roster</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Function" asp-action="Index">Shifts</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Location" asp-action="Index">Personal Page</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Shifts" asp-action="Index">Shifts</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Availability" asp-action="Index">Availabilities</a>
