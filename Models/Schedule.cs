@@ -99,6 +99,7 @@ namespace Gride.Models
             foreach (Availability a in ordered)
             {
                 int d = (int)a.Start.DayOfWeek - 1;
+
                 if (d == -1) { d = 6; }
                 int h = a.Start.Hour;
                 week[d][h] = a.Start.Hour.ToString() + ":00 - " + (a.Start.Hour+1) + ":00";

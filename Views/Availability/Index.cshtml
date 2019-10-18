@@ -2,22 +2,9 @@
     ViewData["Title"] = "Index";
     string day = "";
     string start = "";
-    int week = 1;
-    if (ViewBag.week != null)
-    {
-        week = ViewBag.week;
-    }
-    else
-    {
-        week = DateTime.Now.DayOfYear / 7;
-    }
-    int next = (week + 1) % 52;
-    int previous = week - 1;
-    if (previous < 0) { previous = 51; }
-    week++;
 }
 
-<h1>Week @week</h1>
+<h1>Week @Model._weekNumber</h1>
 
 <div class="row">
     <div class="col-12">
