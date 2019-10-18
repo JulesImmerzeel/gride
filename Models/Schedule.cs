@@ -1,0 +1,82 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Globalization;
+
+namespace Gride.Models
+{
+    public class Schedule
+    {
+        public DateTime[] days = new DateTime[7];
+        public static DateTime now = DateTime.Now;
+        public string[][] week = new string[7][];
+        public int currentWeek = getWeek(now);
+        public int _weekNumber;
+        public string month;
+
+
+        public void setWeek(int weeks)
+        {
+            
+            int x = (weeks - _weekNumber) * 7;
+            int delta = DayOfWeek.Monday - now.DayOfWeek + x;
+
+            days[0] = now.AddDays(delta);
+
+            for (int i = 0; i < 7; i++)
+            {
+                days[i] = days[0].AddDays(i); 
+            }
+
+
+           //checked of de week een maand wisseling bevat en ze daarna de juiste maand(en)
+           string monthMa = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(days[0].Month);
+           string monthSun = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(days[6].Month);
+           if (monthMa == monthSun)
+           {
+                month = monthMa;
+           }
+           else
+           {
+                month = monthMa + " - " + monthSun;
+           }
+
+            _weekNumber = getWeek(days[0]);
+        }
+
+        //returned weeknummerals int
+        public static int getWeek(DateTime time)
+        {
+            DayOfWeek day = CultureInfo.InvariantCulture.Calendar.GetDayOfWeek(time);
+            if (day >= DayOfWeek.Monday && day <= DayOfWeek.Wednesday)
+            {
+                time = time.AddDays(3);
+            }
+            return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+        }
+
+        public void setShifts()
+        {
+            week[0] = new string[24];
+            week[1] = new string[24];
+            week[2] = new string[24];
+            week[3] = new string[24];
+            week[4] = new string[24];
+            week[5] = new string[24];
+            week[6] = new string[24];
+
+            for (int day = 0; day < week.Length; day++)
+            {
+                for (int hour = 0; hour < week[day].Length; hour++)
+                {
+                    week[day][hour] = null;
+                    week[3][7] = "donderdag 8 uur";
+                    week[4][3] = "nog een test";
+                }
+            }
+        }
+
+
+    }
+}
