@@ -23,7 +23,7 @@ namespace Gride.Controllers
 
             schedule.currentWeek = (int)id;
             schedule.setWeek((int)id);
-            schedule.setShifts();
+            schedule.makeSchedule();
            
             return View(schedule);
         }

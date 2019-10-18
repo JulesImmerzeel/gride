@@ -13,6 +13,7 @@ namespace Gride.Controllers
     public class AvailabilityController : Controller { 
 
         private readonly ApplicationDbContext _context;
+        public Schedule schedule = new Schedule();
 
         public AvailabilityController(ApplicationDbContext context)
         {
@@ -20,7 +21,7 @@ namespace Gride.Controllers
         }
 
         // GET: Availability
-        public async Task<IActionResult> Index(int? week)
+        public async Task<IActionResult> Index(int? id)
         {
             EmployeeModel employee = _context.EmployeeModel
                 .Single(e => e.EMail == User.Identity.Name);
@@ -38,31 +39,18 @@ namespace Gride.Controllers
             {
                 allAvailabilities.Add(ea.Availability);
             }
-            int w = 0;
-            if (week == null)
+            if (id == null)
             {
-                w = DateTime.Now.DayOfYear / 7;
-            } else
-            {
-                w = (int)week;
+                id = schedule._weekNumber;
             }
-            foreach (Availability a in allAvailabilities)
-            {
-                if (a.Weekly)
-                {
-                    int weekA = a.Start.DayOfYear / 7;
-                    int weekDif = w - weekA;
-                    double days = weekDif * 7;
-                    a.Start = a.Start.AddDays(days);
-                    a.End = a.End.AddDays(days);
-                }
-            }
-            IEnumerable<Availability> availabilities = allAvailabilities.Where(a => (a.Start.DayOfYear / 7) == w);
 
-            IEnumerable<Availability> ordered = availabilities.OrderBy(a => a.Start);
+            schedule.currentWeek = (int)id;
+            schedule.setWeek((int)id);
+            schedule.makeSchedule();
+            schedule.setAvailabilities(allAvailabilities);
 
-            ViewBag.week = w;
-            return View(ordered);
+            
+            return View(schedule);
         }
 
         // GET: Availability/Create

@@ -35,9 +35,9 @@
         }
 </style>
 @Html.ActionLink("back", "Index", new { id = Model.currentWeek - 1 }, null)
-@Html.ActionLink("forward", "Index", new { id = Model.currentWeek + 1 }, null)
 @Model._weekNumber
 @Model.month
+@Html.ActionLink("forward", "Index", new { id = Model.currentWeek + 1 }, null)
 <table class="GeneratedTable">
     <thead>
         <tr>
