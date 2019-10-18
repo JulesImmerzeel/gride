@@ -1,36 +1,10 @@
-﻿@model IEnumerable<Gride.Models.Availability>
-
-@{
+﻿@{
     ViewData["Title"] = "Index";
     string day = "";
     string start = "";
-    int week = 1;
-    if (ViewBag.week != null)
-    {
-        week = ViewBag.week;
-    } else
-    {
-        week = DateTime.Now.DayOfYear / 7;
-    }
-    int next = (week + 1) % 52;
-    int previous = week - 1;
-    if (previous < 0) { previous = 51;}
-    week++;
 }
 
-<h1>Week @week</h1>
-<div class="row">
-    <div class="col-2">
-        <p>
-            <a asp-action="Index" asp-route-week="@previous">Previous week</a>
-        </p>
-    </div>
-    <div class="col-2">
-        <p>
-            <a asp-action="Index" asp-route-week="@next">Next week</a>
-        </p>
-    </div>
-</div>
+<h1>Week @Model._weekNumber</h1>
 
 <div class="row">
     <div class="col-12">
@@ -39,6 +13,8 @@
         </p>
     </div>
 </div>
+
+<partial name="/Views/Shared/_Schedule.cshtml" />
 <table class="table">
     <thead>
         <tr>
@@ -46,45 +22,45 @@
                 Day
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Start)
+                Start
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.End)
+                End
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Weekly)
+                Weekly
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model._availabilities)
         {
-        <tr>
-            <td>
-                @{
-                    start = item.Start.DayOfWeek.ToString();
-                    if (day != start)
-                    {
-                        day = start;
-                        <text>@day</text>
+            <tr>
+                <td>
+                    @{
+                        start = item.Start.DayOfWeek.ToString();
+                        if (day != start)
+                        {
+                            day = start;
+                            <text>@day</text>
+                        }
                     }
-                }
-            </td>
-            <td>
-                @item.Start.TimeOfDay
-            </td>
-            <td>
-                @item.End.TimeOfDay
-            </td>
-            <td>
-                @item.Weekly
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.AvailabilityID">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.AvailabilityID">Delete</a>
-            </td>
-        </tr>
+                </td>
+                <td>
+                    @item.Start.TimeOfDay
+                </td>
+                <td>
+                    @item.End.TimeOfDay
+                </td>
+                <td>
+                    @item.Weekly
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.AvailabilityID">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.AvailabilityID">Delete</a>
+                </td>
+            </tr>
         }
     </tbody>
 </table>
