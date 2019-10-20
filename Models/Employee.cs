@@ -16,21 +16,21 @@ namespace Gride.Models
 		public string Name{ get; set; }
 		[Required]
 		[StringLength(50)]
-    [Display(Name="Last Name")]
+        [Display(Name="Last Name")]
 		public string LastName { get; set; }
-    [Display(Name = "Date of Birth")]
-    [DataType(DataType.Date)]
+        [Display(Name = "Date of Birth")]
+        [DataType(DataType.Date)]
 		public DateTime DoB { get; set; }
 		public Gender Gender { get; set; } = Gender.Not_Specified;
 		[Required]
 		[StringLength(100)]
 		[EmailAddress]
-    [Display(Name = "E-mail address")]
+        [Display(Name = "E-mail address")]
 		public string EMail { get; set; }
 		[Required]
 		[StringLength(12)]
 		[Phone]
-    [Display(Name = "Phone Number")]
+        [Display(Name = "Phone Number")]
 		public string PhoneNumber { get; set; }
 		public bool Admin { get; set; } = false;
 		public ulong LoginID { get; set; }
