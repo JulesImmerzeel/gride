@@ -10,11 +10,11 @@ using Gride.Models;
 
 namespace Gride.Controllers
 {
-    public class EmployeeModelsController : Controller
+    public class EmployeeController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public EmployeeModelsController(ApplicationDbContext context)
+        public EmployeeController(ApplicationDbContext context)
         {
             _context = context;
         }
