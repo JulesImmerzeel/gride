@@ -37,6 +37,16 @@
 <script>
 	$("#AddSkillLine").hide();
 
+	
+	$("select#Skills").ready(function () {
+		$("select#Skills").children().each(function () {
+			if ($("#" + this.text + this.value).length)
+				$(this).remove();
+		});
+		if (!$("select#Skills").children().length)
+			$("#AddSkill").hide();
+	});
+
 	$("#SkillConfirm").click(function () {
 		$("#AddSkillLine").hide();
 		$("#AddSkill").show();
@@ -46,10 +56,14 @@
 		var table = $("#AddedSkills").children("tbody");
 		$.post("AddSkill", { SkillID: value, Name: name }, function () {
 			selected.remove();
+			if (!$("select#Skills").children().length)
+				$("#AddSkill").hide();
 			table.append("<tr id=\"" + name + value + "\"><td>" + name + "</td><td><a href=\"javascript:DeleteSkill('" + name + "'," + value + ")\">Delete</a></td></tr>");
 		}).fail(function () {
 			$.post("../AddSkill", { SkillID: value, Name: name }, function () {
 				selected.remove();
+				if (!$("select#Skills").children().length)
+					$("#AddSkill").hide();
 				table.append("<tr id=\"" + name + value + "\"><td>" + name + "</td><td><a href=\"javascript:DeleteSkill('" + name + "'," + value + ")\">Delete</a></td></tr>");
 		})});
 	});
@@ -67,10 +81,12 @@
 	function DeleteSkill(name, ID) {
 		$.post("DeleteSkill", { SkillID: ID, Name: name }, function () {
 			$("tr#" + name + ID).remove();
+			$("#AddSkill").show();
 			$("select#Skills").append("<option value\"" + ID + "\">" + name + "</option>");
 		}).fail(function () {
 			$.post("../DeleteSkill", { SkillID: ID, Name: name }, function () {
 				$("tr#" + name + ID).remove();
+				$("#AddSkill").show();
 				$("select#Skills").append("<option value\"" + ID + "\">" + name + "</option>");
 			})
 		});

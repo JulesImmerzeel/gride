@@ -36,10 +36,69 @@ namespace Gride.Controllers
             _context = context;
         }
 
-        // GET: Shifts
-        public async Task<IActionResult> Index()
+		public async Task UpdateFunctions(Shift shift)
+		{
+			foreach (ShiftAndFunctionBind functionBind in FunctionBinds)
+			{
+				if (_context.shiftAndFunctionBind.ToList().Exists(x => x.FunctionID == functionBind.FunctionID && x.ShiftID == functionBind.ShiftID))
+				{
+					ShiftAndFunctionBind exsistingBind = _context.shiftAndFunctionBind.ToList().Find(x => x.FunctionID == functionBind.FunctionID && x.ShiftID == functionBind.ShiftID);
+					if (functionBind.maxEmployees != exsistingBind.maxEmployees)
+					{
+						if (exsistingBind.maxEmployees < functionBind.maxEmployees)
+							for (int i = exsistingBind.maxEmployees; i < functionBind.maxEmployees; i++)
+								await _context.AddAsync(new Work()
+								{
+									FunctionID = exsistingBind.FunctionID,
+									Function = exsistingBind.Function,
+									ShiftID = shift.ShiftID,
+									Shift = shift,
+								});
+						else
+							_context.Work.RemoveRange(_context.Work.ToList().FindAll(x => x.FunctionID == exsistingBind.FunctionID && x.ShiftID == shift.ShiftID).Skip(functionBind.maxEmployees).Take(exsistingBind.maxEmployees - functionBind.maxEmployees));
+						exsistingBind.maxEmployees = functionBind.maxEmployees;
+						_context.Update(exsistingBind);
+					}
+					shift.Functions.Add(exsistingBind);
+				}
+				else
+				{
+
+					Function func = _context.Function.ToList().Find(x => x.FunctionID == functionBind.FunctionID);
+					ShiftAndFunctionBind actualbind = new ShiftAndFunctionBind()
+					{
+						Shift = shift,
+						ShiftID = shift.ShiftID,
+						Function = func,
+						FunctionID = func.FunctionID,
+						maxEmployees = functionBind.maxEmployees,
+					};
+					for (int i = 0; i < actualbind.maxEmployees; i++)
+						await _context.AddAsync(new Work()
+						{
+							FunctionID = actualbind.FunctionID,
+							Function = actualbind.Function,
+							ShiftID = shift.ShiftID,
+							Shift = shift,
+						});
+					shift.Functions.Add(actualbind);
+					await _context.AddAsync(actualbind);
+				}
+			}
+
+			// finds every function bind for current shift that should be removed and removes them
+			foreach (ShiftAndFunctionBind functionBind in from Function in _context.shiftAndFunctionBind
+														  where Function.ShiftID == shift.ShiftID &&
+														  !shift.Functions.ToList().Exists(f => f.FunctionID == Function.FunctionID)
+														  select Function)
+				_context.Remove(functionBind);
+
+		}
+
+		// GET: Shifts
+		public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Shift.Include(s => s.Location).Include( s => s.Functions).Include(s => s.Skills);
+            var applicationDbContext = _context.Shift.Include(s => s.Location).Include(s => s.Skills);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -54,9 +113,12 @@ namespace Gride.Controllers
             var shift = await _context.Shift
                 .Include(s => s.Location)
 				.Include(s => s.Skills)
-				.Include(s => s.Functions)
                 .FirstOrDefaultAsync(m => m.ShiftID == id);
 			ViewData["Skills"] = shift.Skills;
+			// should fix problem of first function not showing up
+			shift.Functions = (from Function in _context.shiftAndFunctionBind
+							  where Function.ShiftID == shift.ShiftID
+							  select Function).ToList();
 			for (int i = 0; i < shift.Functions.Count; i++)
 				shift.Functions.ToList()[i].Function = await _context.Function.FirstAsync(x => x.FunctionID == shift.Functions.ToList()[i].FunctionID);
 			List<ShiftAndFunctionBind> functionBinds = new List<ShiftAndFunctionBind>();
@@ -109,6 +171,11 @@ namespace Gride.Controllers
 			else
 				shift.Skills.Clear();
 
+			if (shift.Functions == null)
+				shift.Functions = new List<ShiftAndFunctionBind>();
+			else
+				shift.Functions.Clear();
+
 			// Me trying to fix an identity error using the exact same objects (so also the same hash codes) in the database
 			foreach (Skill skill in s)
 				shift.Skills.Add(_context.Skill.ToList().Find(x => skill.Name == x.Name && skill.SkillID == x.SkillID));
@@ -119,20 +186,8 @@ namespace Gride.Controllers
 			{
 				_context.Add(shift);
 
-				foreach (ShiftAndFunctionBind functionBind in FunctionBinds)
-				{
-					Function func = _context.Function.ToList().Find(x => x.FunctionID == functionBind.FunctionID);
-					ShiftAndFunctionBind actualbind = new ShiftAndFunctionBind()
-					{
-						Shift = shift,
-						ShiftID = shift.ShiftID,
-						Function = func,
-						FunctionID = func.FunctionID,
-						maxEmployees = functionBind.maxEmployees,
-					};
-					shift.Functions.Add(actualbind);
-					_context.Add(actualbind);
-				}
+				await UpdateFunctions(shift);
+
 				await _context.SaveChangesAsync();
 			
 				return RedirectToAction(nameof(Index));
@@ -157,9 +212,9 @@ namespace Gride.Controllers
 		[HttpPost, ActionName("DeleteSkill")]
 		public async void RemoveSkill([Bind("SkillID,Name")] Skill skill)
 		{
-			ICollection<Skill> skills = Skills;
-			skills.ToList().RemoveAll(x => x.SkillID == skill.SkillID);
-			Skills = skills;
+			List<Skill> skills = Skills.ToList();
+			skills.RemoveAll(x => x.SkillID == skill.SkillID);
+			Skills = skills;	
 		}
 
 		[HttpPost, ActionName("AddFunc")]
@@ -173,8 +228,8 @@ namespace Gride.Controllers
 		[HttpPost, ActionName("DeleteFunc")]
 		public async void RemoveFunc([Bind("FunctionID,Function,maxEmployees")] ShiftAndFunctionBind functionBind)
 		{
-			ICollection<ShiftAndFunctionBind> funcs = FunctionBinds;
-			funcs.ToList().RemoveAll(x => x.FunctionID == functionBind.FunctionID);
+			List<ShiftAndFunctionBind> funcs = FunctionBinds.ToList();
+			funcs.RemoveAll(x => x.FunctionID == functionBind.FunctionID);
 			FunctionBinds = funcs;
 		}
 
@@ -186,7 +241,7 @@ namespace Gride.Controllers
                 return NotFound();
             }
 
-            var shift = await _context.Shift.Include(x => x.Skills).Include(x => x.Functions).FirstOrDefaultAsync(x => x.ShiftID == id);
+            var shift = await _context.Shift.Include(x => x.Skills).FirstOrDefaultAsync(x => x.ShiftID == id);
             if (shift == null)
             {
                 return NotFound();
@@ -197,10 +252,15 @@ namespace Gride.Controllers
 
 			Skills = shift.Skills;
 			ViewData["Skills"] = shift.Skills;
+			// should fix problem of first function not showing up
+			shift.Functions = (from Function in _context.shiftAndFunctionBind
+							   where Function.ShiftID == shift.ShiftID
+							   select Function).ToList();
 			for (int i = 0; i < shift.Functions.Count; i++)
 				shift.Functions.ToList()[i].Function = await _context.Function.FirstAsync(x => x.FunctionID == shift.Functions.ToList()[i].FunctionID);
 			List<ShiftAndFunctionBind> functionBinds = new List<ShiftAndFunctionBind>();
 			foreach (ShiftAndFunctionBind functionBind in shift.Functions)
+			{
 				functionBinds.Add(new ShiftAndFunctionBind()
 				{
 					Function = functionBind.Function,
@@ -208,6 +268,7 @@ namespace Gride.Controllers
 					maxEmployees = functionBind.maxEmployees,
 					ShiftID = shift.ShiftID,
 				});
+			}
 			FunctionBinds = functionBinds;
 			ViewData["FunctionBinds"] = shift.Functions;
 			return View(shift);
@@ -218,45 +279,27 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("ShiftID,Start,End,LocationID")] Shift shift)
+        public async Task<IActionResult> Edit(long id, [Bind("ShiftID,Start,End,LocationID, Skills, Functions")] Shift shift)
         {
             if (id != shift.ShiftID)
             {
                 return NotFound();
-            }
+			}
 
-            if (ModelState.IsValid)
+			shift.Location = await _context.Location.FirstAsync(x => x.LocationID == shift.LocationID);
+
+			var s = Skills;
+			// Me trying to fix an identity error using the exact same objects (so also the same hash codes) in the database
+			foreach (Skill skill in s)
+				if (!shift.Skills.ToList().Exists(x => x.SkillID == skill.SkillID))
+					shift.Skills.Add(_context.Skill.ToList().Find(x => skill.Name == x.Name && skill.SkillID == x.SkillID));
+
+			await UpdateFunctions(shift);
+
+			if (ModelState.IsValid)
             {
                 try
 				{
-					var s = Skills;
-
-					if (shift.Skills == null)
-						shift.Skills = new List<Skill>();
-					else
-						shift.Skills.Clear();
-
-					// Me trying to fix an identity error using the exact same objects (so also the same hash codes) in the database
-					foreach (Skill skill in s)
-						shift.Skills.Add(_context.Skill.ToList().Find(x => skill.Name == x.Name && skill.SkillID == x.SkillID));
-
-					shift.Functions.Clear();
-
-					foreach (ShiftAndFunctionBind functionBind in FunctionBinds)
-					{
-						Function func = _context.Function.ToList().Find(x => x.FunctionID == functionBind.FunctionID);
-						ShiftAndFunctionBind actualbind = new ShiftAndFunctionBind()
-						{
-							Shift = shift,
-							ShiftID = shift.ShiftID,
-							Function = func,
-							FunctionID = func.FunctionID,
-							maxEmployees = functionBind.maxEmployees,
-						};
-						shift.Functions.Add(actualbind);
-						_context.Add(actualbind);
-					}
-
 					_context.Update(shift);
                     await _context.SaveChangesAsync();
                 }
@@ -302,11 +345,15 @@ namespace Gride.Controllers
                 return NotFound();
             }
 
-			var shift = await _context.Shift.Include(x => x.Location).Include(x => x.Skills).Include(x => x.Functions).FirstOrDefaultAsync(x => x.ShiftID == id);
+			var shift = await _context.Shift.Include(x => x.Location).Include(x => x.Skills).FirstOrDefaultAsync(x => x.ShiftID == id);
 			if (shift == null)
             {
                 return NotFound();
-            }
+			}
+			// should fix problem of first function not showing up
+			shift.Functions = (from Function in _context.shiftAndFunctionBind
+							   where Function.ShiftID == shift.ShiftID
+							   select Function).ToList();
 			for (int i = 0; i < shift.Functions.Count; i++)
 				shift.Functions.ToList()[i].Function = await _context.Function.FirstAsync(x => x.FunctionID == shift.Functions.ToList()[i].FunctionID);
 			ViewData["Skill"] = new SelectList(_context.Skill, "SkillID", "Name");
@@ -332,8 +379,12 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var shift = await _context.Shift.Include(s => s.Skills).Include(s => s.Functions).FirstAsync(s => s.ShiftID == id);
+            var shift = await _context.Shift.Include(s => s.Skills).FirstAsync(s => s.ShiftID == id);
 			shift.Skills.Clear();
+			// should fix problem of first function not showing up
+			shift.Functions = (from Function in _context.shiftAndFunctionBind
+							   where Function.ShiftID == shift.ShiftID
+							   select Function).ToList();
 			foreach (ShiftAndFunctionBind bind in shift.Functions)
 				_context.shiftAndFunctionBind.Remove(bind);
 			shift.Functions.Clear();

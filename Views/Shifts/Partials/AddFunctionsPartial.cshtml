@@ -44,6 +44,16 @@
 <script>
 	$("#AddFuncLine").hide();
 
+	$("select#Functions").ready(function () {
+		$("select#Functions").children().each(function () {
+			if ($("#" + this.text + this.value).length) {
+				$(this).remove();
+			}
+		});
+		if (!$("select#Functions").children().length)
+			$("#AddFunc").hide();
+	});
+
 	$("#FuncConfirm").click(function () {
 		$("#AddFuncLine").hide();
 		$("#AddFunc").show();
@@ -56,14 +66,19 @@
 		$.post("AddFunc", { Function: { FunctionID: value, Name: name }, ShiftID: 0, FunctionID: value, maxEmployees: MaxEmp }, function () {
 			selected.remove();
 			MaxEmpObj.val(1);
+			if (!($("select#Functions").children().length))
+				$("#AddFunc").hide();
 			table.append("<tr id=\"" + name + value + "\"><td>" + name + "</td><td>" + MaxEmp + "</td><td><a href=\"javascript:DeleteFunc('" + name + "'," + value + ", " + MaxEmp + ")\">Delete</a></td></tr>");
 		}).fail(function () {
 			$.post("../AddFunc", { Function: { FunctionID: value, Name: name }, ShiftID: 0, FunctionID: value, maxEmployees: MaxEmp }, function () {
 				selected.remove();
 				MaxEmpObj.val(1);
+				if (!($("select#Functions").children().length))
+					$("#AddFunc").hide();
 				table.append("<tr id=\"" + name + value + "\"><td>" + name + "</td><td>" + MaxEmp + "</td><td><a href=\"javascript:DeleteFunc('" + name + "'," + value + ", " + MaxEmp + ")\">Delete</a></td></tr>");
 			})
 		});
+		
 	});
 
 	$("#FuncCancel").click(function () {
@@ -79,11 +94,13 @@
 	function DeleteFunc(name, ID, maxEmp) {
 		$.post("DeleteFunc", { Function: { FunctionID: ID, Name: name }, ShiftID: 0, FunctionID: ID, maxEmployees: maxEmp }, function () {
 			$("tr#" + name + ID).remove();
-			$("select#Funcs").append("<option value\"" + ID + "\">" + name + "</option>");
+			$("#AddFunc").show();
+			$("select#Functions").append("<option value\"" + ID + "\">" + name + "</option>");
 		}).fail(function () {
 			$.post("../DeleteFunc", { Function: { FunctionID: ID, Name: name }, ShiftID: 0, FunctionID: ID, maxEmployees: maxEmp }, function () {
 				$("tr#" + name + ID).remove();
-				$("select#Funcs").append("<option value\"" + ID + "\">" + name + "</option>");
+				$("#AddFunc").show();
+				$("select#Functions	").append("<option value\"" + ID + "\">" + name + "</option>");
 			})
 		});
 	}

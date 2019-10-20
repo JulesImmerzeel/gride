@@ -35,7 +35,7 @@ namespace Gride.Data
 
 			builder.Entity<Employee>(b =>
 			{
-				b.Property<long>(x => x.EmployeeID)
+				b.Property(x => x.EmployeeID)
 					.ValueGeneratedOnAdd()
 					.HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -72,12 +72,13 @@ namespace Gride.Data
 				b.HasKey(x => x.FunctionID);
 				b.HasOne<Employee>().WithMany("Functions");
 				b.HasOne<ShiftAndFunctionBind>().WithOne("Function").HasForeignKey<ShiftAndFunctionBind>(x => x.FunctionID);
+				b.HasOne<Work>().WithOne("Function").HasForeignKey<Work>(x => x.FunctionID);
 			});
 
 			builder.Entity<Work>(b => 
 			{
 				b.HasKey(x => x.WorkID);
-				b.HasAlternateKey(x => new { x.ShiftID, x.EmployeeID });
+				b.HasAlternateKey(x => new { x.ShiftID, x.EmployeeID, x.FunctionID });
 			});
 
 			builder.Entity<Message>(b =>
