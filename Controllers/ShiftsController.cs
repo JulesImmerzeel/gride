@@ -161,11 +161,17 @@ namespace Gride.Views.Shift
             var viewModel = new List<ShiftFunctionData>();
             foreach (var function in allFunctions)
             {
+                int maxEmployees = 0;
+                if (_context.ShiftFunctions.FirstOrDefault(f => (f.FunctionID == function.FunctionID) && (f.ShiftID == shift.ShiftID)) != null)
+                {
+                    maxEmployees = _context.ShiftFunctions.FirstOrDefault(f => (f.FunctionID == function.FunctionID) && (f.ShiftID == shift.ShiftID)).MaxEmployees;
+                }
                 viewModel.Add(new ShiftFunctionData
                 {
                     FunctionID = function.FunctionID,
                     Name = function.Name,
-                    Assigned = shiftFunctions.Contains(function.FunctionID)
+                    Assigned = shiftFunctions.Contains(function.FunctionID),
+                    MaxEmployees = maxEmployees
                 });
             }
             ViewData["Functions"] = viewModel;
@@ -193,7 +199,7 @@ namespace Gride.Views.Shift
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, string[] selectedSkills, string[] selectedFunctions)
+        public async Task<IActionResult> Edit(int? id, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax)
         {
             if (id == null)
             {
@@ -216,7 +222,7 @@ namespace Gride.Views.Shift
                     shiftToUpdate.Location = null;
                 }
                 UpdateShiftSkills(selectedSkills, shiftToUpdate);
-                UpdateShiftFunctions(selectedFunctions, shiftToUpdate);
+                UpdateShiftFunctions(selectedFunctions, selectedFunctionsMax, shiftToUpdate);
                 try
                 {
                     await _context.SaveChangesAsync();
@@ -286,9 +292,9 @@ namespace Gride.Views.Shift
 
         }
 
-        private void UpdateShiftFunctions(string[] selectedFunctions, Models.Shift shiftToUpdate)
+        private void UpdateShiftFunctions(string[] selectedFunctions, int[] selectedFunctionsMax, Models.Shift shiftToUpdate)
         {
-            if (selectedFunctions == null)
+            if (selectedFunctions == null || selectedFunctionsMax == null)
             {
                 shiftToUpdate.ShiftFunctions = new List<ShiftFunction>();
                 return;
@@ -299,13 +305,18 @@ namespace Gride.Views.Shift
             {
                 var shiftFunctions = new HashSet<int>
                 (shiftToUpdate.ShiftFunctions.Select(c => c.Function.FunctionID));
+                int cnt = 0;
                 foreach (var function in _context.Function)
                 {
                     if (selectedFunctionsHS.Contains(function.FunctionID.ToString()))
                     {
                         if (!shiftFunctions.Contains(function.FunctionID))
                         {
-                            shiftToUpdate.ShiftFunctions.Add(new ShiftFunction { ShiftID = shiftToUpdate.ShiftID, FunctionID = function.FunctionID });
+                            shiftToUpdate.ShiftFunctions.Add(new ShiftFunction { ShiftID = shiftToUpdate.ShiftID, FunctionID = function.FunctionID, MaxEmployees = selectedFunctionsMax[cnt] });
+                        }
+                        else
+                        {
+                            shiftToUpdate.ShiftFunctions.Single(f => (f.FunctionID == function.FunctionID) && (f.ShiftID == shiftToUpdate.ShiftID)).MaxEmployees = selectedFunctionsMax[cnt];
                         }
                     }
                     else
@@ -317,10 +328,12 @@ namespace Gride.Views.Shift
                             _context.Remove(functionToRemove);
                         }
                     }
+                    cnt++;
                 }
             } else
             {
                 shiftToUpdate.ShiftFunctions = new List<ShiftFunction>();
+                int cnt = 0;
                 foreach (var function in _context.Function)
                 {
                     if (selectedFunctionsHS.Contains(function.FunctionID.ToString()))
@@ -330,9 +343,11 @@ namespace Gride.Views.Shift
                             ShiftID = shiftToUpdate.ShiftID,
                             Shift = shiftToUpdate,
                             FunctionID = function.FunctionID,
-                            Function = function
+                            Function = function,
+                            MaxEmployees  = selectedFunctionsMax[cnt]
                         });
                     }
+                    cnt++;
                 }
             }
 
@@ -359,7 +374,7 @@ namespace Gride.Views.Shift
         // POST: Shifts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(ulong id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var shift = await _context.Shift.FindAsync(id);
             _context.Shift.Remove(shift);

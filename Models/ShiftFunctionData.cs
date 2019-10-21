@@ -10,5 +10,6 @@ namespace Gride.Models
         public int FunctionID { get; set; }
         public string Name { get; set; }
         public bool Assigned { get; set; }
+        public int MaxEmployees { get; set; }
     }
 }

@@ -61,16 +61,17 @@
 
                                 foreach (var function in functions)
                                 {
-                                    if (c++ % 3 == 0)
-                                    {
                                     @:</tr><tr>
-                                    }
                                     @:<td>
                                         <input type="checkbox"
                                                 name="selectedFunctions"
                                                 value="@function.FunctionID"
                                                 @(Html.Raw(function.Assigned ? "checked=\"checked\"" : "")) />
                                          @function.Name
+                                    @:</td>
+                                    @:<td>
+                                        <input name="selectedFunctionsMax"
+                                                value="@function.MaxEmployees"/>
                                     @:</td>
                                 }
                             @:</tr>
