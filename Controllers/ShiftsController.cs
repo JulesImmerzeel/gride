@@ -22,7 +22,7 @@ namespace Gride.Views.Shift
         // GET: Shifts
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Shift.ToListAsync());
+            return View(await _context.Shift.OrderBy(s => s.Start).ToListAsync());
         }
 
         // GET: Shifts/Details/5
@@ -81,8 +81,9 @@ namespace Gride.Views.Shift
                 {
                     FunctionID = function.FunctionID,
                     Name = function.Name,
-                    Assigned = false
-                });
+                    Assigned = false,
+                    MaxEmployees = 1
+                }) ;
             }
             ViewData["Functions"] = viewModel;
         }
@@ -100,7 +101,7 @@ namespace Gride.Views.Shift
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Start,End,LocationID,Location")] Models.Shift shift, string[] selectedSkills, string[] selectedFunctions)
+        public async Task<IActionResult> Create([Bind("Start,End,LocationID,Location")] Models.Shift shift, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax)
         {
             if (selectedSkills != null)
             {
@@ -114,10 +115,14 @@ namespace Gride.Views.Shift
             if (selectedFunctions != null)
             {
                 shift.ShiftFunctions = new List<ShiftFunction>();
+                int cnt = 0;
                 foreach (var function in selectedFunctions)
                 {
-                    var functionToAdd = new ShiftFunction { ShiftID = shift.ShiftID, Shift = shift, FunctionID = int.Parse(function), Function = _context.Function.Single(f => f.FunctionID == int.Parse(function)) };
+                    var functionToAdd = new ShiftFunction { ShiftID = shift.ShiftID, Shift = shift, FunctionID = int.Parse(function),
+                        Function = _context.Function.Single(f => f.FunctionID == int.Parse(function)), MaxEmployees = selectedFunctionsMax[cnt]
+                    };
                     shift.ShiftFunctions.Add(functionToAdd);
+                    cnt++;
                 }
             }
             if (ModelState.IsValid)
