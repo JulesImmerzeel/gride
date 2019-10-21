@@ -33,6 +33,7 @@ namespace Gride.Models
 		public virtual ICollection<Skill> Skills { get; set; }
 		public virtual ICollection<Function> Functions { get; set; }
 		public virtual ICollection<Location> Locations { get; set; }
+        public ICollection<EmployeeAvailability> EmployeeAvailabilities { get; set; }
 	}
 	public enum Gender
 	{

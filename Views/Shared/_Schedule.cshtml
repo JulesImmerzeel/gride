@@ -1,0 +1,76 @@
+﻿@model Gride.Models.Schedule
+@{ int day = (int)DateTime.Now.DayOfWeek; }
+<style>
+    table.GeneratedTable {
+        width: 100%;
+        background-color: #ffffff;
+        border-collapse: collapse;
+        border-width: 2px;
+        border-color: lightgray;
+        border-style: solid;
+        color: #000000;
+    }
+
+        table.GeneratedTable td, table.GeneratedTable th {
+            border-width: 2px;
+            border-color: lightgray;
+            border-style: solid;
+            padding: 3px;
+        }
+
+        table.GeneratedTable thead {
+            background-color: lightgray;
+            text-align: center;
+        }
+
+        table.GeneratedTable col {
+            width: 14.29%;
+        }
+
+        table.GeneratedTable td {
+            height: 75px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+            vertical-align: top;
+        }
+</style>
+@Html.ActionLink("back", "Index", new { id = Model.currentWeek - 1 }, null)
+@Model._weekNumber
+@Model.month
+@Html.ActionLink("forward", "Index", new { id = Model.currentWeek + 1 }, null)
+<table class="GeneratedTable">
+    <thead>
+        <tr>
+            @for (int i = 0; i < 7; i++)
+            {
+                <th class="head">@Model.days[i].ToString("dddd") <br />@Model.days[i].ToString("dd")</th>
+            }
+
+        </tr>
+    </thead>
+    <colgroup>
+        <col span="7" style="width: 14.29%;">
+    </colgroup>
+    <tbody>
+        @for (int tdHour = 0; tdHour < 24; tdHour++)
+        {
+            <tr id="@(tdHour)">
+                @{int[] tdDays = new int[] { 0, 1, 2, 3, 4, 5, 6 };
+                }
+                @foreach (int d in tdDays)
+                {
+                    <td id="@(d.ToString() + tdHour.ToString())">@Model.week[d][tdHour]</td>
+                    <script>
+            cell = document.getElementById("@(d.ToString() + tdHour.ToString())");
+                if (cell.innerText != "")
+                {
+                    cell.style.backgroundColor = "grey";
+                }
+                    </script>
+                }
+            </tr>
+        }
+
+    </tbody>
+</table>
+@Model._weekNumber

@@ -61,10 +61,43 @@
                 </tr>
                 <tr>
                     <td>
+                        @Html.DisplayNameFor(model => model.Skills)
+                    </td>
+                    <td>
+                        @foreach (var skill in Model.Skills)
+                        {
+                            <p>@skill.Name</p>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.Functions)
+                    </td>
+                    <td>
+                        @foreach (var function in Model.Functions)
+                        {
+                            <p>@function.Name</p>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>
                         @Html.DisplayNameFor(model => model.Experience)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => Model.Experience)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @Html.DisplayNameFor(model => model.Locations)
+                    </td>
+                    <td>
+                        @foreach (var location in Model.Locations)
+                        {
+                            <p>@location.Name</p>
+                        }
                     </td>
                 </tr>
             </table>

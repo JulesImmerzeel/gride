@@ -18,5 +18,6 @@ namespace Gride.Models
 		public DateTime Time { get; set; } = DateTime.Now;
 
 		public virtual Employee Employee { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; } 
 	}
 }

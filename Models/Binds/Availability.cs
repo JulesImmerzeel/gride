@@ -5,18 +5,18 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using Abp.Localization;
 
 namespace Gride.Models
 {
 	public class Availability
 	{
-		[Key, ForeignKey("EmployeeID")]
-		public long EmployeeID { get; set; }
+        public int AvailabilityID { get; set; }
 		public DateTime Start { get; set; }
-		public DateTime End { get; set; }
-		public bool Prefered { get; set; } = true;
+        [EndDateValidator]
+        public DateTime End { get; set; }
+        public bool Weekly { get; set; } = false;
 
-		public virtual Employee Employee { get; set; }
+        public ICollection<EmployeeAvailability> EmployeeAvailabilities { get; set; }
 	}
 }

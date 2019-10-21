@@ -99,7 +99,14 @@ namespace Gride.Controllers
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
 
-			return View(Employee);
+            employeeModel.Skills = employee.Skills;
+            employeeModel.Functions = employee.Functions;
+            employeeModel.Locations = employee.Locations;
+
+            _context.Update(employeeModel);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         //Get: Employee/Request/itemToChange
@@ -154,7 +161,7 @@ namespace Gride.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EmployeeExists(long id)
+        private bool EmployeeModelExists(int id)
         {
             return _context.Employee.Any(e => e.EmployeeID == id);
         }

@@ -81,7 +81,8 @@ namespace Gride.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<long>("LoginID");
+                    b.Property<decimal>("LoginID")
+                        .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -152,7 +153,7 @@ namespace Gride.Migrations
                     b.Property<long>("MessageID")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
+                        
                     b.Property<long>("EmployeeID");
 
                     b.Property<string>("Text")
@@ -434,6 +435,17 @@ namespace Gride.Migrations
                     b.HasOne("Gride.Models.Shift")
                         .WithMany("Functions")
                         .HasForeignKey("ShiftID1");
+                });
+
+            modelBuilder.Entity("Gride.Models.Comment", b =>
+                {
+                    b.HasOne("Gride.Models.EmployeeModel", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeID");
+
+                    b.HasOne("Gride.Models.Message")
+                        .WithMany("Comments")
+                        .HasForeignKey("MessageID");
                 });
 
             modelBuilder.Entity("Gride.Models.Function", b =>

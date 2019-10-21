@@ -25,8 +25,13 @@
 
   </ItemGroup>
 
+<<<<<<< HEAD
+
   <ItemGroup>
     <Folder Include="Page\" />
   </ItemGroup>
 
 </Project>
+=======
+</Project>
+>>>>>>> 235a4ee4587c790248f6cf470716e1bd98b68bfc
