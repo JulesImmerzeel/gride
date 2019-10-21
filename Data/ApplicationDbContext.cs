@@ -22,6 +22,9 @@ namespace Gride.Data
         public DbSet<EmployeeAvailability> EmployeeAvailabilities { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Shift> Shift { get; set; }
+        public DbSet<ShiftFunction> ShiftFunctions { get; set; }
+        public DbSet<ShiftSkills> ShiftSkills { get; set; }
 
     }
 }
