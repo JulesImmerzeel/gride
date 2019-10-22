@@ -20,7 +20,6 @@ namespace Gride.Models
 		public string Postalcode { get; set; }
 		public string City { get; set; }
 		public string Country { get; set; } = "NetherLands";
-        public uint EmployeeModelID { get; set; }
 
     }
 }

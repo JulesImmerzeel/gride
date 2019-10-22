@@ -23,7 +23,7 @@
         {
             <tr>
                 <td>
-                    @Html.Display(item.Name)
+                    @Html.DisplayFor(modelitem => item.Name)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.FunctionID">Edit</a> |

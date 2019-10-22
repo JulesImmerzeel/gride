@@ -13,6 +13,5 @@ namespace Gride.Models
         [StringLength(50)]
         [Display(Name = "Function")]
         public string Name { get; set; }
-        public uint EmployeeModelID { get; set; }
 	}
 }

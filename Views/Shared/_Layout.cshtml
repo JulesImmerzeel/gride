@@ -34,7 +34,7 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <partial name="_LoginPartial" />
                     <ul class="navbar-nav flex-grow-1">
-                        @if (SignInManager.IsSignedIn(User) && _context.EmployeeModel.FirstOrDefault(x => x.EMail == User.Identity.Name).Admin)
+                        @if (SignInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Roster" asp-action="Index">Roster</a>
@@ -53,7 +53,7 @@
                             </li>
                         }
 
-                        @if (SignInManager.IsSignedIn(User) && !_context.EmployeeModel.FirstOrDefault(x => x.EMail == User.Identity.Name).Admin)
+                        @if (SignInManager.IsSignedIn(User) && !_context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Roster" asp-action="Index">Roster</a>
