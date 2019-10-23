@@ -99,18 +99,18 @@ namespace Gride.Controllers
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
 
-            employeeModel.Skills = employee.Skills;
-            employeeModel.Functions = employee.Functions;
-            employeeModel.Locations = employee.Locations;
+            employee.Skills = employee.Skills;
+            employee.Functions = employee.Functions;
+            employee.Locations = employee.Locations;
 
-            _context.Update(employeeModel);
+            _context.Update(employee);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
 
         //Get: Employee/Request/itemToChange
-        public async Task<IActionResult> Request(string item)
+        public new async Task<IActionResult> Request(string item)
         {
             Employee employee = await _context.Employee
                                         .AsNoTracking()
@@ -127,10 +127,12 @@ namespace Gride.Controllers
         //Post: Employee/Request/itemToChange
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Request()
+#pragma warning disable 1998
+        public new async Task<IActionResult> Request()
         {
             return RedirectToAction(nameof(Index));
         }
+#pragma warning restore 1998
 
             // GET: Employee/Delete/5
             public async Task<IActionResult> Delete(long? id)
@@ -161,7 +163,7 @@ namespace Gride.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EmployeeModelExists(int id)
+        private bool EmployeeExists(long id)
         {
             return _context.Employee.Any(e => e.EmployeeID == id);
         }

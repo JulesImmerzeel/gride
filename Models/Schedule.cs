@@ -20,7 +20,7 @@ namespace Gride.Models
 
         public void setWeek(int weeks)
         {
-            
+
             int x = (weeks - _weekNumber) * 7;
             int delta = DayOfWeek.Monday - now.DayOfWeek + x;
 
@@ -28,21 +28,21 @@ namespace Gride.Models
 
             for (int i = 0; i < 7; i++)
             {
-                days[i] = days[0].AddDays(i); 
+                days[i] = days[0].AddDays(i);
             }
 
 
-           //checked of de week een maand wisseling bevat en ze daarna de juiste maand(en)
-           string monthMa = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(days[0].Month);
-           string monthSun = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(days[6].Month);
-           if (monthMa == monthSun)
-           {
+            //checked of de week een maand wisseling bevat en ze daarna de juiste maand(en)
+            string monthMa = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(days[0].Month);
+            string monthSun = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(days[6].Month);
+            if (monthMa == monthSun)
+            {
                 month = monthMa;
-           }
-           else
-           {
+            }
+            else
+            {
                 month = monthMa + " - " + monthSun;
-           }
+            }
 
             _weekNumber = getWeek(days[0]);
         }
@@ -73,6 +73,29 @@ namespace Gride.Models
                 for (int hour = 0; hour < week[day].Length; hour++)
                 {
                     week[day][hour] = null;
+                }
+            }
+        }
+
+        public void setShifts(ICollection<Shift> allShifts)
+        {
+            IEnumerable<Shift> shifts = allShifts.Where(a => (a.Start.DayOfYear / 7) == _weekNumber - 1);
+
+            IEnumerable<Shift> ordered = shifts.OrderBy(a => a.Start);
+
+            _shifts = ordered;
+
+            foreach (Shift a in ordered)
+            {
+                int d = (int)a.Start.DayOfWeek - 1;
+
+                if (d == -1) { d = 6; }
+                int h = a.Start.Hour;
+                week[d][h] = a.Start.Hour.ToString() + ":00 - " + (a.Start.Hour + 1) + ":00";
+                while (h < a.End.Hour - 1)
+                {
+                    h++;
+                    week[d][h] = h + ":00 - " + (h + 1) + ":00";
                 }
             }
         }

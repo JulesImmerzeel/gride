@@ -13,6 +13,6 @@ namespace Gride.Models
         [StringLength(2000)]
         public string Text { get; set; }
         public DateTime Time { get; set; } = DateTime.Now;
-        public EmployeeModel Employee { get; set; }
+        public Employee Employee { get; set; }
     }
 }

@@ -16,76 +16,76 @@ namespace Gride.Controllers
             _context = context;
         }
 
-        // GET: EmployeeModels
+        // GET: Employees
         public async Task<IActionResult> Index()
         {
-            return View(await _context.EmployeeModel.ToListAsync());
+            return View(await _context.Employee.ToListAsync());
         }
 
-        // GET: EmployeeModels/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: Employees/Details/5
+        public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var employeeModel = await _context.EmployeeModel
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (employeeModel == null)
+            var Employee = await _context.Employee
+                .FirstOrDefaultAsync(m => m.EmployeeID == id);
+            if (Employee == null)
             {
                 return NotFound();
             }
 
-            return View(employeeModel);
+            return View(Employee);
         }
 
-        // GET: EmployeeModels/Create
+        // GET: Employees/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: EmployeeModels/Create
+        // POST: Employees/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage")] EmployeeModel employeeModel)
+        public async Task<IActionResult> Create([Bind("EmployeeID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage")] Employee Employee)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(employeeModel);
+                _context.Add(Employee);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(employeeModel);
+            return View(Employee);
         }
 
-        // GET: EmployeeModels/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // GET: Employees/Edit/5
+        public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var employeeModel = await _context.EmployeeModel.FindAsync(id);
-            if (employeeModel == null)
+            var Employee = await _context.Employee.FindAsync(id);
+            if (Employee == null)
             {
                 return NotFound();
             }
-            return View(employeeModel);
+            return View(Employee);
         }
 
-        // POST: EmployeeModels/Edit/5
+        // POST: Employees/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage")] EmployeeModel employeeModel)
+        public async Task<IActionResult> Edit(long id, [Bind("EmployeeID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage")] Employee Employee)
         {
-            if (id != employeeModel.ID)
+            if (id != Employee.EmployeeID)
             {
                 return NotFound();
             }
@@ -94,12 +94,12 @@ namespace Gride.Controllers
             {
                 try
                 {
-                    _context.Update(employeeModel);
+                    _context.Update(Employee);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EmployeeModelExists(employeeModel.ID))
+                    if (!EmployeeExists(Employee.EmployeeID))
                     {
                         return NotFound();
                     }
@@ -110,41 +110,41 @@ namespace Gride.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(employeeModel);
+            return View(Employee);
         }
 
-        // GET: EmployeeModels/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Employees/Delete/5
+        public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var employeeModel = await _context.EmployeeModel
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (employeeModel == null)
+            var Employee = await _context.Employee
+                .FirstOrDefaultAsync(m => m.EmployeeID == id);
+            if (Employee == null)
             {
                 return NotFound();
             }
 
-            return View(employeeModel);
+            return View(Employee);
         }
 
-        // POST: EmployeeModels/Delete/5
+        // POST: Employees/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var employeeModel = await _context.EmployeeModel.FindAsync(id);
-            _context.EmployeeModel.Remove(employeeModel);
+            var Employee = await _context.Employee.FindAsync(id);
+            _context.Employee.Remove(Employee);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EmployeeModelExists(int id)
+        private bool EmployeeExists(long id)
         {
-            return _context.EmployeeModel.Any(e => e.ID == id);
+            return _context.Employee.Any(e => e.EmployeeID == id);
         }
     }
 }

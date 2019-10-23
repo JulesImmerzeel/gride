@@ -202,6 +202,7 @@ namespace Gride.Controllers
         }
 
 		[HttpPost, ActionName("AddSkill")]
+#pragma warning disable 1998
 		public async void AddSkill([Bind("SkillID,Name")] Skill skill)
 		{
 			ICollection<Skill> skills = Skills;
@@ -232,6 +233,7 @@ namespace Gride.Controllers
 			funcs.RemoveAll(x => x.FunctionID == functionBind.FunctionID);
 			FunctionBinds = funcs;
 		}
+#pragma warning restore 1998
 
 		// GET: Shifts/Edit/5
 		public async Task<IActionResult> Edit(long? id)

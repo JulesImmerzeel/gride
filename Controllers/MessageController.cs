@@ -37,12 +37,12 @@ namespace Gride.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Comment(int id)
+        public async Task<IActionResult> Comment(long id)
         {
             Comment comment = new Comment
             {
                 Text = Request.Form["comment"],
-                Employee = _context.EmployeeModel
+                Employee = _context.Employee
                 .Single(e => e.EMail == User.Identity.Name)
             };
             _context.Add(comment);
@@ -73,7 +73,7 @@ namespace Gride.Controllers
         };
 
         // GET: Function/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
             {
@@ -103,7 +103,7 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Text")] Message message )
         {
-            var employee = _context.EmployeeModel
+            var employee = _context.Employee
                 .Single(e => e.EMail == User.Identity.Name);
 
             message.Employee = employee;
@@ -119,7 +119,7 @@ namespace Gride.Controllers
         }
 
         // GET: Function/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
             {
@@ -139,7 +139,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MessageID, Text")] Message message)
+        public async Task<IActionResult> Edit(long id, [Bind("MessageID, Text")] Message message)
         {
             if (id != message.MessageID)
             {
@@ -170,7 +170,7 @@ namespace Gride.Controllers
         }
 
         // GET: Function/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
             {
@@ -190,7 +190,7 @@ namespace Gride.Controllers
         // POST: Function/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var message = await _context.Messages.FindAsync(id);
             _context.Messages.Remove(message);
@@ -198,7 +198,7 @@ namespace Gride.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool MessageExists(int id)
+        private bool MessageExists(long id)
         {
             return _context.Messages.Any(e => e.MessageID == id);
         }

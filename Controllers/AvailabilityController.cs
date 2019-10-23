@@ -23,7 +23,7 @@ namespace Gride.Controllers
         // GET: Availability
         public async Task<IActionResult> Index(int? id)
         {
-            EmployeeModel employee = _context.EmployeeModel
+            Employee employee = _context.Employee
                 .Single(e => e.EMail == User.Identity.Name);
 
             ICollection<EmployeeAvailability> employeeAvailabilities = await _context.EmployeeAvailabilities
@@ -68,7 +68,7 @@ namespace Gride.Controllers
         {
             if (ModelState.IsValid)
             {
-                EmployeeModel employee = _context.EmployeeModel
+                Employee employee = _context.Employee
                     .Single(e => e.EMail == User.Identity.Name);
 
                 _context.Add(availability);
@@ -77,7 +77,7 @@ namespace Gride.Controllers
                 EmployeeAvailability employeeAvailability = new EmployeeAvailability
                 {
                     AvailabilityID = availability.AvailabilityID,
-                    EmployeeID = employee.ID,
+                    EmployeeID = (int)employee.EmployeeID,
                     Availability = availability,
                     Employee = employee
                 };

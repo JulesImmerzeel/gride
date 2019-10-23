@@ -11,7 +11,7 @@ namespace Gride.Models
         public int EmployeeAvailabilityID { get; set; }
         public int EmployeeID { get; set; }
         public int AvailabilityID { get; set; }
-        public EmployeeModel Employee { get; set; }
+        public Employee Employee { get; set; }
         public Availability Availability { get; set; }
     }
 }

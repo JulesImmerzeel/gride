@@ -16,21 +16,22 @@ namespace Gride.Data
 		{
 		}
 
-		public DbSet<Availability> Availability { get; set; }
+		public DbSet<Availability> Availabilities { get; set; }
 		public DbSet<Employee> Employee { get; set; }
 		public DbSet<Function> Function { get; set; }
 		public DbSet<Location> Location { get; set; }
-		public DbSet<Message> Message { get; set; }
+		public DbSet<Message> Messages { get; set; }
 		public DbSet<Shift> Shift { get; set; }
 		public DbSet<Skill> Skill { get; set; }
 		public DbSet<Work> Work { get; set; }
 		public DbSet<ShiftAndFunctionBind> shiftAndFunctionBind { get; set; }
+		public DbSet<EmployeeAvailability> EmployeeAvailabilities{get;set;}
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
 			builder.Entity<Availability>(b =>
 			{
-				b.HasKey(x => x.EmployeeID);
+				b.HasKey(x => x.AvailabilityID);
 			});
 
 			builder.Entity<Employee>(b =>
@@ -40,7 +41,6 @@ namespace Gride.Data
 					.HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
 				b.HasKey(x => x.EmployeeID);
-				b.HasOne<Availability>().WithOne("Employee").HasForeignKey<Availability>(x => x.EmployeeID);
 				b.HasOne<Message>().WithOne("Employee").HasForeignKey<Message>(x => x.EmployeeID);
 				b.HasOne<Work>().WithOne("Employee").HasForeignKey<Work>(x => x.EmployeeID);
 			});
