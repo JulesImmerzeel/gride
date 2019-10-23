@@ -1,11 +1,7 @@
 ﻿@model Gride.Models.Shift
 
 @{
-    ViewData["Title"] = "Create";
-<<<<<<< HEAD
-=======
-    Layout = "~/Views/Shared/_Layout.cshtml";
->>>>>>> 3e5b3a41759ee26a52f0007b0ab3791d150d1741
+	ViewData["Title"] = "Create";
 }
 
 <h1>Create</h1>
@@ -14,7 +10,6 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-<<<<<<< HEAD
 		<form asp-action="Create">
 			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 			<div class="form-group">
@@ -43,86 +38,6 @@
 				<input type="submit" value="Create" class="btn btn-primary" />
 			</div>
 		</form>
-=======
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Start" class="control-label"></label>
-                <input asp-for="Start" class="form-control" />
-                <span asp-validation-for="Start" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="End" class="control-label"></label>
-                <input asp-for="End" class="form-control" />
-                <span asp-validation-for="End" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Location" class="control-label"></label>
-                <select asp-for="LocationID" class="form-control" asp-items="ViewBag.LocationID">
-                    <option value="">-- Select Location --</option>
-                </select>
-                <span asp-validation-for="LocationID" class="text-danger" />
-            </div>
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <table>
-                        <tr>
-                            @{
-                                int cnt = 0;
-                                List<Gride.Models.ShiftSkillsData> skills = ViewBag.Skills;
-
-                                foreach (var skill in skills)
-                                {
-                                    if (cnt++ % 3 == 0)
-                                    {
-                                    @:</tr><tr>
-                                    }
-                                    @:<td>
-                                        <input type="checkbox"
-                                               name="selectedSkills"
-                                               value="@skill.SkillID"
-                                               @(Html.Raw(skill.Assigned ? "checked=\"checked\"" : "")) />
-                                        @skill.Name
-                                    @:</td>
-                                }
-                            @:</tr>
-                            }
-                    </table>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <table>
-                        <tr>
-                            @{
-                                int c = 0;
-                                List<Gride.Models.ShiftFunctionData> functions = ViewBag.Functions;
-
-                                foreach (var function in functions)
-                                {
-                                    @:</tr><tr>
-                                    @:<td>
-                                        <input type="checkbox"
-                                               name="selectedFunctions"
-                                               value="@function.FunctionID"
-                                               @(Html.Raw(function.Assigned ? "checked=\"checked\"" : "")) />
-                                        @function.Name
-                                    @:</td>
-                                    @:<td>
-                                        <input name="selectedFunctionsMax"
-                                               value="@function.MaxEmployees" />
-                                    @:</td>
-                                    }
-                            @:</tr>
-                            }
-                    </table>
-                </div>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
->>>>>>> 3e5b3a41759ee26a52f0007b0ab3791d150d1741
     </div>
 </div>
 
@@ -130,9 +45,6 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-<<<<<<< HEAD
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
-=======
->>>>>>> 3e5b3a41759ee26a52f0007b0ab3791d150d1741
