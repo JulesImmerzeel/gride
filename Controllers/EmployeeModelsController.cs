@@ -61,7 +61,6 @@ namespace Gride.Controllers
             PopulateAssignedFunctions(employee);
             PopulateAssignedSkills(employee);
             PopulateAssignedLocations(employee);
-            PopulateGenderDropDownList();
             return View();
         }
 
@@ -124,7 +123,6 @@ namespace Gride.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            PopulateGenderDropDownList();
             return View(employeeModel);
         }
 
@@ -144,7 +142,6 @@ namespace Gride.Controllers
             PopulateAssignedFunctions(employeeModel);
             PopulateAssignedSkills(employeeModel);
             PopulateAssignedLocations(employeeModel);
-            PopulateGenderDropDownList();
             return View(employeeModel);
         }
 
@@ -188,7 +185,6 @@ namespace Gride.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            PopulateGenderDropDownList();
             return View(employeeToUpdate);
         }
 
@@ -463,10 +459,6 @@ namespace Gride.Controllers
                     }
                 }
             }
-        }
-        private void PopulateGenderDropDownList()
-        {
-            ViewBag.Gender = new SelectList(new List<Gender>{Gender.Male, Gender.Female, Gender.Not_Specified});
         }
     }
 }
