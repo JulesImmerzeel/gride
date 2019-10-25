@@ -26,7 +26,6 @@ namespace Gride.Data
                     EMail ="0967844@hr.nl",
                     PhoneNumber ="0640643724",
                     Admin =true,
-                    LoginID =0967844,
                     Experience =1,
                     ProfileImage ="profile_0967844.jpeg",
                 },
@@ -39,7 +38,6 @@ namespace Gride.Data
                     EMail = "0123456@hr.nl",
                     PhoneNumber = "0612345678",
                     Admin = false,
-                    LoginID = 0123456,
                     Experience = 2,
                     ProfileImage = "profile_0123456.jpeg"
                 }

@@ -38,9 +38,9 @@
                                 Skills
                             </td>
                             <td>
-                                @foreach (var skill in Model.Skills)
+                                @foreach (var skill in Model.EmployeeSkills)
                                 {
-                                    <p>@skill.Name</p>
+                                    <p>@skill.Skill.Name</p>
                                 }
                             </td>
                         </tr>
@@ -57,9 +57,9 @@
                                 Function
                             </td>
                             <td>
-                                @foreach (var function in Model.Functions)
+                                @foreach (var function in Model.EmployeeFunctions)
                                 {
-                                    <p>@function.Name</p>
+                                    <p>@function.Function.Name</p>
                                 }
                             </td>
                         </tr>
@@ -76,9 +76,9 @@
                                 Locations
                             </td>
                             <td>
-                                @foreach (var location in Model.Locations)
+                                @foreach (var location in Model.EmployeeLocations)
                                 {
-                                    <p>@location.Name</p>
+                                    <p>@location.Location.Name</p>
                                 }
                             </td>
                         </tr>

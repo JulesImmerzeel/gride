@@ -33,14 +33,13 @@ namespace Gride.Models
     [Display(Name = "Phone Number")]
 		public string PhoneNumber { get; set; }
 		public bool Admin { get; set; } = false;
-		public ulong LoginID { get; set; }
 		public float Experience { get; set; }
 		
 		public string ProfileImage { get; set; } = null;
 
-        public  ICollection<Skill> Skills { get; set; }
-		public ICollection<Function> Functions { get; set; }
-        public ICollection<Location> Locations { get; set; }
+        public  ICollection<EmployeeSkill> EmployeeSkills { get; set; }
+		public ICollection<EmployeeFunction> EmployeeFunctions { get; set; }
+        public ICollection<EmployeeLocations> EmployeeLocations { get; set; }
         public ICollection<EmployeeAvailability> EmployeeAvailabilities { get; set; }
     }
 	public enum Gender
