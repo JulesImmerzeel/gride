@@ -10,12 +10,10 @@
 
 <h1>Messages</h1>
 
-@if (SignInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
-{
+
     <p>
         <a asp-action="Create">Create New</a>
     </p>
-}
 
 @foreach (var item in Model)
 {
