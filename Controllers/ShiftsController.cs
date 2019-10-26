@@ -391,5 +391,6 @@ namespace Gride.Views.Shift
         {
             return _context.Shift.Any(e => e.ShiftID == id);
         }
+
     }
 }

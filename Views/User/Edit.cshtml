@@ -71,12 +71,12 @@
                 </tr>
                 <tr>
                     <td>
-                        <label asp-for="Skills" class="control-label"></label>
+                        Skills
                     </td>
                     <td>
-                        @foreach (var skill in Model.Skills)
+                        @foreach (var skill in Model.EmployeeSkills)
                         {
-                            <p>@skill.Name</p>
+                            <p>@skill.Skill.Name</p>
                         }
                     </td>
                     <td>
@@ -85,12 +85,12 @@
                 </tr>
                 <tr>
                     <td>
-                        <label asp-for="Functions" class="control-label"></label>
+                        <label class="control-label">Functions</label>
                     </td>
                     <td>
-                        @foreach (var function in Model.Functions)
+                        @foreach (var function in Model.EmployeeFunctions)
                         {
-                            <p>@function.Name</p>
+                            <p>@function.Function.Name</p>
                         }
                     </td>
                     <td>
@@ -99,37 +99,52 @@
                 </tr>
                 <tr>
                     <td>
-                        <label asp-for="Locations" class="control-label"></label>
+                        Locations
                     </td>
                     <td>
-                        @foreach (var location in Model.Locations)
-                        {
-                            <p>@location.Name</p>
-                        }
+                        <table>
+                            <tr>
+                                @{
+                                    int cnt = 0;
+                                    List<LocationData> locations = ViewBag.Locations;
+
+                                    foreach (var location in locations)
+                                    {
+                                        if (cnt++ % 3 == 0)
+                                        {
+                                        @:</tr><tr>
+                                        }
+                                        @:<td>
+                                            <input type="checkbox"
+                                                    name="selectedLocations"
+                                                    value="@location.LocationID"
+                                                    @(Html.Raw(location.Assigned ? "checked=\"checked\"" : "")) />
+                                            @location.Name
+                                        @:</td>
+                                    }
+                                    @:</tr>
+                                    }
+                        </table>
                     </td>
-                    <td>
-                        <a asp-action="Request" asp-controller="User" asp-route-id="Locations">Request Change</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>@Html.DisplayNameFor(model => model.Experience)</td>
-                    <td>@Html.DisplayFor(model => model.Experience)</td>
-                    <td><a asp-action="Request" asp-controller="User" asp-route-id="Experience">Request Change</a></td>
-                </tr>
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="ID" />
-                <input asp-for="ProfileImage" type="hidden" />
-                <input asp-for="Name" type="hidden" />
-                <input asp-for="LastName" type="hidden" />
-                <input asp-for="Admin" type="hidden"  />
-                <input asp-for="LoginID" type="hidden" />
+            </tr>
+            <tr>
+                <td>@Html.DisplayNameFor(model => model.Experience)</td>
+                <td>@Html.DisplayFor(model => model.Experience)</td>
+                <td><a asp-action="Request" asp-controller="User" asp-route-id="Experience">Request Change</a></td>
+            </tr>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+            <input asp-for="ProfileImage" type="hidden" />
+            <input asp-for="Name" type="hidden" />
+            <input asp-for="LastName" type="hidden" />
+            <input asp-for="Admin" type="hidden" />
 
             </table>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
                 <a asp-action="Index">Cancel</a>
             </div>
-        </form>
-    </div>
+            </form>
+        </div>
 </div>
 

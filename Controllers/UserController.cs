@@ -25,9 +25,12 @@ namespace Gride.Controllers
         public async Task<IActionResult> Index()
         {
             EmployeeModel employee = await _context.EmployeeModel
-                                        .Include(e => e.Skills)
-                                        .Include(f => f.Functions)
-                                        .Include(l => l.Locations)
+                                        .Include(e => e.EmployeeSkills)
+                                            .ThenInclude(e => e.Skill)
+                                        .Include(f => f.EmployeeFunctions)
+                                            .ThenInclude(f => f.Function)
+                                        .Include(l => l.EmployeeLocations)
+                                            .ThenInclude(l => l.Location)
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
 
@@ -40,29 +43,16 @@ namespace Gride.Controllers
             return View();
         }
 
-        // POST: Employee/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EmployeeModelID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,Skills,Functions,LoginID,Experience,Locations,ProfileImage")] EmployeeModel employeeModel)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(employeeModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(employeeModel);
-        }
-
         // GET: Employee/Edit
         public async Task<IActionResult> Edit()
         {
             EmployeeModel employee = await _context.EmployeeModel
-                                        .Include(e => e.Skills)
-                                        .Include(f => f.Functions)
-                                        .Include(l => l.Locations)
+                                        .Include(e => e.EmployeeSkills)
+                                            .ThenInclude(e => e.Skill)
+                                        .Include(f => f.EmployeeFunctions)
+                                            .ThenInclude(f => f.Function)
+                                        .Include(l => l.EmployeeLocations)
+                                            .ThenInclude(l => l.Location)
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
 
@@ -70,61 +60,174 @@ namespace Gride.Controllers
                 return NotFound();
             }
 
+            PopulateAssignedSkills(employee);
+            PopulateAssignedFunctions(employee);
+            PopulateAssignedLocations(employee);
+
             return View(employee);
         }
+
+        private void PopulateAssignedSkills(EmployeeModel employee)
+        {
+            var allSkills = _context.Skill;
+            var employeeSkills = new HashSet<int>(employee.EmployeeSkills.Select(c => c.SkillID));
+            var viewModel = new List<ShiftSkillsData>();
+            foreach (var skill in allSkills)
+            {
+                viewModel.Add(new ShiftSkillsData
+                {
+                    SkillID = skill.SkillID,
+                    Name = skill.Name,
+                    Assigned = employeeSkills.Contains(skill.SkillID)
+                });
+            }
+            ViewData["Skills"] = viewModel;
+        }
+
+        private void PopulateAssignedFunctions(EmployeeModel employee)
+        {
+            var allFunctions = _context.Function;
+            var employeeFunctions = new HashSet<int>(employee.EmployeeFunctions.Select(c => c.FunctionID));
+            var viewModel = new List<ShiftFunctionData>();
+            foreach (var function in allFunctions)
+            {
+                viewModel.Add(new ShiftFunctionData
+                {
+                    FunctionID = function.FunctionID,
+                    Name = function.Name,
+                    Assigned = employeeFunctions.Contains(function.FunctionID)
+                });
+            }
+            ViewData["Functions"] = viewModel;
+        }
+
+        private void PopulateAssignedLocations(EmployeeModel employee)
+        {
+            var allLocations = _context.Locations;
+            var employeeLocations = new HashSet<int>(employee.EmployeeLocations.Select(c => c.LocationID));
+            var viewModel = new List<LocationData>();
+            foreach (var location in allLocations)
+            {
+                viewModel.Add(new LocationData
+                {
+                    LocationID = location.LocationID,
+                    Name = location.Name,
+                    Assigned = employeeLocations.Contains(location.LocationID)
+                });
+            }
+            ViewData["Locations"] = viewModel;
+        }
+
 
         // POST: Employee/Edit
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([Bind("ID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage,Skills,Functions,Locations")] EmployeeModel employeeModel)
+        public async Task<IActionResult> Edit(int? id, string[] selectedLocations)
         {
-             if (ModelState.IsValid)
+            if (id == null)
             {
+                return NotFound();
+            }
+
+            var employeeToUpdate = await _context.EmployeeModel
+                .Include(s => s.EmployeeSkills)
+                    .ThenInclude(s => s.Skill)
+                .Include(s => s.EmployeeFunctions)
+                    .ThenInclude(s => s.Function)
+                .Include(s => s.EmployeeLocations)
+                    .ThenInclude(s => s.Location)
+                .FirstOrDefaultAsync(s => s.ID == _context.EmployeeModel.Single(e => e.EMail == User.Identity.Name).ID);
+
+            if (await TryUpdateModelAsync<EmployeeModel>(employeeToUpdate, "",
+                e => e.Name, e => e.LastName, e => e.DoB, e => e.Gender, e => e.EMail, e => e.PhoneNumber, e => e.Admin, e => e.Experience, e => e.ProfileImage))
+            {
+                UpdateEmployeeLocations(selectedLocations, employeeToUpdate);
                 try
                 {
-                    _context.Update(employeeModel);
                     await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateException /* ex */)
                 {
-                    if (!EmployeeModelExists(employeeModel.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    //Log the error (uncomment ex variable name and write a log.)
+                    ModelState.AddModelError("", "Unable to save changes. " +
+                        "Try again, and if the problem persists, " +
+                        "see your system administrator.");
                 }
                 return RedirectToAction(nameof(Index));
             }
+            return View(employeeToUpdate);
+        }
 
-            var employee = await _context.EmployeeModel
-                                        .Include(e => e.Skills)
-                                        .Include(f => f.Functions)
-                                        .Include(l => l.Locations)
-                                        .AsNoTracking()
-                                        .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
+        private void UpdateEmployeeLocations(string[] selectedLocations, EmployeeModel employeeToUpdate)
+        {
+            if (selectedLocations == null)
+            {
+                employeeToUpdate.EmployeeLocations = new List<EmployeeLocations>();
+                return;
+            }
 
-            employeeModel.Skills = employee.Skills;
-            employeeModel.Functions = employee.Functions;
-            employeeModel.Locations = employee.Locations;
+            var selectedLocationsHS = new HashSet<string>(selectedLocations);
+            if (employeeToUpdate.EmployeeLocations != null)
+            {
+                var employeeLocations = new HashSet<int>
+                (employeeToUpdate.EmployeeLocations.Select(c => c.Location.LocationID));
+                foreach (var location in _context.Locations)
+                {
+                    if (selectedLocationsHS.Contains(location.LocationID.ToString()))
+                    {
+                        if (!employeeLocations.Contains(location.LocationID))
+                        {
+                           employeeToUpdate.EmployeeLocations.Add(new EmployeeLocations 
+                           { 
+                               EmployeeModelID = employeeToUpdate.ID,
+                               LocationID = location.LocationID,
+                               Employee = employeeToUpdate,
+                               Location = location
+                           });
+                        }
+                    }
+                    else
+                    {
 
-            _context.Update(employeeModel);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+                        if (employeeLocations.Contains(location.LocationID))
+                        {
+                            EmployeeLocations locationToRemove = employeeToUpdate.EmployeeLocations.FirstOrDefault(i => i.LocationID == location.LocationID);
+                            _context.Remove(locationToRemove);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                employeeToUpdate.EmployeeLocations = new List<EmployeeLocations>();
+                foreach (var location in _context.Locations)
+                {
+                    if (selectedLocationsHS.Contains(location.LocationID.ToString()))
+                    {
+                        employeeToUpdate.EmployeeLocations.Add(new EmployeeLocations
+                        {
+                            EmployeeModelID = employeeToUpdate.ID,
+                            Employee = employeeToUpdate,
+                            LocationID = location.LocationID,
+                            Location = location
+                        });
+                    }
+                }
+            }
         }
 
         //Get: Employee/Request/itemToChange
         public async Task<IActionResult> Request(string item)
         {
             EmployeeModel employee = await _context.EmployeeModel
-                                        .Include(e => e.Skills)
-                                        .Include(f => f.Functions)
-                                        .Include(l => l.Locations)
+                                        .Include(e => e.EmployeeSkills)
+                                            .ThenInclude( e => e.Skill)
+                                        .Include(f => f.EmployeeFunctions)
+                                            .ThenInclude(f => f.Function)
+                                        .Include(l => l.EmployeeLocations)
+                                            .ThenInclude(l => l.Location)
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
 
