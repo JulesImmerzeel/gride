@@ -15,6 +15,8 @@
 <div class="card">
     <div class="card-body">
         <div class="card-title font-weight-bold">
+            @{ var Date = item.Time.ToShortDateString();}
+            @Html.DisplayFor(modelItem => Date) - 
             @Html.DisplayFor(modelItem => item.Employee.Name) @Html.DisplayFor(modelItem => item.Employee.LastName)
         </div>
         <div class="card-text">
