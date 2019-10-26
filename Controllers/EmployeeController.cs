@@ -132,7 +132,14 @@ namespace Gride.Controllers
                 return NotFound();
             }
 
-            var employeeModel = await _context.EmployeeModel.FindAsync(id);
+            var employeeModel = await _context.EmployeeModel
+                .Include(s => s.EmployeeSkills)
+                    .ThenInclude(s => s.Skill)
+                .Include(s => s.EmployeeFunctions)
+                    .ThenInclude(s => s.Function)
+                .Include(s => s.EmployeeLocations)
+                    .ThenInclude(s => s.Location)
+                .FirstOrDefaultAsync(s => s.ID == id);
             if (employeeModel == null)
             {
                 return NotFound();
@@ -162,7 +169,7 @@ namespace Gride.Controllers
                     .ThenInclude(s => s.Function)
                 .Include(s => s.EmployeeLocations)
                     .ThenInclude(s => s.Location)
-                .FirstOrDefaultAsync(s => s.ID == _context.EmployeeModel.Single(e => e.EMail == User.Identity.Name).ID);
+                .FirstOrDefaultAsync(s => s.ID == (int)id);
 
             if (await TryUpdateModelAsync<EmployeeModel>(employeeToUpdate, "",
                 e => e.Name, e => e.LastName, e => e.DoB, e => e.Gender, e => e.EMail, e => e.PhoneNumber, e => e.Admin, e => e.Experience, e => e.ProfileImage))
