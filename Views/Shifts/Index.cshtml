@@ -1,14 +1,20 @@
 ﻿@model IEnumerable<Gride.Models.Shift>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject ApplicationDbContext _context
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+<h1>Shifts</h1>
+@if (SignInManager.IsSignedIn(User)  && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -25,6 +31,7 @@
         </tr>
     </thead>
     <tbody>
+<<<<<<< HEAD
 @foreach (var item in Model) {
         <tr>
             <td>
@@ -43,5 +50,23 @@
             </td>
         </tr>
 }
+=======
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Start)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.End)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ShiftID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ShiftID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ShiftID">Delete</a>
+                </td>
+            </tr>
+        }
+>>>>>>> bb6e895ebccbc526607ad929c1580df464cfb9cd
     </tbody>
 </table>

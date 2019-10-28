@@ -399,5 +399,6 @@ namespace Gride.Controllers
         {
             return _context.Shift.Any(e => e.ShiftID == id);
         }
+
     }
 }

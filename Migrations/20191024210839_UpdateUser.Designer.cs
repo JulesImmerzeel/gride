@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gride.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191020144609_work-functionKey")]
-    partial class workfunctionKey
+    [Migration("20191024210839_UpdateUser")]
+    partial class UpdateUser
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,47 +23,106 @@ namespace Gride.Migrations
 
             modelBuilder.Entity("Gride.Models.Availability", b =>
                 {
-                    b.Property<long>("EmployeeID");
+                    b.Property<int>("AvailabilityID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("End");
 
-                    b.Property<bool>("Prefered");
-
                     b.Property<DateTime>("Start");
 
-                    b.HasKey("EmployeeID");
+                    b.Property<bool>("Weekly");
 
-                    b.ToTable("Availability");
+                    b.HasKey("AvailabilityID");
+
+                    b.ToTable("Availabilities");
                 });
 
-            modelBuilder.Entity("Gride.Models.Binds.ShiftAndFunctionBind", b =>
+            modelBuilder.Entity("Gride.Models.Comment", b =>
                 {
-                    b.Property<long>("ShiftID");
+                    b.Property<int>("CommentID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("EmployeeID");
+
+                    b.Property<int?>("MessageID");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(2000);
+
+                    b.Property<DateTime>("Time");
+
+                    b.HasKey("CommentID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.HasIndex("MessageID");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Gride.Models.EmployeeAvailability", b =>
+                {
+                    b.Property<int>("EmployeeAvailabilityID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AvailabilityID");
+
+                    b.Property<int>("EmployeeID");
+
+                    b.HasKey("EmployeeAvailabilityID");
+
+                    b.HasIndex("AvailabilityID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.ToTable("EmployeeAvailabilities");
+                });
+
+            modelBuilder.Entity("Gride.Models.EmployeeFunction", b =>
+                {
+                    b.Property<int>("EmployeeFunctionID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("EmployeeID");
 
                     b.Property<int>("FunctionID");
 
-                    b.Property<long?>("ShiftID1");
+                    b.HasKey("EmployeeFunctionID");
 
-                    b.Property<byte>("maxEmployees");
+                    b.HasIndex("EmployeeID");
 
-                    b.HasKey("ShiftID", "FunctionID");
+                    b.HasIndex("FunctionID");
 
-                    b.HasAlternateKey("FunctionID", "ShiftID");
-
-                    b.HasIndex("FunctionID")
-                        .IsUnique();
-
-                    b.HasIndex("ShiftID")
-                        .IsUnique();
-
-                    b.HasIndex("ShiftID1");
-
-                    b.ToTable("shiftAndFunctionBind");
+                    b.ToTable("EmployeeFunction");
                 });
 
-            modelBuilder.Entity("Gride.Models.Employee", b =>
+            modelBuilder.Entity("Gride.Models.EmployeeLocations", b =>
                 {
-                    b.Property<long>("EmployeeID")
+                    b.Property<int>("EmployeeLocationsID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("EmployeeModelID");
+
+                    b.Property<int>("LocationID");
+
+                    b.HasKey("EmployeeLocationsID");
+
+                    b.HasIndex("EmployeeModelID");
+
+                    b.HasIndex("LocationID");
+
+                    b.ToTable("EmployeeLocations");
+                });
+
+            modelBuilder.Entity("Gride.Models.EmployeeModel", b =>
+                {
+                    b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -83,7 +142,8 @@ namespace Gride.Migrations
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<long>("LoginID");
+                    b.Property<decimal>("LoginID")
+                        .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -95,9 +155,28 @@ namespace Gride.Migrations
 
                     b.Property<string>("ProfileImage");
 
-                    b.HasKey("EmployeeID");
+                    b.HasKey("ID");
 
-                    b.ToTable("Employee");
+                    b.ToTable("EmployeeModel");
+                });
+
+            modelBuilder.Entity("Gride.Models.EmployeeSkill", b =>
+                {
+                    b.Property<int>("EmployeeSkillID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("EmployeeModelID");
+
+                    b.Property<int>("SkillID");
+
+                    b.HasKey("EmployeeSkillID");
+
+                    b.HasIndex("EmployeeModelID");
+
+                    b.HasIndex("SkillID");
+
+                    b.ToTable("EmployeeSkill");
                 });
 
             modelBuilder.Entity("Gride.Models.Function", b =>
@@ -106,14 +185,10 @@ namespace Gride.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("EmployeeID");
-
                     b.Property<string>("Name")
                         .HasMaxLength(50);
 
                     b.HasKey("FunctionID");
-
-                    b.HasIndex("EmployeeID");
 
                     b.ToTable("Function");
                 });
@@ -130,8 +205,6 @@ namespace Gride.Migrations
 
                     b.Property<string>("Country");
 
-                    b.Property<long?>("EmployeeID");
-
                     b.Property<string>("Name")
                         .IsRequired();
 
@@ -144,18 +217,16 @@ namespace Gride.Migrations
 
                     b.HasKey("LocationID");
 
-                    b.HasIndex("EmployeeID");
-
-                    b.ToTable("Location");
+                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("Gride.Models.Message", b =>
                 {
-                    b.Property<long>("MessageID")
+                    b.Property<int>("MessageID")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("EmployeeID");
+                    b.Property<int?>("EmployeeID");
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -165,16 +236,14 @@ namespace Gride.Migrations
 
                     b.HasKey("MessageID");
 
-                    b.HasAlternateKey("EmployeeID");
+                    b.HasIndex("EmployeeID");
 
-                    b.HasAlternateKey("EmployeeID", "MessageID");
-
-                    b.ToTable("Message");
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("Gride.Models.Shift", b =>
                 {
-                    b.Property<long>("ShiftID")
+                    b.Property<int>("ShiftID")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -186,11 +255,49 @@ namespace Gride.Migrations
 
                     b.HasKey("ShiftID");
 
-                    b.HasAlternateKey("LocationID");
-
-                    b.HasAlternateKey("LocationID", "ShiftID");
+                    b.HasIndex("LocationID");
 
                     b.ToTable("Shift");
+                });
+
+            modelBuilder.Entity("Gride.Models.ShiftFunction", b =>
+                {
+                    b.Property<int>("ShiftFunctionID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("FunctionID");
+
+                    b.Property<int>("MaxEmployees");
+
+                    b.Property<int>("ShiftID");
+
+                    b.HasKey("ShiftFunctionID");
+
+                    b.HasIndex("FunctionID");
+
+                    b.HasIndex("ShiftID");
+
+                    b.ToTable("ShiftFunctions");
+                });
+
+            modelBuilder.Entity("Gride.Models.ShiftSkills", b =>
+                {
+                    b.Property<int>("ShiftskillsID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ShiftID");
+
+                    b.Property<int>("SkillID");
+
+                    b.HasKey("ShiftskillsID");
+
+                    b.HasIndex("ShiftID");
+
+                    b.HasIndex("SkillID");
+
+                    b.ToTable("ShiftSkills");
                 });
 
             modelBuilder.Entity("Gride.Models.Skill", b =>
@@ -199,53 +306,13 @@ namespace Gride.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long?>("EmployeeID");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50);
 
-                    b.Property<long?>("ShiftID");
-
                     b.HasKey("SkillID");
 
-                    b.HasIndex("EmployeeID");
-
-                    b.HasIndex("ShiftID");
-
                     b.ToTable("Skill");
-                });
-
-            modelBuilder.Entity("Gride.Models.Work", b =>
-                {
-                    b.Property<long>("WorkID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Difference");
-
-                    b.Property<long>("EmployeeID");
-
-                    b.Property<int>("FunctionID");
-
-                    b.Property<long>("ShiftID");
-
-                    b.HasKey("WorkID");
-
-                    b.HasAlternateKey("ShiftID", "EmployeeID", "FunctionID");
-
-                    b.HasAlternateKey("EmployeeID", "FunctionID", "ShiftID", "WorkID");
-
-                    b.HasIndex("EmployeeID")
-                        .IsUnique();
-
-                    b.HasIndex("FunctionID")
-                        .IsUnique();
-
-                    b.HasIndex("ShiftID")
-                        .IsUnique();
-
-                    b.ToTable("Work");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -413,87 +480,107 @@ namespace Gride.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Gride.Models.Availability", b =>
+            modelBuilder.Entity("Gride.Models.Comment", b =>
                 {
-                    b.HasOne("Gride.Models.Employee", "Employee")
-                        .WithOne()
-                        .HasForeignKey("Gride.Models.Availability", "EmployeeID")
+                    b.HasOne("Gride.Models.EmployeeModel", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeID");
+
+                    b.HasOne("Gride.Models.Message")
+                        .WithMany("Comments")
+                        .HasForeignKey("MessageID");
+                });
+
+            modelBuilder.Entity("Gride.Models.EmployeeAvailability", b =>
+                {
+                    b.HasOne("Gride.Models.Availability", "Availability")
+                        .WithMany("EmployeeAvailabilities")
+                        .HasForeignKey("AvailabilityID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Gride.Models.EmployeeModel", "Employee")
+                        .WithMany("EmployeeAvailabilities")
+                        .HasForeignKey("EmployeeID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Gride.Models.Binds.ShiftAndFunctionBind", b =>
+            modelBuilder.Entity("Gride.Models.EmployeeFunction", b =>
                 {
+                    b.HasOne("Gride.Models.EmployeeModel", "Employee")
+                        .WithMany("EmployeeFunctions")
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Gride.Models.Function", "Function")
-                        .WithOne()
-                        .HasForeignKey("Gride.Models.Binds.ShiftAndFunctionBind", "FunctionID")
+                        .WithMany()
+                        .HasForeignKey("FunctionID")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Gride.Models.Shift", "Shift")
-                        .WithOne()
-                        .HasForeignKey("Gride.Models.Binds.ShiftAndFunctionBind", "ShiftID")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Gride.Models.Shift")
-                        .WithMany("Functions")
-                        .HasForeignKey("ShiftID1");
                 });
 
-            modelBuilder.Entity("Gride.Models.Function", b =>
+            modelBuilder.Entity("Gride.Models.EmployeeLocations", b =>
                 {
-                    b.HasOne("Gride.Models.Employee")
-                        .WithMany("Functions")
-                        .HasForeignKey("EmployeeID");
+                    b.HasOne("Gride.Models.EmployeeModel", "Employee")
+                        .WithMany("EmployeeLocations")
+                        .HasForeignKey("EmployeeModelID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Gride.Models.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Gride.Models.Location", b =>
+            modelBuilder.Entity("Gride.Models.EmployeeSkill", b =>
                 {
-                    b.HasOne("Gride.Models.Employee")
-                        .WithMany("Locations")
-                        .HasForeignKey("EmployeeID");
+                    b.HasOne("Gride.Models.EmployeeModel", "Employee")
+                        .WithMany("EmployeeSkills")
+                        .HasForeignKey("EmployeeModelID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Gride.Models.Skill", "Skill")
+                        .WithMany()
+                        .HasForeignKey("SkillID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Gride.Models.Message", b =>
                 {
-                    b.HasOne("Gride.Models.Employee", "Employee")
-                        .WithOne()
-                        .HasForeignKey("Gride.Models.Message", "EmployeeID")
-                        .OnDelete(DeleteBehavior.Cascade);
+                    b.HasOne("Gride.Models.EmployeeModel", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeID");
                 });
 
             modelBuilder.Entity("Gride.Models.Shift", b =>
                 {
                     b.HasOne("Gride.Models.Location", "Location")
-                        .WithOne()
-                        .HasForeignKey("Gride.Models.Shift", "LocationID")
+                        .WithMany()
+                        .HasForeignKey("LocationID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Gride.Models.Skill", b =>
+            modelBuilder.Entity("Gride.Models.ShiftFunction", b =>
                 {
-                    b.HasOne("Gride.Models.Employee")
-                        .WithMany("Skills")
-                        .HasForeignKey("EmployeeID");
-
-                    b.HasOne("Gride.Models.Shift")
-                        .WithMany("Skills")
-                        .HasForeignKey("ShiftID");
-                });
-
-            modelBuilder.Entity("Gride.Models.Work", b =>
-                {
-                    b.HasOne("Gride.Models.Employee", "Employee")
-                        .WithOne()
-                        .HasForeignKey("Gride.Models.Work", "EmployeeID")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("Gride.Models.Function", "Function")
-                        .WithOne()
-                        .HasForeignKey("Gride.Models.Work", "FunctionID")
+                        .WithMany()
+                        .HasForeignKey("FunctionID")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Gride.Models.Shift", "Shift")
-                        .WithOne()
-                        .HasForeignKey("Gride.Models.Work", "ShiftID")
+                        .WithMany("ShiftFunctions")
+                        .HasForeignKey("ShiftID")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Gride.Models.ShiftSkills", b =>
+                {
+                    b.HasOne("Gride.Models.Shift", "Shift")
+                        .WithMany("ShiftSkills")
+                        .HasForeignKey("ShiftID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Gride.Models.Skill", "Skill")
+                        .WithMany()
+                        .HasForeignKey("SkillID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

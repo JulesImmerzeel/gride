@@ -1,4 +1,4 @@
-﻿@model Gride.Models.Employee
+﻿@model Gride.Models.EmployeeModel
 
 @{
     ViewData["Title"] = "Request";
@@ -28,6 +28,63 @@
                     <label asp-for="LastName" class="control-label">@value</label>
                     <input asp-for="LastName" class="form-control" />
                     <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                break;
+            case "Skill":
+                <div class="form-group">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                Skills
+                            </td>
+                            <td>
+                                @foreach (var skill in Model.EmployeeSkills)
+                                {
+                                    <p>@skill.Skill.Name</p>
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                    <p>Add other</p>
+                    <input class="form-control" for="Skills" />
+                </div>
+                break;
+            case "Function":
+                <div class="form-group">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                Function
+                            </td>
+                            <td>
+                                @foreach (var function in Model.EmployeeFunctions)
+                                {
+                                    <p>@function.Function.Name</p>
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                    <p>Add other</p>
+                    <input class="form-control" for="Functions" />
+                </div>
+                break;
+            case "Location":
+                <div class="form-group">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                Locations
+                            </td>
+                            <td>
+                                @foreach (var location in Model.EmployeeLocations)
+                                {
+                                    <p>@location.Location.Name</p>
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                    <p>Add other</p>
+                    <input class="form-control" for="Locations" />
                 </div>
                 break;
             case "Experience":
