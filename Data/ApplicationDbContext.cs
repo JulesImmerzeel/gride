@@ -25,6 +25,7 @@ namespace Gride.Data
         public DbSet<Shift> Shift { get; set; }
         public DbSet<ShiftFunction> ShiftFunctions { get; set; }
         public DbSet<ShiftSkills> ShiftSkills { get; set; }
+        public DbSet<Work> Works { get; set; }
 
     }
 }

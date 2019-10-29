@@ -14,25 +14,47 @@ namespace Gride.Models
 
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
-        {
-            Availability timeslot = (Availability)validationContext.ObjectInstance;
-            var end = ((DateTime)value);
-
-            _start = timeslot.Start;
-            day = (int)_start.DayOfWeek;
-
-            int endDay = (int)end.DayOfWeek;
-
-            if (end <= _start)
+        {            
+            if (validationContext.ObjectInstance is Availability)
             {
-                return new ValidationResult(GetErrorMessage1());
-            }
+                Availability timeslot = (Availability)validationContext.ObjectInstance;
+                var end = ((DateTime)value);
 
-            if (day != endDay)
+                _start = timeslot.Start;
+                day = (int)_start.DayOfWeek;
+
+                int endDay = (int)end.DayOfWeek;
+
+                if (end <= _start)
+                {
+                    return new ValidationResult(GetErrorMessage1());
+                }
+
+                if (day != endDay)
+                {
+                    return new ValidationResult(GetErrorMessage2());
+                }
+            } else if (validationContext.ObjectInstance is Shift)
             {
-                return new ValidationResult(GetErrorMessage2());
-            }
+                Shift timeslot = (Shift)validationContext.ObjectInstance;
+                var end = ((DateTime)value);
 
+                _start = timeslot.Start;
+                day = (int)_start.DayOfWeek;
+
+                int endDay = (int)end.DayOfWeek;
+
+                if (end <= _start)
+                {
+                    return new ValidationResult(GetErrorMessage1());
+                }
+
+                if (day != endDay)
+                {
+                    return new ValidationResult(GetErrorMessage2());
+                }
+            }
+            
             return ValidationResult.Success;
         }
 
