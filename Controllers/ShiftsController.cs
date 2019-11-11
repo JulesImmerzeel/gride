@@ -108,7 +108,12 @@ namespace Gride.Views.Shift
                 shift.ShiftSkills = new List<ShiftSkills>();
                 foreach (var skill in selectedSkills)
                 {
-                    var skillToAdd = new ShiftSkills { ShiftID = shift.ShiftID, Shift = shift, SkillID = int.Parse(skill), Skill = _context.Skill.Single(s => s.SkillID == int.Parse(skill)) };
+                    var skillToAdd = new ShiftSkills 
+                    { 
+                        ShiftID = shift.ShiftID, 
+                        Shift = shift, SkillID = int.Parse(skill), 
+                        Skill = _context.Skill.Single(s => s.SkillID == int.Parse(skill)) 
+                    };
                     shift.ShiftSkills.Add(skillToAdd);
                 }
             }
@@ -147,6 +152,8 @@ namespace Gride.Views.Shift
             var shift = await _context.Shift
                 .Include(s => s.ShiftFunctions).ThenInclude(s => s.Function)
                 .Include(s => s.ShiftSkills).ThenInclude(s => s.Skill)
+                .Include(s => s.Works).ThenInclude(s => s.Employee)
+                .Include(s => s.Location)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ShiftID == id);
             if (shift == null)
@@ -156,7 +163,33 @@ namespace Gride.Views.Shift
             PopulateLocationsDropDownList(shift.LocationID);
             PopulateAssignedSkills(shift);
             PopulateAssignedFunction(shift);
+            PopulateAssignedEmployees(shift);
             return View(shift);
+        }
+
+        private void PopulateAssignedEmployees(Models.Shift shift)
+        {
+            var allEmployees = _context.EmployeeModel;
+            var shiftEmployees = new HashSet<int>(shift.Works.Select(c => c.EmployeeID));
+            var viewModel = new List<WorkData>();
+            foreach (var employee in allEmployees)
+            {
+                int delay = 0, overtime = 0;
+                if (_context.Works.FirstOrDefault(f => (f.EmployeeID == employee.ID) && (f.ShiftID == shift.ShiftID)) != null)
+                {
+                    delay = _context.Works.FirstOrDefault(f => (f.EmployeeID == employee.ID) && (f.ShiftID == shift.ShiftID)).Delay;
+                    overtime = _context.Works.FirstOrDefault(f => (f.EmployeeID == employee.ID) && (f.ShiftID == shift.ShiftID)).Overtime;
+                }
+                viewModel.Add(new WorkData
+                {
+                    EmployeeID = employee.ID,
+                    Name = employee.Name + " " + employee.LastName,
+                    Assigned = shiftEmployees.Contains(employee.ID),
+                    Delay = delay,
+                    Overtime = overtime
+                });
+            }
+            ViewData["Employees"] = viewModel;
         }
 
         private void PopulateAssignedFunction(Models.Shift shift)
@@ -204,7 +237,8 @@ namespace Gride.Views.Shift
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax)
+        public async Task<IActionResult> Edit(int? id, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax, string[] selectedEmployees)
+        
         {
             if (id == null)
             {
@@ -216,10 +250,12 @@ namespace Gride.Views.Shift
                     .ThenInclude(s => s.Skill)
                 .Include(s => s.ShiftFunctions)
                     .ThenInclude(s => s.Function)
+                .Include(s => s.Works)
+                    .ThenInclude(s => s.Employee)
                 .Include(s => s.Location)
                 .FirstOrDefaultAsync(s => s.ShiftID == id);
 
-            if( await TryUpdateModelAsync<Gride.Models.Shift>(shiftToUpdate, "", 
+            if( await TryUpdateModelAsync<Models.Shift>(shiftToUpdate, "", 
                 s => s.Start, s=> s.End, s => s.LocationID))
             {
                 if (String.IsNullOrWhiteSpace(shiftToUpdate.Location.Name))
@@ -228,6 +264,7 @@ namespace Gride.Views.Shift
                 }
                 UpdateShiftSkills(selectedSkills, shiftToUpdate);
                 UpdateShiftFunctions(selectedFunctions, selectedFunctionsMax, shiftToUpdate);
+                UpdateShiftEmployees(selectedEmployees, shiftToUpdate);
                 try
                 {
                     await _context.SaveChangesAsync();
@@ -242,7 +279,72 @@ namespace Gride.Views.Shift
                 return RedirectToAction(nameof(Index));
             }
             PopulateLocationsDropDownList(shiftToUpdate.LocationID);
+            PopulateAssignedSkills(shiftToUpdate);
+            PopulateAssignedFunction(shiftToUpdate);
+            PopulateAssignedEmployees(shiftToUpdate);
             return View(shiftToUpdate);
+        }
+
+        private void UpdateShiftEmployees(string[] selectedEmployees, Models.Shift shiftToUpdate)
+        {
+            if (selectedEmployees == null)
+            {
+                shiftToUpdate.Works = new List<Work>();
+                return;
+            }
+
+            var selectedEmployeesHS = new HashSet<string>(selectedEmployees);
+            if (shiftToUpdate.Works != null)
+            {
+                var shiftEmployees = new HashSet<int>
+                (shiftToUpdate.Works.Select(c => c.Employee.ID));
+                foreach (var employee in _context.EmployeeModel)
+                {
+                    if (selectedEmployeesHS.Contains(employee.ID.ToString()))
+                    {
+                        if (!shiftEmployees.Contains(employee.ID))
+                        {
+                            shiftToUpdate.Works.Add(new Work 
+                            { 
+                                ShiftID = shiftToUpdate.ShiftID, 
+                                EmployeeID = employee.ID,
+                                Employee = employee,
+                                Shift = shiftToUpdate,
+                                Overtime = 0,
+                                Delay = 0
+                            });
+                        }
+                    }
+                    else
+                    {
+
+                        if (shiftEmployees.Contains(employee.ID))
+                        {
+                            Work workToRemove = shiftToUpdate.Works.FirstOrDefault(i => i.EmployeeID == employee.ID);
+                            _context.Remove(workToRemove);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                shiftToUpdate.Works = new List<Work>();
+                foreach (var employee in _context.EmployeeModel)
+                {
+                    if (selectedEmployeesHS.Contains(employee.ID.ToString()))
+                    {
+                        shiftToUpdate.Works.Add(new Work
+                        {
+                            ShiftID = shiftToUpdate.ShiftID,
+                            Shift = shiftToUpdate,
+                            EmployeeID = employee.ID,
+                            Employee = employee,
+                            Delay = 0,
+                            Overtime = 0
+                        });
+                    }
+                }
+            }
         }
 
         private void UpdateShiftSkills(string[] selectedSkills, Models.Shift shiftToUpdate)
