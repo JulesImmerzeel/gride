@@ -8,14 +8,23 @@ namespace Gride.Models
 {
     public class MaxEmployeesValidator : ValidationAttribute
     {
+        public MaxEmployeesValidator(string paramName)
+        {
+            this.ParamName = paramName;
+        }
+
+        public string ParamName { get; private set; }
+
         private int maxEmployees = 0;
         private ICollection<ShiftFunction> functions;
         private ICollection<Work> works;
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
+            var property = validationContext.ObjectType.GetProperty(this.ParamName);
+            functions = (ShiftFunction[])property.GetValue(validationContext.ObjectInstance, null);
+
             Shift shift = (Shift)validationContext.ObjectInstance;
-            functions = shift.ShiftFunctions;
 
             foreach (ShiftFunction function in functions)
             {
