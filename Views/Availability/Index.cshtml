@@ -47,8 +47,8 @@
                         }
                     }
                 </td>
-                <td>
-                    @item.Start.TimeOfDay
+                <td >
+                @item.Start.TimeOfDay
                 </td>
                 <td>
                     @item.End.TimeOfDay
@@ -60,6 +60,7 @@
                     <a asp-action="Edit" asp-route-id="@item.AvailabilityID">Edit</a> |
                     <a asp-action="Delete" asp-route-id="@item.AvailabilityID">Delete</a>
                 </td>
+                
             </tr>
         }
     </tbody>
