@@ -1,4 +1,5 @@
 ﻿@model Gride.Models.Schedule
+@inject ApplicationDbContext _context
 @{ int day = (int)DateTime.Now.DayOfWeek; }
 <style>
     table.GeneratedTable {
@@ -52,28 +53,57 @@
         <col span="7" style="width: 14.29%;">
     </colgroup>
     <tbody>
+        @{int shift_hours_all = 0;}
+        @{int shift_hours_all_2 = -1;}
+        @{int shift_hours_all_3 = -1;}
+        @{int k = 0;}
+        @foreach (Shift shift in _context.Shift)
+            {
+                shift_hours_all = shift_hours_all + (int)(shift.End - shift.Start).TotalHours;
+                shift_hours_all_2 = shift_hours_all_2 + (int)(shift.End - shift.Start).TotalHours;
+                shift_hours_all_3 = shift_hours_all_3 + (int)(shift.End - shift.Start).TotalHours;
+            }
+        @{string[] shiftID_link_num = new string[shift_hours_all]; }
+                @foreach (Shift shift in _context.Shift)
+                {
+                    int si = shift.ShiftID;
+                    for (int i = (int)(shift.End - shift.Start).TotalHours; i > 0; i = i - 1)
+                    {
+
+                        shiftID_link_num[shift_hours_all_3] = ("https://localhost:44368/Shifts/Details/" + si);
+                        shift_hours_all_3 = shift_hours_all_3 - 1;
+
+                    }
+                }
+
         @for (int tdHour = 0; tdHour < 24; tdHour++)
         {
             <tr id="@(tdHour)">
-                @{int[] tdDays = new int[] { 0, 1, 2, 3, 4, 5, 6 };
-                }
+                @{int[] tdDays = new int[] { 0, 1, 2, 3, 4, 5, 6 };}
+
                 @foreach (int d in tdDays)
                 {
-                    <td id="@(d.ToString() + tdHour.ToString())">@Model.week[d][tdHour]</td>
-            <script>
+                    <td id="@(d.ToString() + tdHour.ToString())"><a href=@shiftID_link_num[k]>@Model.week[d][tdHour]</a></td>
+                    <script>
                 cell = document.getElementById("@(d.ToString() + tdHour.ToString())");
                 if (cell.innerText != "" && window.location.pathname == "/Roster") {
-                    cell.style.backgroundColor = "blue";
+                    cell.style.backgroundColor = "red";
+                    @{if (k<shift_hours_all_2){
+                        k = k + 1;
+                    } }
+
                 } else if (cell.innerText != "" && window.location.pathname == "/Availability") {
                     cell.style.backgroundColor = "grey";
                 } else if (cell.innerText != "") {
-                    cell.style.backgroundColor = "blue";
+                    cell.style.backgroundColor = "red";
                 }
-            </script>
+                 
+                    </script>
+
                 }
+
             </tr>
         }
-
     </tbody>
 </table>
 @Model._weekNumber
