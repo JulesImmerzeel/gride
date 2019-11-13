@@ -170,10 +170,10 @@ else
                     {
                         <td id="@(d.ToString() + tdHour.ToString())">@Model.week[d][tdHour]</td>
                         <script>
-                        cell = document.getElementById("@(d.ToString() + tdHour.ToString())");
-                        if (cell.innerText != "" && window.location.pathname == "/Roster") {
-                            cell.style.backgroundColor = "blue";
-                        } else if (cell.innerText != "" && window.location.pathname == "/Availability") {
+                            cell = document.getElementById("@(d.ToString() + tdHour.ToString())");
+                            if (cell.innerText != "" && window.location.pathname.includes("/Roster")) {
+                                cell.style.backgroundColor = "blue";
+                            } else if (cell.innerText != "" && window.location.pathname.includes("/Availability")) {
                             cell.style.backgroundColor = "grey";
                         } else if (cell.innerText != "") {
                             cell.style.backgroundColor = "blue";
