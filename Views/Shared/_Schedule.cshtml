@@ -41,21 +41,8 @@
 @Model._weekNumber
 @Model.month
 @Html.ActionLink("forward", "Index", new { id = Model.currentWeek + 1 }, null)
-@{bool roster_Bool;}
 
-<script>
-    if (window.location.pathname.includes("/Roster")) {
-        roster_Bool = true;
-    }
-    else {
-        roster_Bool = false;
-    }
-
-</script>
-
-
-
-@if (true)
+@if (Model._shifts!=null)
 {
     <table class="GeneratedTable">
         <thead>
