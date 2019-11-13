@@ -57,14 +57,16 @@
         @{int shift_hours_all_2 = -1;}
         @{int shift_hours_all_3 = -1;}
         @{int k = 0;}
-        @foreach (Shift shift in _context.Shift)
+        @{int lol = 0;}
+        @foreach (Shift shift in Model._shifts)
             {
                 shift_hours_all = shift_hours_all + (int)(shift.End - shift.Start).TotalHours;
                 shift_hours_all_2 = shift_hours_all_2 + (int)(shift.End - shift.Start).TotalHours;
                 shift_hours_all_3 = shift_hours_all_3 + (int)(shift.End - shift.Start).TotalHours;
             }
-        @{string[] shiftID_link_num = new string[shift_hours_all + 1]; }
-        @foreach (Shift shift in _context.Shift)
+        @{string[] shiftID_link_num = new string[shift_hours_all]; }
+        @{string[] tbID_id_num = new string[shift_hours_all]; }
+        @foreach (Shift shift in Model._shifts)
             {
                 int si = shift.ShiftID;
                 for (int i = (int)(shift.End - shift.Start).TotalHours; i > 0; i = i - 1)
@@ -77,40 +79,42 @@
 
             }
 
-        <script>
-            function give_details_link() {
-                if (window.location.pathname.includes("/Roster")) {
-                    @{ if (k < shift_hours_all_2)
-                        {
+    @section scripts{ 
+                <script type="text/javascript">
 
-                            k = k + 1;
+                    function give_details_link() {
+                        if (window.location.pathname.includes("/Roster") && cell.innerText != "")) {
+                            @{int b = Array.IndexOf(tbID_id_num, "32"); }
+                            return window.location = "@shiftID_link_num[b]";
                         }
                         else
                         {
-                            shiftID_link_num[k] = ("https://localhost:44368/Shifts");
+                            return "window.location = https://localhost:44368/Availability";
                         }
                     }
-                    return window.location = "@shiftID_link_num[k]";
-                    
-                }
-                else
-                {
-                    return "window.location = https://localhost:44368/Availability";
-                }
-            }
 
-        </script>
+                </script>
+        }
 
         @for (int tdHour = 0; tdHour < 24; tdHour++)
-        {
+            {
             <tr id="@(tdHour)">
                 @{int[] tdDays = new int[] { 0, 1, 2, 3, 4, 5, 6 };}
 
                 @foreach (int d in tdDays)
-                {
+            {
+
                     <td id="@(d.ToString() + tdHour.ToString())" onclick="give_details_link()">@Model.week[d][tdHour]</td>
+
+                if (Model.week[d][tdHour] != null)
+                {
+                    tbID_id_num[lol] = (d.ToString() + tdHour.ToString());
+                    lol = lol + 1;
+                }
+
+
                     <script>
-                cell = document.getElementById("@(d.ToString() + tdHour.ToString())");
+                cell = document.getElementById("@(d.ToString() + tdHour.ToString())")
                 if (cell.innerText != "" && window.location.pathname.includes("/Roster")) {
                     cell.style.backgroundColor = "red";
                 } else if (cell.innerText != "" && window.location.pathname.includes("/Availability")) {
@@ -120,11 +124,11 @@
                 }
 
                     </script>
-
-                }
+            }
 
             </tr>
-        }
+                }
+        @{Array.Sort(tbID_id_num);}
     </tbody>
 </table>
 @Model._weekNumber
