@@ -41,10 +41,21 @@
 @Model._weekNumber
 @Model.month
 @Html.ActionLink("forward", "Index", new { id = Model.currentWeek + 1 }, null)
+@{bool roster_Bool;}
 
-@{ }
+<script>
+    if (window.location.pathname.includes("/Roster")) {
+        roster_Bool = true;
+    }
+    else {
+        roster_Bool = false;
+    }
 
-@if (Directory.GetCurrentDirectory().Contains("/Roster"))
+</script>
+
+
+
+@if (true)
 {
     <table class="GeneratedTable">
         <thead>
