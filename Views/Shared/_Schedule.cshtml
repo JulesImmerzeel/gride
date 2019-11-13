@@ -63,18 +63,43 @@
                 shift_hours_all_2 = shift_hours_all_2 + (int)(shift.End - shift.Start).TotalHours;
                 shift_hours_all_3 = shift_hours_all_3 + (int)(shift.End - shift.Start).TotalHours;
             }
-        @{string[] shiftID_link_num = new string[shift_hours_all]; }
-                @foreach (Shift shift in _context.Shift)
+        @{string[] shiftID_link_num = new string[shift_hours_all + 1]; }
+        @foreach (Shift shift in _context.Shift)
+            {
+                int si = shift.ShiftID;
+                for (int i = (int)(shift.End - shift.Start).TotalHours; i > 0; i = i - 1)
                 {
-                    int si = shift.ShiftID;
-                    for (int i = (int)(shift.End - shift.Start).TotalHours; i > 0; i = i - 1)
-                    {
 
-                        shiftID_link_num[shift_hours_all_3] = ("https://localhost:44368/Shifts/Details/" + si);
-                        shift_hours_all_3 = shift_hours_all_3 - 1;
+                    shiftID_link_num[shift_hours_all_3] = ("https://localhost:44368/Shifts/Details/" + si);
+                    shift_hours_all_3 = shift_hours_all_3 - 1;
 
-                    }
                 }
+
+            }
+
+        <script>
+            function give_details_link() {
+                if (window.location.pathname.includes("/Roster")) {
+                    @{ if (k < shift_hours_all_2)
+                        {
+
+                            k = k + 1;
+                        }
+                        else
+                        {
+                            shiftID_link_num[k] = ("https://localhost:44368/Shifts");
+                        }
+                    }
+                    return window.location = "@shiftID_link_num[k]";
+                    
+                }
+                else
+                {
+                    return "window.location = https://localhost:44368/Availability";
+                }
+            }
+
+        </script>
 
         @for (int tdHour = 0; tdHour < 24; tdHour++)
         {
@@ -83,21 +108,17 @@
 
                 @foreach (int d in tdDays)
                 {
-                    <td id="@(d.ToString() + tdHour.ToString())"><a href=@shiftID_link_num[k]>@Model.week[d][tdHour]</a></td>
+                    <td id="@(d.ToString() + tdHour.ToString())" onclick="give_details_link()">@Model.week[d][tdHour]</td>
                     <script>
                 cell = document.getElementById("@(d.ToString() + tdHour.ToString())");
-                if (cell.innerText != "" && window.location.pathname == "/Roster") {
+                if (cell.innerText != "" && window.location.pathname.includes("/Roster")) {
                     cell.style.backgroundColor = "red";
-                    @{if (k<shift_hours_all_2){
-                        k = k + 1;
-                    } }
-
-                } else if (cell.innerText != "" && window.location.pathname == "/Availability") {
+                } else if (cell.innerText != "" && window.location.pathname.includes("/Availability")) {
                     cell.style.backgroundColor = "grey";
                 } else if (cell.innerText != "") {
                     cell.style.backgroundColor = "red";
                 }
-                 
+
                     </script>
 
                 }
