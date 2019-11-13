@@ -1,5 +1,7 @@
 ﻿@model Gride.Models.Schedule
 @inject ApplicationDbContext _context
+@using System.IO;
+@using System;
 @{ int day = (int)DateTime.Now.DayOfWeek; }
 <style>
     table.GeneratedTable {
@@ -39,34 +41,40 @@
 @Model._weekNumber
 @Model.month
 @Html.ActionLink("forward", "Index", new { id = Model.currentWeek + 1 }, null)
-<table class="GeneratedTable">
-    <thead>
-        <tr>
-            @for (int i = 0; i < 7; i++)
-            {
-                <th class="head">@Model.days[i].ToString("dddd") <br />@Model.days[i].ToString("dd")</th>
-            }
 
-        </tr>
-    </thead>
-    <colgroup>
-        <col span="7" style="width: 14.29%;">
-    </colgroup>
-    <tbody>
-        @{int shift_hours_all = 0;}
-        @{int shift_hours_all_2 = -1;}
-        @{int shift_hours_all_3 = -1;}
-        @{int k = 0;}
-        @{int lol = 0;}
-        @foreach (Shift shift in Model._shifts)
+@{ }
+
+@if (Directory.GetCurrentDirectory().Contains("/Roster"))
+{
+    <table class="GeneratedTable">
+        <thead>
+            <tr>
+                @for (int i = 0; i < 7; i++)
+                {
+                    <th class="head">@Model.days[i].ToString("dddd") <br />@Model.days[i].ToString("dd")</th>
+                }
+
+            </tr>
+        </thead>
+        <colgroup>
+            <col span="7" style="width: 14.29%;">
+        </colgroup>
+        <tbody>
+            @{int shift_hours_all = 0;}
+            @{int shift_hours_all_2 = -1;}
+            @{int shift_hours_all_3 = -1;}
+            @{int k = 0;}
+            @{int lol = 0;}
+            @{string link_string;}
+            @foreach (Shift shift in Model._shifts)
             {
                 shift_hours_all = shift_hours_all + (int)(shift.End - shift.Start).TotalHours;
                 shift_hours_all_2 = shift_hours_all_2 + (int)(shift.End - shift.Start).TotalHours;
                 shift_hours_all_3 = shift_hours_all_3 + (int)(shift.End - shift.Start).TotalHours;
             }
-        @{string[] shiftID_link_num = new string[shift_hours_all]; }
-        @{string[] tbID_id_num = new string[shift_hours_all]; }
-        @foreach (Shift shift in Model._shifts)
+            @{string[] shiftID_link_num = new string[shift_hours_all]; }
+            @{string[] tbID_id_num = new string[shift_hours_all]; }
+            @foreach (Shift shift in Model._shifts)
             {
                 int si = shift.ShiftID;
                 for (int i = (int)(shift.End - shift.Start).TotalHours; i > 0; i = i - 1)
@@ -78,42 +86,47 @@
                 }
 
             }
+            @{Array.Sort(shiftID_link_num);}
 
-    @section scripts{ 
-                <script type="text/javascript">
 
-                    function give_details_link() {
-                        if (window.location.pathname.includes("/Roster") && cell.innerText != "")) {
-                            @{int b = Array.IndexOf(tbID_id_num, "32"); }
-                            return window.location = "@shiftID_link_num[b]";
+            @for (int tdHour = 0; tdHour < 24; tdHour++)
+            {
+                int[] tdDays = new int[] { 0, 1, 2, 3, 4, 5, 6 };
+
+                foreach (int d in tdDays)
+                {
+                    if (Model.week[d][tdHour] != null)
+                    {
+                        tbID_id_num[lol] = (d.ToString() + tdHour.ToString());
+                        lol = lol + 1;
+                    }
+                }
+            }
+
+            @{Array.Sort(tbID_id_num);}
+
+            @for (int tdHour = 0; tdHour < 24; tdHour++)
+            {
+                <tr id="@(tdHour)">
+                    @{int[] tdDays = new int[] { 0, 1, 2, 3, 4, 5, 6 };}
+
+                    @foreach (int d in tdDays)
+                    {
+                        int b = Array.IndexOf(tbID_id_num, (d.ToString() + tdHour.ToString()));
+                        if (b == -1)
+                        {
+                            link_string = "#";
+
                         }
                         else
                         {
-                            return "window.location = https://localhost:44368/Availability";
+                            link_string = shiftID_link_num[b];
                         }
-                    }
-
-                </script>
-        }
-
-        @for (int tdHour = 0; tdHour < 24; tdHour++)
-            {
-            <tr id="@(tdHour)">
-                @{int[] tdDays = new int[] { 0, 1, 2, 3, 4, 5, 6 };}
-
-                @foreach (int d in tdDays)
-            {
-
-                    <td id="@(d.ToString() + tdHour.ToString())" onclick="give_details_link()">@Model.week[d][tdHour]</td>
-
-                if (Model.week[d][tdHour] != null)
-                {
-                    tbID_id_num[lol] = (d.ToString() + tdHour.ToString());
-                    lol = lol + 1;
-                }
 
 
-                    <script>
+                        <td id="@(d.ToString() + tdHour.ToString())" onclick="window.location = '@link_string'">@Model.week[d][tdHour]</td>
+
+                        <script>
                 cell = document.getElementById("@(d.ToString() + tdHour.ToString())")
                 if (cell.innerText != "" && window.location.pathname.includes("/Roster")) {
                     cell.style.backgroundColor = "red";
@@ -123,12 +136,58 @@
                     cell.style.backgroundColor = "red";
                 }
 
-                    </script>
+                        </script>
+                    }
+
+                </tr>
             }
+        </tbody>
+    </table>
+}
+
+else
+
+{
+
+    <table class="GeneratedTable">
+        <thead>
+            <tr>
+                @for (int i = 0; i < 7; i++)
+                {
+                    <th class="head">@Model.days[i].ToString("dddd") <br />@Model.days[i].ToString("dd")</th>
+                }
 
             </tr>
-                }
-        @{Array.Sort(tbID_id_num);}
-    </tbody>
-</table>
+        </thead>
+        <colgroup>
+            <col span="7" style="width: 14.29%;">
+        </colgroup>
+        <tbody>
+            @for (int tdHour = 0; tdHour < 24; tdHour++)
+            {
+                <tr id="@(tdHour)">
+                    @{int[] tdDays = new int[] { 0, 1, 2, 3, 4, 5, 6 };
+                    }
+                    @foreach (int d in tdDays)
+                    {
+                        <td id="@(d.ToString() + tdHour.ToString())">@Model.week[d][tdHour]</td>
+                        <script>
+                        cell = document.getElementById("@(d.ToString() + tdHour.ToString())");
+                        if (cell.innerText != "" && window.location.pathname == "/Roster") {
+                            cell.style.backgroundColor = "blue";
+                        } else if (cell.innerText != "" && window.location.pathname == "/Availability") {
+                            cell.style.backgroundColor = "grey";
+                        } else if (cell.innerText != "") {
+                            cell.style.backgroundColor = "blue";
+                        }
+                        </script>
+                    }
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+}
+
 @Model._weekNumber
