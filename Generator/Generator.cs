@@ -26,12 +26,28 @@ namespace Gride.Generator
             return Employees;*/
 
             List<EmployeeModel> available = (from row in _context.Availabilities
-                                                 join ea in _context.EmployeeAvailabilities on row.AvailabilityID equals ea.AvailabilityID
-                                                 join employee in _context.EmployeeModel on ea.EmployeeID  equals employee.ID
-                                                 where shift.Start >= row.Start && shift.End >= row.End
-                                                 select employee
+                                             join ea in _context.EmployeeAvailabilities on row.AvailabilityID equals ea.AvailabilityID
+                                             join employee in _context.EmployeeModel on ea.EmployeeID equals employee.ID
+                                             where shift.Start >= row.Start && shift.End >= row.End
+                                             select employee
                                                ).ToList();
+            //EmployeeFunctions is een list dus weet niet zeker of dit gaat werken
+            List<EmployeeModel> function = (from employee in available
+                         join ef in _context.EmployeeFunctions on employee.ID equals ef.EmployeeID
+                         join func in _context.Function on ef.FunctionID equals func.FunctionID
+                         join sf in _context.ShiftFunctions on func.FunctionID equals sf.FunctionID
+                         where shift.ShiftFunctions.Contains(sf)
+                         select employee).ToList();
 
-           List<EmployeeModel> function = (from in available)
+            List<EmployeeModel> skill = (from employee in function
+                                         join es in _context.EmployeeSkills on employee.ID equals es.EmployeeModelID
+                                         join sk in _context.Skill on es.SkillID equals sk.SkillID
+                                         join ss in _context.ShiftSkills on sk.SkillID equals ss.SkillID
+                                         where shift.ShiftSkills.Contains(ss)
+                                         select employee).ToList();
+            
+           
+
+        }
     }
 }
