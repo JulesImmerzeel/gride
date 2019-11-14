@@ -11,6 +11,9 @@ namespace Gride.Generator
     {
         public static List<EmployeeModel> Generate(Shift shift, ApplicationDbContext _context)
         {
+
+            //GIJS ZIJN CODE
+
             /*List<EmployeeModel> Employees =
                 (from Employee in _context.EmployeeModel
                 where (from EmployeeAvailability in _context.EmployeeAvailabilities
@@ -25,13 +28,15 @@ namespace Gride.Generator
                 select Employee).ToList();
             return Employees;*/
 
+            //Iedereen die kan werken.
             List<EmployeeModel> available = (from row in _context.Availabilities
                                              join ea in _context.EmployeeAvailabilities on row.AvailabilityID equals ea.AvailabilityID
                                              join employee in _context.EmployeeModel on ea.EmployeeID equals employee.ID
                                              where shift.Start >= row.Start && shift.End >= row.End
                                              select employee
                                                ).ToList();
-            //EmployeeFunctions is een list dus weet niet zeker of dit gaat werken
+
+            //Iedereen die kan werken en juiste functie heeft.
             List<EmployeeModel> function = (from employee in available
                          join ef in _context.EmployeeFunctions on employee.ID equals ef.EmployeeID
                          join func in _context.Function on ef.FunctionID equals func.FunctionID
@@ -39,14 +44,23 @@ namespace Gride.Generator
                          where shift.ShiftFunctions.Contains(sf)
                          select employee).ToList();
 
+            //Iedereen die kan werken, juiste functie heeft en skill.
             List<EmployeeModel> skill = (from employee in function
                                          join es in _context.EmployeeSkills on employee.ID equals es.EmployeeModelID
                                          join sk in _context.Skill on es.SkillID equals sk.SkillID
                                          join ss in _context.ShiftSkills on sk.SkillID equals ss.SkillID
                                          where shift.ShiftSkills.Contains(ss)
                                          select employee).ToList();
+
+            //Iedereen die kan werken, juiste functie heeft en skill en locatie.
+            List<EmployeeModel> location = (from employee in skill
+                                            join el in _context.EmployeeLocations on employee.ID equals el.EmployeeModelID
+                                            join loc in _context.Locations on el.LocationID equals loc.LocationID
+                                            where el.LocationID == shift.LocationID
+                                            select employee).ToList();
             
-           
+            //TODO experience filter toevoegen.
+            return location;
 
         }
     }
