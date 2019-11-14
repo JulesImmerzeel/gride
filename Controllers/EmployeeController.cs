@@ -121,7 +121,7 @@ namespace Gride.Controllers
                 await _context.SaveChangesAsync();
 
                 //redirect admin to register page
-                return Redirect("/Identity/Account/Register");
+                return Redirect("/Identity/Account/Register?email=" + employeeModel.EMail);
 
                 //return RedirectToAction(nameof(Index));
             }
