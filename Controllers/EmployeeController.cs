@@ -147,7 +147,11 @@ namespace Gride.Controllers
             PopulateAssignedFunctions(employeeModel);
             PopulateAssignedSkills(employeeModel);
             PopulateAssignedLocations(employeeModel);
-            return View(employeeModel);
+
+            //redirect admin to register page
+            return RedirectToAction("Register");
+
+            //return View(employeeModel);
         }
 
         // POST: EmployeeModels/Edit/5
