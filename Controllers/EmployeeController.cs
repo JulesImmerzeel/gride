@@ -119,8 +119,13 @@ namespace Gride.Controllers
             {
                 _context.Add(employeeModel);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                //redirect admin to register page
+                return Redirect("/Identity/Account/Register");
+
+                //return RedirectToAction(nameof(Index));
             }
+
             return View(employeeModel);
         }
 
@@ -148,10 +153,7 @@ namespace Gride.Controllers
             PopulateAssignedSkills(employeeModel);
             PopulateAssignedLocations(employeeModel);
 
-            //redirect admin to register page
-            return RedirectToAction("Register");
-
-            //return View(employeeModel);
+            return View(employeeModel);
         }
 
         // POST: EmployeeModels/Edit/5
