@@ -9,7 +9,14 @@ namespace Gride.Generator
 {
     public static class Generator
     {
-        public static List<EmployeeModel> Generate(Shift shift, ApplicationDbContext _context)
+        public enum filter
+        {
+            all,
+            func,
+            skill,
+            location
+        }
+        public static List<EmployeeModel> Generate(Shift shift, ApplicationDbContext _context, filter filter = filter.location)
         {
 
             //GIJS ZIJN CODE
@@ -58,10 +65,25 @@ namespace Gride.Generator
                                             join loc in _context.Locations on el.LocationID equals loc.LocationID
                                             where el.LocationID == shift.LocationID
                                             select employee).ToList();
-            
-            //TODO experience filter toevoegen.
-            return location;
 
+            //TODO experience filter toevoegen.
+
+            if (filter == filter.all)
+            {
+                return available;
+            }
+            if (filter == filter.func)
+            {
+                return function;
+            }
+            if (filter == filter.skill)
+            {
+                return skill;
+            }
+            else
+            {
+                return location;
+            }
         }
     }
 }
