@@ -22,25 +22,39 @@ namespace Gride.Data
                     Name ="Guus",
                     LastName ="Joppe",
                     DoB =DateTime.Parse("1998-05-18"),
-                    Gender =0,
+                    Gender =Gender.Male,
                     EMail ="0967844@hr.nl",
                     PhoneNumber ="0640643724",
                     Admin =true,
                     Experience =1,
                     ProfileImage ="profile_0967844.jpeg",
                 },
+
                 new EmployeeModel
                 {
                     Name = "John",
                     LastName = "Doe",
                     DoB = DateTime.Parse("1997-01-01"),
-                    Gender = 0,
+                    Gender = Gender.Male,
                     EMail = "0123456@hr.nl",
                     PhoneNumber = "0612345678",
                     Admin = false,
                     Experience = 2,
                     ProfileImage = "profile_0123456.jpeg"
-                }
+                },
+
+                new EmployeeModel
+                {
+                    Name = "Mary",
+                    LastName = "Doe",
+                    DoB = DateTime.Parse("1996-01-01"),
+                    Gender = Gender.Male,
+                    EMail = "928374@hr.nl",
+                    PhoneNumber = "0612344678",
+                    Admin = false,
+                    Experience = 2,
+                    ProfileImage = "profile_0123456.jpeg"
+                },
             };
             foreach (EmployeeModel e in employees)
             {
@@ -78,6 +92,17 @@ namespace Gride.Data
             {
                 context.EmployeeAvailabilities.Add(ea);
             }
+
+            var locations = new Location[]
+{
+                new Location{ LocationID=1, Name= "wijnhaven", Street= "wijnhaven", StreetNumber= 107, Postalcode= "3011 WN", City= "Rotterdam", Country= "Nederland"},
+
+};
+            foreach (Location loc in locations)
+            {
+                context.Locations.Add(loc);
+            }
+
             context.SaveChanges();
         }
     }
