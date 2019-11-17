@@ -81,7 +81,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage,SupervisorID")] EmployeeModel employeeModel , string[] selectedSkills, string[] selectedFunctions, string[] selectedLocations, int SupervisorID)
+        public async Task<IActionResult> Create([Bind("ID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage,SupervisorID")] EmployeeModel employeeModel , string[] selectedSkills, string[] selectedFunctions, string[] selectedLocations)
         {
             //employeeModel = setSupervisor(employeeModel);
             if (selectedSkills != null)
@@ -131,7 +131,7 @@ namespace Gride.Controllers
             }
 
             if (ModelState.IsValid)
-            { 
+            {
                 _context.Add(employeeModel);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
