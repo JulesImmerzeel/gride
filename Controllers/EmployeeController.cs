@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Gride.Data;
 using Gride.Models;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 
 namespace Gride.Controllers
 {
@@ -41,6 +43,7 @@ namespace Gride.Controllers
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync(m => m.ID == id);
 
+            ViewBag.Supervisor = _context.EmployeeModel.FirstOrDefault(s => s.ID == employeeModel.SupervisorID);
             if (employeeModel == null)
             {
                 return NotFound();
@@ -59,7 +62,18 @@ namespace Gride.Controllers
             PopulateAssignedFunctions(employee);
             PopulateAssignedSkills(employee);
             PopulateAssignedLocations(employee);
+            PopulateSupervisorsDropDownList();
             return View();
+        }
+
+        private void PopulateSupervisorsDropDownList(object selectedSupervisor = null)
+        {
+            var supervisors = _context.EmployeeModel
+                .Where(e => e.Admin == true)
+                .AsNoTracking()
+                .ToList();
+
+            ViewBag.SupervisorID = new SelectList(supervisors,"ID","Name",selectedSupervisor);
         }
 
         // POST: EmployeeModels/Create
@@ -67,8 +81,9 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage")] EmployeeModel employeeModel , string[] selectedSkills, string[] selectedFunctions, string[] selectedLocations)
+        public async Task<IActionResult> Create([Bind("ID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage,SupervisorID")] EmployeeModel employeeModel , string[] selectedSkills, string[] selectedFunctions, string[] selectedLocations, int SupervisorID)
         {
+            //employeeModel = setSupervisor(employeeModel);
             if (selectedSkills != null)
             {
                 employeeModel.EmployeeSkills = new List<EmployeeSkill>();
@@ -116,11 +131,16 @@ namespace Gride.Controllers
             }
 
             if (ModelState.IsValid)
-            {
+            { 
                 _context.Add(employeeModel);
                 await _context.SaveChangesAsync();
+                ViewBag.Supervisor = _context.EmployeeModel.Select(s => s.ID == employeeModel.SupervisorID).FirstOrDefault();
                 return RedirectToAction(nameof(Index));
             }
+            PopulateSupervisorsDropDownList(employeeModel.SupervisorID);
+            PopulateAssignedFunctions(employeeModel);
+            PopulateAssignedSkills(employeeModel);
+            PopulateAssignedLocations(employeeModel);
             return View(employeeModel);
         }
 
@@ -147,6 +167,7 @@ namespace Gride.Controllers
             PopulateAssignedFunctions(employeeModel);
             PopulateAssignedSkills(employeeModel);
             PopulateAssignedLocations(employeeModel);
+            PopulateSupervisorsDropDownList(employeeModel.SupervisorID);
             return View(employeeModel);
         }
 
@@ -172,7 +193,7 @@ namespace Gride.Controllers
                 .FirstOrDefaultAsync(s => s.ID == (int)id);
 
             if (await TryUpdateModelAsync<EmployeeModel>(employeeToUpdate, "",
-                e => e.Name, e => e.LastName, e => e.DoB, e => e.Gender, e => e.EMail, e => e.PhoneNumber, e => e.Admin, e => e.Experience, e => e.ProfileImage))
+                e => e.Name, e => e.LastName, e => e.DoB, e => e.Gender, e => e.EMail, e => e.PhoneNumber, e => e.Admin, e => e.Experience, e => e.ProfileImage, e => e.SupervisorID))
             {
                 UpdateEmployeeLocations(selectedLocations, employeeToUpdate);
                 UpdateEmployeeFunctions(selectedFunctions, employeeToUpdate);
@@ -180,6 +201,7 @@ namespace Gride.Controllers
                 try
                 {
                     await _context.SaveChangesAsync();
+                    ViewBag.Supervisor = _context.EmployeeModel.Select(s => s.ID == employeeToUpdate.SupervisorID).FirstOrDefault();
                 }
                 catch (DbUpdateException /* ex */)
                 {
