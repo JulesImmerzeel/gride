@@ -134,7 +134,6 @@ namespace Gride.Controllers
             { 
                 _context.Add(employeeModel);
                 await _context.SaveChangesAsync();
-                ViewBag.Supervisor = _context.EmployeeModel.Select(s => s.ID == employeeModel.SupervisorID).FirstOrDefault();
                 return RedirectToAction(nameof(Index));
             }
             PopulateSupervisorsDropDownList(employeeModel.SupervisorID);
@@ -201,7 +200,6 @@ namespace Gride.Controllers
                 try
                 {
                     await _context.SaveChangesAsync();
-                    ViewBag.Supervisor = _context.EmployeeModel.Select(s => s.ID == employeeToUpdate.SupervisorID).FirstOrDefault();
                 }
                 catch (DbUpdateException /* ex */)
                 {
