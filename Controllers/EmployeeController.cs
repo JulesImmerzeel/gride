@@ -134,8 +134,13 @@ namespace Gride.Controllers
             {
                 _context.Add(employeeModel);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                //redirect admin to register page
+                return Redirect("/Identity/Account/Register?email=" + employeeModel.EMail);
+
+                //return RedirectToAction(nameof(Index));
             }
+            
             PopulateSupervisorsDropDownList(employeeModel.SupervisorID);
             PopulateAssignedFunctions(employeeModel);
             PopulateAssignedSkills(employeeModel);
