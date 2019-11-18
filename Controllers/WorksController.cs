@@ -47,10 +47,10 @@ namespace Gride.Controllers
         }
 
         // GET: Works/Create
-        public IActionResult Create()
+        public IActionResult Create(int ShiftId = 0)
         {
             ViewData["EmployeeID"] = new SelectList(_context.EmployeeModel, "ID", "EMail");
-            ViewData["ShiftID"] = new SelectList(_context.Shift, "ShiftID", "ShiftID");
+            ViewData["ShiftID"] = new SelectList(_context.Shift, "ShiftID", "ShiftID", ShiftId); ;
             return View();
         }
 
