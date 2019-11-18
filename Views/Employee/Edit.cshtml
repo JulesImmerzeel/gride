@@ -75,62 +75,69 @@
                             }
                         </table>
                     </div>
-            </div>
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <p>Functions</p>
-                    <table>
-                        <tr>
-                            @{
-                                List<Gride.Models.ShiftFunctionData> functions = ViewBag.Functions;
-
-                                foreach (var function in functions)
-                                {
-                                    @:<td>
-                                        <input type="checkbox"
-                                                name="selectedFunctions"
-                                                value="@function.FunctionID"
-                                                @(Html.Raw(function.Assigned ? "checked=\"checked\"" : "")) />
-                                        @function.Name
-                                    @:</td>
-                                }
-                            @:</tr>
-                            }
-                    </table>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <p>Locations</p>
-                    <table>
-                        <tr>
-                            @{
-                                List<Gride.Models.LocationData> locations = ViewBag.Locations;
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <p>Functions</p>
+                        <table>
+                            <tr>
+                                @{
+                                    List<Gride.Models.ShiftFunctionData> functions = ViewBag.Functions;
 
-                                foreach (var location in locations)
-                                {
-                                    @:<td>
-                                        <input type="checkbox"
-                                               name="selectedLocations"
-                                               value="@location.LocationID"
-                                               @(Html.Raw(location.Assigned ? "checked=\"checked\"" : "")) />
-                                        @location.Name
-                                    @:</td>
+                                    foreach (var function in functions)
+                                    {
+                                        @:<td>
+                                            <input type="checkbox"
+                                                   name="selectedFunctions"
+                                                   value="@function.FunctionID"
+                                                   @(Html.Raw(function.Assigned ? "checked=\"checked\"" : "")) />
+                                            @function.Name
+                                        @:</td>
+                                    }
+                                @:</tr>
                                 }
-                            @:</tr>
-                            }
-                        </table>
+                            </table>
+                        </div>
                     </div>
-            </div>
-            <div class="form-group">
-                <label asp-for="ProfileImage" class="control-label"></label>
-                <input asp-for="ProfileImage" class="form-control" />
-                <span asp-validation-for="ProfileImage" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <p>Locations</p>
+                            <table>
+                                <tr>
+                                    @{
+                                        List<Gride.Models.LocationData> locations = ViewBag.Locations;
+
+                                        foreach (var location in locations)
+                                        {
+                                            @:<td>
+                                                <input type="checkbox"
+                                                       name="selectedLocations"
+                                                       value="@location.LocationID"
+                                                       @(Html.Raw(location.Assigned ? "checked=\"checked\"" : "")) />
+                                                @location.Name
+                                            @:</td>
+                                        }
+                                    @:</tr>
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ProfileImage" class="control-label"></label>
+                            <input asp-for="ProfileImage" class="form-control" />
+                            <span asp-validation-for="ProfileImage" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="SupervisorID" class="control-label"></label>
+                            <select asp-for="SupervisorID" class="form-control" asp-items="ViewBag.SupervisorID">
+                                <option value="">-- Select Supervisor --</option>
+                            </select>
+                            <span asp-validation-for="SupervisorID" class="text-danger" />
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                        </div>
+                    </form>
     </div>
 </div>
 

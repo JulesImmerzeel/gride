@@ -91,6 +91,19 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ProfileImage)
         </dd>
+        @if (ViewBag.Supervisor != null)
+        {
+            <dt class="col-sm-2">
+                Supervisor
+            </dt>
+            <dd class="col-sm-10">
+                @{
+                    EmployeeModel s = ViewBag.Supervisor;
+                    string name = s.Name + " " + s.LastName;
+                }
+                @name
+            </dd>
+        }
     </dl>
 </div>
 <div>

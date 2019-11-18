@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gride.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191024210839_UpdateUser")]
-    partial class UpdateUser
+    [Migration("20191114114702_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -141,9 +141,6 @@ namespace Gride.Migrations
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50);
-
-                    b.Property<decimal>("LoginID")
-                        .HasConversion(new ValueConverter<decimal, decimal>(v => default(decimal), v => default(decimal), new ConverterMappingHints(precision: 20, scale: 0)));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -313,6 +310,29 @@ namespace Gride.Migrations
                     b.HasKey("SkillID");
 
                     b.ToTable("Skill");
+                });
+
+            modelBuilder.Entity("Gride.Models.Work", b =>
+                {
+                    b.Property<int>("WorkID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Delay");
+
+                    b.Property<int>("EmployeeID");
+
+                    b.Property<int>("Overtime");
+
+                    b.Property<int>("ShiftID");
+
+                    b.HasKey("WorkID");
+
+                    b.HasIndex("EmployeeID");
+
+                    b.HasIndex("ShiftID");
+
+                    b.ToTable("Works");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -581,6 +601,19 @@ namespace Gride.Migrations
                     b.HasOne("Gride.Models.Skill", "Skill")
                         .WithMany()
                         .HasForeignKey("SkillID")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Gride.Models.Work", b =>
+                {
+                    b.HasOne("Gride.Models.EmployeeModel", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Gride.Models.Shift", "Shift")
+                        .WithMany("Works")
+                        .HasForeignKey("ShiftID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
