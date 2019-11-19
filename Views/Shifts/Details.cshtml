@@ -24,6 +24,8 @@
             @Html.DisplayFor(model => model.End)
         </dd>
     </dl>
+    <br />
+    <a href="/Works/Create?ShiftId=@Model.ShiftID">Add employee overtime/delay</a>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.ShiftID">Edit</a> |
