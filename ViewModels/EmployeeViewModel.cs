@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Gride.ViewModels
 {
-    public class EmployeeEditViewModel
+    public class EmployeeViewModel
     {
         public int ID { get; set; }
         [Required]

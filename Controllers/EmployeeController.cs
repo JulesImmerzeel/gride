@@ -185,7 +185,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, string[] selectedSkills, string[] selectedFunctions, string[] selectedLocations, EmployeeEditViewModel model)
+        public async Task<IActionResult> Edit(int? id, string[] selectedSkills, string[] selectedFunctions, string[] selectedLocations, EmployeeViewModel model)
         {
             if (id == null)
             {
