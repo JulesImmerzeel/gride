@@ -201,7 +201,7 @@ namespace Gride.Controllers
                     .ThenInclude(s => s.Location)
                 .FirstOrDefaultAsync(s => s.ID == (int)id);
 
-            string uniqueFileName = null;
+            string uniqueFileName = employeeToUpdate.ProfileImage;
 
             // If the Photo property on the incoming model object is not null, then the user
             // has selected an image to upload.
@@ -227,7 +227,9 @@ namespace Gride.Controllers
                 UpdateEmployeeFunctions(selectedFunctions, employeeToUpdate);
                 UpdateEmployeeSkills(selectedSkills, employeeToUpdate);
 
+    
                 employeeToUpdate.ProfileImage = uniqueFileName;
+ 
 
                 try
                 {
