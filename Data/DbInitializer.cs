@@ -92,17 +92,17 @@ namespace Gride.Data
             {
                 context.EmployeeAvailabilities.Add(ea);
             }
+            context.SaveChanges();
 
             var locations = new Location[]
-{
+            {
                 new Location{ LocationID=1, Name= "wijnhaven", Street= "wijnhaven", StreetNumber= 107, Postalcode= "3011 WN", City= "Rotterdam", Country= "Nederland"},
 
-};
+            };
             foreach (Location loc in locations)
             {
                 context.Locations.Add(loc);
             }
-
             context.SaveChanges();
         }
     }
