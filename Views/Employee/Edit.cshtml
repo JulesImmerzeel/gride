@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ID" />
             <div class="form-group">
@@ -122,11 +122,22 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="form-group">
+                    <div class="form-group">
+                        <div class="custom-file">
                             <label asp-for="ProfileImage" class="control-label"></label>
-                            <input asp-for="ProfileImage" class="form-control" />
-                            <span asp-validation-for="ProfileImage" class="text-danger"></span>
+                            <input asp-for="ProfileImage" type="file" class="form-control custom-file-input" />
                         </div>
+                        <hr />
+                        <p>Current image:</p>
+                        <div class="row">
+                            <div class="col-12">
+                                @if (!String.IsNullOrEmpty(Model.ProfileImage))
+                                {
+                                    <img class="img img-profile" src="/images/@Model.ProfileImage" alt="Profile Image" />
+                                }
+                            </div>
+                        </div>
+                    </div>
                         <div class="form-group">
                             <label asp-for="SupervisorID" class="control-label"></label>
                             <select asp-for="SupervisorID" class="form-control" asp-items="ViewBag.SupervisorID">
@@ -147,4 +158,13 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            $('.custom-file-input').on("change", function () {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).next('.custom-file-label').html(fileName);
+            });
+        });
+    </script>
 }

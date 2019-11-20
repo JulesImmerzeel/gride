@@ -37,7 +37,7 @@ namespace Gride.Models
 		public float Experience { get; set; }
 		public string ProfileImage { get; set; } = null;
 
-        public  ICollection<EmployeeSkill> EmployeeSkills { get; set; }
+        public ICollection<EmployeeSkill> EmployeeSkills { get; set; }
 		public ICollection<EmployeeFunction> EmployeeFunctions { get; set; }
         public ICollection<EmployeeLocations> EmployeeLocations { get; set; }
         public ICollection<EmployeeAvailability> EmployeeAvailabilities { get; set; }
