@@ -20,35 +20,22 @@ namespace Gride.Generator
 		/// <param name="settings">The setting for the generation</param>
 		/// <remarks>result is set whenever possible even if en exception where to occur</remarks>
 		/// <exception cref="NotEnoughStaffException">Thrown when not enough staff is available</exception>
+		/// <exception cref="ArgumentNullException">Thrown when either <paramref name="_context"/> or <paramref name="shift"/> is <see cref="null"/></exception>
 		// TODO: Make it so you can see who is assigned to what function
 		// TODO: Make it so you can get every exception that would have been thrown
 #if DEBUG 
-		public static void Generate(Shift shift, ApplicationDbContext _context, out List<EmployeeModel> result, float avgExp = 2, GeneratorSettings settings = GeneratorSettings.StopOnError)
+		public static void Generate(Shift shift, ApplicationDbContext _context, out List<EmployeeModel> result, float avgExp = 2, GeneratorSettings settings = GeneratorSettings.StopOnError | GeneratorSettings.PreferTrios)
 #else
-		public static void Generate(Shift shift, ApplicationDbContext _context, out List<EmployeeModel> result, float avgExp = 2, GeneratorSettings settings = GeneratorSettings.Default)
+		public static void Generate(Shift shift, ApplicationDbContext _context, out List<EmployeeModel> result, float avgExp = 2, GeneratorSettings settings = GeneratorSettings.Default | GeneratorSettings.PreferTrios)
 #endif
 		{
-
-			//GIJS ZIJN CODE
-
-			/*List<EmployeeModel> Employees =
-                (from Employee in _context.EmployeeModel
-                where (from EmployeeAvailability in _context.EmployeeAvailabilities
-                       where EmployeeAvailability.EmployeeID == Employee.ID
-                       select EmployeeAvailability.Availability).ToList().Exists(x => x.Start <= shift.Start && x.End >= shift.End)
-                       select Employee).ToList();
-            Employees = 
-                (from Employee  in Employees
-                where (from EmployeeFunction in _context.EmployeeFunctions
-                       where EmployeeFunction.EmployeeID == Employee.ID
-                       select EmployeeFunction.Function).ToList().Exists(x => shift.ShiftFunctions.ToList().Exists(y => y.FunctionID == x.FunctionID))
-                select Employee).ToList();
-            return Employees;*/
-
 			// Checks if settings is viable
 			if ((settings & (GeneratorSettings.PreferLowerExp | GeneratorSettings.PreferHigerExp)) == (GeneratorSettings.PreferLowerExp | GeneratorSettings.PreferHigerExp))
-				throw new ArgumentException("cannot have both PreferLowerEp and PreferHigherExp selected please chose one or none", "settings");
-
+				throw new ArgumentException("can't have both PreferLowerEp and PreferHigherExp selected please chose one or none", "settings");
+			if (_context == null)
+				throw new ArgumentNullException("_context");
+			if (shift == null)
+				throw new ArgumentNullException("shift");
 
 			// A temporary list for operations
 			List<EmployeeModel> cresult = new List<EmployeeModel>();
@@ -76,7 +63,7 @@ namespace Gride.Generator
 												join ef in _context.EmployeeFunctions on employee.ID equals ef.EmployeeID
 												join funct in _context.Function on ef.FunctionID equals funct.FunctionID
 												join sf in _context.ShiftFunctions on funct.FunctionID equals sf.FunctionID
-												where shift.ShiftFunctions.Contains(func)
+												where shift.ShiftFunctions.ToList().Exists(x => x.FunctionID == func.FunctionID)
 												select employee).ToList();
 
 				//Iedereen die kan werken, juiste functie heeft en locatie.
@@ -114,6 +101,19 @@ namespace Gride.Generator
 											 join ss in _context.ShiftSkills on sk.SkillID equals ss.SkillID
 											 where shift.ShiftSkills.Contains(ss)
 											 select employee).ToList();
+
+				if(skill.Count < func.MaxEmployees && (settings & GeneratorSettings.ForceSkills) != 0)
+				{
+					// if not enough people are available the result will be set and a NotEnoughStaffExption is thrown (if possible)
+					cresult.AddRange(skill);
+					// Checks if the generation should stop
+					if ((settings & GeneratorSettings.StopOnError) != 0)
+					{
+						result = cresult;
+						throw new NotEnoughStaffException();
+					}
+					continue;
+				}
 
 				// Checking if we have enough people
 				// and if not trying to fill up the empty spots
@@ -154,15 +154,50 @@ namespace Gride.Generator
 					List<EmployeeModel> current = skill.Take(func.MaxEmployees).ToList();
 					List<EmployeeModel> closest = new List<EmployeeModel>();
 					float closestExp = 0;
+					bool done = false;
+					int mostxpI = skill.Count - 1;
+					int ToChange = current.Count - 1;
+					// all hail brute force
+					// probably needs to be multi threaded
+					// TODO: not this
 					do
 					{
 						// calculates the hp the current list of people has
 						float currentExp = 0;
 						foreach (EmployeeModel employee in current)
 							currentExp += employee.Experience; 
+						if(currentExp == requiredExp)
+						{
+							cresult.AddRange(current);
+							break;
+						}
+
+						if (Abs(closestExp - requiredExp) > Abs(currentExp - requiredExp))
+						{
+							// copying the data from current so that when we change current it doesn't affect closest
+							closest = new List<EmployeeModel>(current);
+							closestExp = currentExp;
+						}
+
+						current[ToChange] = skill[mostxpI];
+
+						if (ToChange == 0 && mostxpI == current.Count)
+							done = true;
+						else if (mostxpI == current.Count)
+						{
+							mostxpI = skill.Count - 1;
+							ToChange--;
+						}
+						else
+							mostxpI--;
 					}
-					// pls don't hate me for doing this
-					while (true);
+					while (!done);
+
+					if(done)
+					{
+						cresult.AddRange(closest);
+					}
+					continue;
 				}
 
 				//TODO experience filter toevoegen.
@@ -187,7 +222,10 @@ namespace Gride.Generator
 		ForceSkills = 0x8,
 		// Should the Generator stop if an error occurred
 		StopOnError = 0x10,
-
+		// Should pairs of avg exp be made
+		PreferPairs = 0x20,
+		// Should trios of avg exp be made
+		PreferTrios = 0x40,
 	}
 
 	class ExperienceComparer : Comparer<EmployeeModel>
