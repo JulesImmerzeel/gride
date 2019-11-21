@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gride.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191111083929_kanker")]
-    partial class kanker
+    [Migration("20191121141144_random")]
+    partial class random
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -98,7 +98,7 @@ namespace Gride.Migrations
 
                     b.HasIndex("FunctionID");
 
-                    b.ToTable("EmployeeFunction");
+                    b.ToTable("EmployeeFunctions");
                 });
 
             modelBuilder.Entity("Gride.Models.EmployeeLocations", b =>
@@ -173,7 +173,7 @@ namespace Gride.Migrations
 
                     b.HasIndex("SkillID");
 
-                    b.ToTable("EmployeeSkill");
+                    b.ToTable("EmployeeSkills");
                 });
 
             modelBuilder.Entity("Gride.Models.Function", b =>

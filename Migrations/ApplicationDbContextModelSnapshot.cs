@@ -96,7 +96,7 @@ namespace Gride.Migrations
 
                     b.HasIndex("FunctionID");
 
-                    b.ToTable("EmployeeFunction");
+                    b.ToTable("EmployeeFunctions");
                 });
 
             modelBuilder.Entity("Gride.Models.EmployeeLocations", b =>
@@ -171,7 +171,7 @@ namespace Gride.Migrations
 
                     b.HasIndex("SkillID");
 
-                    b.ToTable("EmployeeSkill");
+                    b.ToTable("EmployeeSkills");
                 });
 
             modelBuilder.Entity("Gride.Models.Function", b =>

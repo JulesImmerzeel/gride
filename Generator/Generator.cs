@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using static System.MathF;
 
-namespace Gride.Generator
+namespace Gride.Gen
 {
 	public static class Generator
 	{
@@ -24,7 +24,7 @@ namespace Gride.Generator
 		// TODO: Make it so you can see who is assigned to what function
 		// TODO: Make it so you can get every exception that would have been thrown
 #if DEBUG 
-		public static void Generate(Shift shift, ApplicationDbContext _context, out List<EmployeeModel> result, float avgExp = 2, GeneratorSettings settings = GeneratorSettings.StopOnError | GeneratorSettings.PreferTrios)
+		public static void Generate(Shift shift, ApplicationDbContext _context, out Dictionary<int, List<EmployeeModel>> result, float avgExp = 2, GeneratorSettings settings = GeneratorSettings.StopOnError | GeneratorSettings.PreferTrios)
 #else
 		public static void Generate(Shift shift, ApplicationDbContext _context, out List<EmployeeModel> result, float avgExp = 2, GeneratorSettings settings = GeneratorSettings.Default | GeneratorSettings.PreferTrios)
 #endif
@@ -39,6 +39,7 @@ namespace Gride.Generator
 
 			// A temporary list for operations
 			List<EmployeeModel> cresult = new List<EmployeeModel>();
+			result = new Dictionary<int, List<EmployeeModel>>();
 
 			foreach (ShiftFunction func in _context.ShiftFunctions.ToList().FindAll(x => x.ShiftID == shift.ShiftID))
 			{
@@ -78,12 +79,10 @@ namespace Gride.Generator
 				{
 					// if not enough people are available the result will be set and a NotEnoughStaffExption is thrown
 					cresult.AddRange(location);
+					result.Add(func.FunctionID, location);
 					// Checks if the generation should stop
 					if((settings & GeneratorSettings.StopOnError) != 0)
-					{
-						result = cresult;
 						throw new NotEnoughStaffException();
-					}
 					continue;
 				}
 
@@ -91,6 +90,7 @@ namespace Gride.Generator
 				if (func.MaxEmployees == location.Count && ((settings & GeneratorSettings.ForceSkills) == 0))
 				{
 					cresult.AddRange(location);
+					result.Add(func.FunctionID, location);
 					continue;
 				}
 
@@ -106,12 +106,10 @@ namespace Gride.Generator
 				{
 					// if not enough people are available the result will be set and a NotEnoughStaffExption is thrown (if possible)
 					cresult.AddRange(skill);
+					result.Add(func.FunctionID, skill);
 					// Checks if the generation should stop
 					if ((settings & GeneratorSettings.StopOnError) != 0)
-					{
-						result = cresult;
 						throw new NotEnoughStaffException();
-					}
 					continue;
 				}
 
@@ -132,6 +130,7 @@ namespace Gride.Generator
 				if(skill.Count == func.MaxEmployees)
 				{
 					cresult.AddRange(skill);
+					result.Add(func.FunctionID, skill);
 					continue;
 				}
 
@@ -142,7 +141,9 @@ namespace Gride.Generator
 				if((settings & GeneratorSettings.PreferHigerExp) != 0)
 				{
 					// takes the most experienced people and saves them
-					cresult.AddRange(skill.TakeLast(func.MaxEmployees));
+					skill = skill.TakeLast(func.MaxEmployees).ToList();
+					cresult.AddRange(skill);
+					result.Add(func.FunctionID, skill);
 					continue;
 				}
 
@@ -169,6 +170,7 @@ namespace Gride.Generator
 						if(currentExp == requiredExp)
 						{
 							cresult.AddRange(current);
+							result.Add(func.FunctionID, current);
 							break;
 						}
 
@@ -196,14 +198,11 @@ namespace Gride.Generator
 					if(done)
 					{
 						cresult.AddRange(closest);
+						result.Add(func.FunctionID, closest);
 					}
 					continue;
 				}
-
-				//TODO experience filter toevoegen.
-
 			}
-			result = cresult;
 		}
 	}
 
