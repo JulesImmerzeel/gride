@@ -21,7 +21,11 @@
               integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" />
     </environment>
     <link rel="stylesheet" href="~/css/site.css" />
-    @RenderSection("scripts", required: false)
+    <style>
+        .selected {
+            color: black;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -37,8 +41,8 @@
                     <ul class="navbar-nav flex-grow-1">
                         @if (SignInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Roster" asp-action="Index">Roster</a>
+                            <li class="selected">
+                                <a class="nav-link text-dark"  asp-area="" asp-controller="Roster" asp-action="Index">Roster</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Shifts" asp-action="Index">Shifts</a>
