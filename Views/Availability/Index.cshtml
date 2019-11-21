@@ -9,7 +9,6 @@
         canEdit = true;
     }
 }
-
 <h1>Week @Model._weekNumber</h1>
 
 <div class="row">
@@ -19,7 +18,12 @@
         </p>
     </div>
 </div>
-
+<style>
+    .selected_Availability {
+        font-weight: bold;
+        color: black;
+    }
+</style>
 <partial name="/Views/Shared/_Schedule.cshtml" />
 <table class="table">
     <thead>
