@@ -150,6 +150,8 @@ namespace Gride.Migrations
 
                     b.Property<string>("ProfileImage");
 
+                    b.Property<int?>("SupervisorID");
+
                     b.HasKey("ID");
 
                     b.ToTable("EmployeeModel");

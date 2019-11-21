@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gride.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191028173301_Works")]
-    partial class Works
+    [Migration("20191114115116_AddEmployeeSupervisorID")]
+    partial class AddEmployeeSupervisorID
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -151,6 +151,8 @@ namespace Gride.Migrations
                         .HasMaxLength(12);
 
                     b.Property<string>("ProfileImage");
+
+                    b.Property<int?>("SupervisorID");
 
                     b.HasKey("ID");
 
