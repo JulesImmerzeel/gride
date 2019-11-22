@@ -5,16 +5,23 @@ using Microsoft.EntityFrameworkCore;
 using Gride.Data;
 using Gride.Models;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using Gride.ViewModels;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Gride.Controllers
 {
     public class EmployeeController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IHostingEnvironment _env;
 
-        public EmployeeController(ApplicationDbContext context)
+        public EmployeeController(ApplicationDbContext context, IHostingEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         // GET: EmployeeModels
@@ -41,6 +48,7 @@ namespace Gride.Controllers
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync(m => m.ID == id);
 
+            ViewBag.Supervisor = _context.EmployeeModel.FirstOrDefault(s => s.ID == employeeModel.SupervisorID);
             if (employeeModel == null)
             {
                 return NotFound();
@@ -59,7 +67,18 @@ namespace Gride.Controllers
             PopulateAssignedFunctions(employee);
             PopulateAssignedSkills(employee);
             PopulateAssignedLocations(employee);
+            PopulateSupervisorsDropDownList();
             return View();
+        }
+
+        private void PopulateSupervisorsDropDownList(object selectedSupervisor = null)
+        {
+            var supervisors = _context.EmployeeModel
+                .Where(e => e.Admin == true)
+                .AsNoTracking()
+                .ToList();
+
+            ViewBag.SupervisorID = new SelectList(supervisors,"ID","Name",selectedSupervisor);
         }
 
         // POST: EmployeeModels/Create
@@ -67,8 +86,9 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage")] EmployeeModel employeeModel , string[] selectedSkills, string[] selectedFunctions, string[] selectedLocations)
+        public async Task<IActionResult> Create([Bind("ID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage,SupervisorID")] EmployeeModel employeeModel , string[] selectedSkills, string[] selectedFunctions, string[] selectedLocations, EmployeeViewModel model)
         {
+            //employeeModel = setSupervisor(employeeModel);
             if (selectedSkills != null)
             {
                 employeeModel.EmployeeSkills = new List<EmployeeSkill>();
@@ -115,12 +135,42 @@ namespace Gride.Controllers
                 }
             }
 
+            string uniqueFileName = null;
+
+            // If the Photo property on the incoming model object is not null, then the user
+            // has selected an image to upload.
+            if (model.ProfileImage != null)
+            {
+                // The image must be uploaded to the images folder in wwwroot
+                // To get the path of the wwwroot folder we are using the inject
+                // HostingEnvironment service provided by ASP.NET Core
+                string uploadsFolder = Path.Combine(_env.WebRootPath, "images");
+                // To make sure the file name is unique we are appending a new
+                // GUID value and and an underscore to the file name
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + model.ProfileImage.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                // Use CopyTo() method provided by IFormFile interface to
+                // copy the file to wwwroot/images folder
+                model.ProfileImage.CopyTo(new FileStream(filePath, FileMode.Create));
+            }
+
+            employeeModel.ProfileImage = uniqueFileName;
+
             if (ModelState.IsValid)
             {
                 _context.Add(employeeModel);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                //redirect admin to register page
+                return Redirect("/Identity/Account/Register?email=" + employeeModel.EMail);
+
+                //return RedirectToAction(nameof(Index));
             }
+            
+            PopulateSupervisorsDropDownList(employeeModel.SupervisorID);
+            PopulateAssignedFunctions(employeeModel);
+            PopulateAssignedSkills(employeeModel);
+            PopulateAssignedLocations(employeeModel);
             return View(employeeModel);
         }
 
@@ -147,15 +197,16 @@ namespace Gride.Controllers
             PopulateAssignedFunctions(employeeModel);
             PopulateAssignedSkills(employeeModel);
             PopulateAssignedLocations(employeeModel);
+            PopulateSupervisorsDropDownList(employeeModel.SupervisorID);
             return View(employeeModel);
-        }
+        }    
 
         // POST: EmployeeModels/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, string[] selectedSkills, string[] selectedFunctions, string[] selectedLocations)
+        public async Task<IActionResult> Edit(int? id, string[] selectedSkills, string[] selectedFunctions, string[] selectedLocations, EmployeeViewModel model)
         {
             if (id == null)
             {
@@ -171,12 +222,36 @@ namespace Gride.Controllers
                     .ThenInclude(s => s.Location)
                 .FirstOrDefaultAsync(s => s.ID == (int)id);
 
+            string uniqueFileName = employeeToUpdate.ProfileImage;
+
+            // If the Photo property on the incoming model object is not null, then the user
+            // has selected an image to upload.
+            if (model.ProfileImage != null)
+            {
+                // The image must be uploaded to the images folder in wwwroot
+                // To get the path of the wwwroot folder we are using the inject
+                // HostingEnvironment service provided by ASP.NET Core
+                string uploadsFolder = Path.Combine(_env.WebRootPath, "images");
+                // To make sure the file name is unique we are appending a new
+                // GUID value and and an underscore to the file name
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + model.ProfileImage.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                // Use CopyTo() method provided by IFormFile interface to
+                // copy the file to wwwroot/images folder
+                model.ProfileImage.CopyTo(new FileStream(filePath, FileMode.Create));
+            }
+
             if (await TryUpdateModelAsync<EmployeeModel>(employeeToUpdate, "",
-                e => e.Name, e => e.LastName, e => e.DoB, e => e.Gender, e => e.EMail, e => e.PhoneNumber, e => e.Admin, e => e.Experience, e => e.ProfileImage))
+                e => e.Name, e => e.LastName, e => e.DoB, e => e.Gender, e => e.EMail, e => e.PhoneNumber, e => e.Admin, e => e.Experience, e => e.ProfileImage, e => e.SupervisorID))
             {
                 UpdateEmployeeLocations(selectedLocations, employeeToUpdate);
                 UpdateEmployeeFunctions(selectedFunctions, employeeToUpdate);
                 UpdateEmployeeSkills(selectedSkills, employeeToUpdate);
+
+    
+                employeeToUpdate.ProfileImage = uniqueFileName;
+ 
+
                 try
                 {
                     await _context.SaveChangesAsync();

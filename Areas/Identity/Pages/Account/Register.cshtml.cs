@@ -37,6 +37,8 @@ namespace Gride.Areas.Identity.Pages.Account
 
         public string ReturnUrl { get; set; }
 
+        public string Email { get; set; }
+
         public class InputModel
         {
             [Required]
@@ -56,8 +58,9 @@ namespace Gride.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
         }
 
-        public void OnGet(string returnUrl = null)
+        public void OnGet(string returnUrl = null, string email = null)
         {
+            Email = email;
             ReturnUrl = returnUrl;
         }
 

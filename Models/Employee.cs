@@ -32,12 +32,12 @@ namespace Gride.Models
 		[Phone]
         [Display(Name = "Phone Number")]
 		public string PhoneNumber { get; set; }
+        public int? SupervisorID { get; set; }
 		public bool Admin { get; set; } = false;
 		public float Experience { get; set; }
-		
 		public string ProfileImage { get; set; } = null;
 
-        public  ICollection<EmployeeSkill> EmployeeSkills { get; set; }
+        public ICollection<EmployeeSkill> EmployeeSkills { get; set; }
 		public ICollection<EmployeeFunction> EmployeeFunctions { get; set; }
         public ICollection<EmployeeLocations> EmployeeLocations { get; set; }
         public ICollection<EmployeeAvailability> EmployeeAvailabilities { get; set; }
