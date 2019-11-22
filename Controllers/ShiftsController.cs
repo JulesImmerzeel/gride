@@ -34,6 +34,10 @@ namespace Gride.Views.Shift
             }
 
             var shift = await _context.Shift
+                .Include(s => s.ShiftFunctions).ThenInclude(s => s.Function)
+                .Include(s => s.ShiftSkills).ThenInclude(s => s.Skill)
+                .Include(s => s.Works).ThenInclude(s => s.Employee)
+                .Include(s => s.Location)
                 .FirstOrDefaultAsync(m => m.ShiftID == id);
             if (shift == null)
             {
