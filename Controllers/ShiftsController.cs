@@ -163,7 +163,7 @@ namespace Gride.Controllers
 			{
 				_context.Add(shift);
 				await _context.SaveChangesAsync();
-
+				AssignStaff(shift);
 				return RedirectToAction(nameof(Index));
 			}
 			PopulateLocationsDropDownList(shift);

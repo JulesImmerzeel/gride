@@ -48,9 +48,8 @@ namespace Gride.Gen
 				List<EmployeeModel> available = (from row in _context.Availabilities
 												 join ea in _context.EmployeeAvailabilities on row.AvailabilityID equals ea.AvailabilityID
 												 join employee in _context.EmployeeModel on ea.EmployeeID equals employee.ID
-												 where shift.Start >= row.Start && shift.End >= row.End
-												 select employee
-												   ).ToList();
+												 where shift.Start >= row.Start && shift.End <= row.End
+												 select employee).ToList();
 
 				// Removes everyone that is selected for other functions
 				// TODO: Also check other shifts
@@ -59,13 +58,11 @@ namespace Gride.Gen
 								 where !cresult.Contains(possible)
 								 select possible).ToList();
 
-				//Iedereen die kan werken en juiste functie heeft.
+				available = available.Distinct(new EmployeeComparer()).ToList();
 				List<EmployeeModel> function = (from employee in available
-												join ef in _context.EmployeeFunctions on employee.ID equals ef.EmployeeID
-												join funct in _context.Function on ef.FunctionID equals funct.FunctionID
-												join sf in _context.ShiftFunctions on funct.FunctionID equals sf.FunctionID
-												where shift.ShiftFunctions.ToList().Exists(x => x.FunctionID == func.FunctionID)
-												select employee).ToList();
+											   join ef in _context.EmployeeFunctions on employee.ID equals ef.EmployeeID
+											   where ef.FunctionID == func.FunctionID
+											   select employee).ToList();
 
 				//Iedereen die kan werken, juiste functie heeft en locatie.
 				List<EmployeeModel> location = (from employee in function
@@ -230,5 +227,11 @@ namespace Gride.Gen
 	class ExperienceComparer : Comparer<EmployeeModel>
 	{
 		public override int Compare(EmployeeModel x, EmployeeModel y) => x.Experience.CompareTo(y.Experience);
+	}
+
+	class EmployeeComparer : IEqualityComparer<EmployeeModel>
+	{
+		public bool Equals(EmployeeModel x, EmployeeModel y) => x.ID == y.ID;
+		public int GetHashCode(EmployeeModel obj) => obj.GetHashCode();
 	}
 }
