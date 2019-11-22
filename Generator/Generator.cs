@@ -48,7 +48,12 @@ namespace Gride.Gen
 				List<EmployeeModel> available = (from row in _context.Availabilities
 												 join ea in _context.EmployeeAvailabilities on row.AvailabilityID equals ea.AvailabilityID
 												 join employee in _context.EmployeeModel on ea.EmployeeID equals employee.ID
-												 where shift.Start >= row.Start && shift.End <= row.End
+												 where row.Weekly ? 
+												 // if availability is weekly
+												 row.Start.Day.Equals(shift.Start.Day) && row.End.Day.Equals(shift.End.Day) && 
+												 (shift.Start.TimeOfDay >= row.Start.TimeOfDay && shift.End.TimeOfDay <= row.End.TimeOfDay) : 
+												 // if not
+												 (shift.Start >= row.Start && shift.End <= row.End)
 												 select employee).ToList();
 
 
