@@ -51,10 +51,10 @@ namespace Gride.Gen
 												 where shift.Start >= row.Start && shift.End <= row.End
 												 select employee).ToList();
 
+
 				// Removes everyone that is selected for other functions
-				// TODO: Also check other shifts
 				if ((settings & GeneratorSettings.AllowDoubleBooking) == 0)
-					available = (from possible in available
+					available = (from possible in RemoveUnavailable(available, shift, _context)
 								 where !cresult.Contains(possible)
 								 select possible).ToList();
 
@@ -201,6 +201,22 @@ namespace Gride.Gen
 				}
 			}
 		}
+
+		/// <summary>
+		/// Removes the unavailable employees in <paramref name="employees"/>.
+		/// </summary>
+		/// <param name="employees">The employees to filter.</param>
+		/// <param name="shift">The shift to check who is available.</param>
+		/// <param name="_context">The context to get the data from.</param>
+		/// <returns>A filtered list</returns>
+		static List<EmployeeModel> RemoveUnavailable(List<EmployeeModel> employees, Shift shift, ApplicationDbContext _context) =>
+			(from employee in employees
+			 where !(from uEmployee in employees
+					 join w in _context.Works on uEmployee.ID equals w.EmployeeID
+					 join s in _context.Shift on w.ShiftID equals s.ShiftID
+					 where s.End > shift.Start || s.Start < shift.End
+					 select uEmployee).ToList().Exists(x => x.ID == employee.ID)
+			 select employee).ToList();
 	}
 
 	[Flags]
