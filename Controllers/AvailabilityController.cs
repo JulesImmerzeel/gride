@@ -143,6 +143,11 @@ namespace Gride.Controllers
         // GET: Availability/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            DateTime editableStart = DateTime.Now;
+            editableStart = editableStart.AddDays(14);
+            int weeknrEditableStart = editableStart.DayOfYear / 7;
+            int weeknr = 0;
+            int currentwknr = DateTime.Now.DayOfYear / 7;
             if (id == null)
             {
                 return NotFound();

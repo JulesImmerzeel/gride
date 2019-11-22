@@ -18,7 +18,6 @@ namespace Gride.Models
         public Location Location { get; set; }
         public ICollection<ShiftFunction> ShiftFunctions { get; set; }
         public ICollection<ShiftSkills> ShiftSkills { get; set; }
-        [MaxEmployeesValidator]
         public ICollection<Work> Works { get; set; }
 	}
 }

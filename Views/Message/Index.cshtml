@@ -9,7 +9,12 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-
+<style>
+    .selected_Messages {
+        font-weight: bold;
+        color: black;
+    }
+</style>
 @foreach (var item in Model)
 {
 <div class="card">
