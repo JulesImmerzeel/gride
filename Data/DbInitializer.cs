@@ -18,7 +18,7 @@ namespace Gride.Data
                 new EmployeeModel{
                     Name ="Guus",
                     LastName ="Joppe",
-                    DoB =DateTime.Parse("1998-05-18"),
+                    DoB = new DateTime(1998, 05,18),
                     Gender =0,
                     EMail ="0967844@hr.nl",
                     PhoneNumber ="0640643724",
@@ -30,7 +30,7 @@ namespace Gride.Data
                 {
                     Name = "John",
                     LastName = "Doe",
-                    DoB = DateTime.Parse("1997-01-01"),
+                    DoB = new DateTime(1998, 05,18),
                     Gender = 0,
                     EMail = "0123456@hr.nl",
                     PhoneNumber = "0612345678",
@@ -42,7 +42,7 @@ namespace Gride.Data
                 new EmployeeModel{
                     Name ="Charles",
                     LastName ="Babbage",
-                    DoB =DateTime.Parse("1998-05-18"),
+                    DoB = new DateTime(1998, 05,18),
                     Gender =0,
                     EMail ="cb@hr.nl",
                     PhoneNumber ="0640643724",
@@ -54,7 +54,7 @@ namespace Gride.Data
                 new EmployeeModel{
                     Name ="Bill",
                     LastName ="Gates",
-                    DoB =DateTime.Parse("1998-05-18"),
+                    DoB = new DateTime(1998, 05,18),
                     Gender =0,
                     EMail ="bg@hr.nl",
                     PhoneNumber ="0640643724",
@@ -66,7 +66,7 @@ namespace Gride.Data
                 new EmployeeModel{
                     Name ="Steve",
                     LastName ="Jobs",
-                    DoB =DateTime.Parse("1998-05-18"),
+                    DoB = new DateTime(1998, 05,18),
                     Gender =0,
                     EMail ="sj@hr.nl",
                     PhoneNumber ="0640643724",
@@ -78,7 +78,7 @@ namespace Gride.Data
                 new EmployeeModel{
                     Name ="Ava",
                     LastName ="Lovelace",
-                    DoB =DateTime.Parse("1998-05-18"),
+                    DoB = new DateTime(1998, 05,18),
                     Gender = Gender.Female,
                     EMail ="al@hr.nl",
                     PhoneNumber ="0640643724",
@@ -90,7 +90,7 @@ namespace Gride.Data
                 new EmployeeModel{
                     Name ="Elon",
                     LastName ="Musk",
-                    DoB =DateTime.Parse("1998-05-18"),
+                    DoB = new DateTime(1998, 05,18),
                     Gender =0,
                     EMail ="em@hr.nl",
                     PhoneNumber ="0640643724",
@@ -102,7 +102,7 @@ namespace Gride.Data
                 new EmployeeModel{
                     Name ="Guido",
                     LastName ="van Rossum",
-                    DoB =DateTime.Parse("1998-05-18"),
+                    DoB = new DateTime(1998, 05,18),
                     Gender = 0,
                     EMail ="gvr@hr.nl",
                     PhoneNumber ="0640643724",
@@ -115,7 +115,7 @@ namespace Gride.Data
                 {
                     Name = "Yukihiro",
                     LastName = "Matsumoto",
-                    DoB = DateTime.Parse("1998-05-18"),
+                    DoB = new DateTime(1998, 05,18),
                     Gender = 0,
                     EMail = "ym@hr.nl",
                     PhoneNumber = "0640643724",
@@ -128,7 +128,7 @@ namespace Gride.Data
                 {
                     Name = "John",
                     LastName = "Resig",
-                    DoB = DateTime.Parse("1998-05-18"),
+                    DoB = new DateTime(1998, 05,18),
                     Gender = 0,
                     EMail = "jr@hr.nl",
                     PhoneNumber = "0640643724",
@@ -141,7 +141,7 @@ namespace Gride.Data
                 {
                     Name = "Brian",
                     LastName = "Kernighan",
-                    DoB = DateTime.Parse("1998-05-18"),
+                    DoB = new DateTime(1998, 05,18),
                     Gender = 0,
                     EMail = "bk@hr.nl",
                     PhoneNumber = "0640643724",
@@ -154,7 +154,7 @@ namespace Gride.Data
                 {
                     Name = "James",
                     LastName = "Gosling",
-                    DoB = DateTime.Parse("1998-05-18"),
+                    DoB = new DateTime(1998, 05,18),
                     Gender = 0,
                     EMail = "jg@hr.nl",
                     PhoneNumber = "0640643724",
@@ -167,7 +167,7 @@ namespace Gride.Data
                 {
                     Name = "Mark",
                     LastName = "Zuckerberg",
-                    DoB = DateTime.Parse("1998-05-18"),
+                    DoB = new DateTime(1998, 05,18),
                     Gender = 0,
                     EMail = "mz@hr.nl",
                     PhoneNumber = "0640643724",
@@ -180,7 +180,7 @@ namespace Gride.Data
                 {
                     Name = "Larry",
                     LastName = "Page",
-                    DoB = DateTime.Parse("1998-05-18"),
+                    DoB = new DateTime(1998, 05,18),
                     Gender = 0,
                     EMail = "lp@hr.nl",
                     PhoneNumber = "0640643724",
@@ -193,7 +193,7 @@ namespace Gride.Data
                 {
                     Name = "Sergey",
                     LastName = "Brin",
-                    DoB = DateTime.Parse("1998-05-18"),
+                    DoB = new DateTime(1998, 05,18),
                     Gender = 0,
                     EMail = "sb@hr.nl",
                     PhoneNumber = "0640643724",
@@ -206,7 +206,7 @@ namespace Gride.Data
                 {
                     Name = "Tim",
                     LastName = "Berners-Lee",
-                    DoB = DateTime.Parse("1998-05-18"),
+                    DoB = new DateTime(1998, 05,18),
                     Gender = 0,
                     EMail = "tbl@hr.nl",
                     PhoneNumber = "0640643724",
@@ -228,41 +228,47 @@ namespace Gride.Data
             {
                 var availabilities = new Availability[]
             {
-                new Availability{ Start = DateTime.Parse("2019/11/18 8:00"), End = DateTime.Parse("2019/11/18 10:00"), Weekly = true },
-                new Availability{ Start = DateTime.Parse("2019/11/18 10:00"), End = DateTime.Parse("2019/11/18 12:00"), Weekly = true },
-                new Availability{ Start = DateTime.Parse("2019/11/18 12:00"), End = DateTime.Parse("2019/11/18 14:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/18 14:00"), End = DateTime.Parse("2019/11/18 16:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/18 16:00"), End = DateTime.Parse("2019/11/18 18:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/19 8:00"), End = DateTime.Parse("2019/11/19 10:00"), Weekly = true },
-                new Availability{ Start = DateTime.Parse("2019/11/19 10:00"), End = DateTime.Parse("2019/11/19 12:00"), Weekly = true },
-                new Availability{ Start = DateTime.Parse("2019/11/19 12:00"), End = DateTime.Parse("2019/11/19 14:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/19 14:00"), End = DateTime.Parse("2019/11/19 16:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/19 16:00"), End = DateTime.Parse("2019/11/19 18:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/20 8:00"), End = DateTime.Parse("2019/11/20 10:00"), Weekly = true },
-                new Availability{ Start = DateTime.Parse("2019/11/20 10:00"), End = DateTime.Parse("2019/11/20 12:00"), Weekly = true },
-                new Availability{ Start = DateTime.Parse("2019/11/20 12:00"), End = DateTime.Parse("2019/11/20 14:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/20 14:00"), End = DateTime.Parse("2019/11/20 16:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/20 16:00"), End = DateTime.Parse("2019/11/20 18:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/21 8:00"), End = DateTime.Parse("2019/11/21 10:00"), Weekly = true },
-                new Availability{ Start = DateTime.Parse("2019/11/21 10:00"), End = DateTime.Parse("2019/11/21 12:00"), Weekly = true },
-                new Availability{ Start = DateTime.Parse("2019/11/21 12:00"), End = DateTime.Parse("2019/11/21 14:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/21 14:00"), End = DateTime.Parse("2019/11/21 16:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/21 16:00"), End = DateTime.Parse("2019/11/21 18:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/22 8:00"), End = DateTime.Parse("2019/11/22 10:00"), Weekly = true },
-                new Availability{ Start = DateTime.Parse("2019/11/22 10:00"), End = DateTime.Parse("2019/11/22 12:00"), Weekly = true },
-                new Availability{ Start = DateTime.Parse("2019/11/22 12:00"), End = DateTime.Parse("2019/11/22 14:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/22 14:00"), End = DateTime.Parse("2019/11/22 16:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/22 16:00"), End = DateTime.Parse("2019/11/22 18:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/23 8:00"), End = DateTime.Parse("2019/11/23 10:00"), Weekly = true },
-                new Availability{ Start = DateTime.Parse("2019/11/23 10:00"), End = DateTime.Parse("2019/11/23 12:00"), Weekly = true },
-                new Availability{ Start = DateTime.Parse("2019/11/23 12:00"), End = DateTime.Parse("2019/11/23 14:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/23 14:00"), End = DateTime.Parse("2019/11/23 16:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/23 16:00"), End = DateTime.Parse("2019/11/23 18:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/24 8:00"), End = DateTime.Parse("2019/11/24 10:00"), Weekly = true },
-                new Availability{ Start = DateTime.Parse("2019/11/24 10:00"), End = DateTime.Parse("2019/11/24 12:00"), Weekly = true },
-                new Availability{ Start = DateTime.Parse("2019/11/24 12:00"), End = DateTime.Parse("2019/11/24 14:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/24 14:00"), End = DateTime.Parse("2019/11/24 16:00"), Weekly = true},
-                new Availability{ Start = DateTime.Parse("2019/11/24 16:00"), End = DateTime.Parse("2019/11/24 18:00"), Weekly = true},
+                new Availability{ Start = new DateTime(2019, 11, 18, 8,0,0), End = new DateTime(2019, 11, 18, 10,0,0), Weekly = true },
+                new Availability{ Start = new DateTime(2019, 11, 18, 10,0,0), End = new DateTime(2019, 11, 18, 12,0,0), Weekly = true },
+                new Availability{ Start = new DateTime(2019, 11, 18, 12,0,0), End = new DateTime(2019, 11, 18, 14,0,0), Weekly = true},
+                new Availability{ Start = new DateTime(2019, 11, 18, 14,0,0), End = new DateTime(2019, 11, 18, 16,0,0), Weekly = true},
+                new Availability{ Start = new DateTime(2019, 11, 18, 16,0,0), End = new DateTime(2019, 11, 18, 18,0,0), Weekly = true},
+
+                new Availability{ Start = new DateTime(2019, 11, 19, 8,0,0), End = new DateTime(2019, 11, 19, 10,0,0), Weekly = true },
+                new Availability{ Start = new DateTime(2019, 11, 19, 10,0,0), End = new DateTime(2019, 11, 19, 12,0,0), Weekly = true },
+                new Availability{ Start = new DateTime(2019, 11, 19, 12,0,0), End = new DateTime(2019, 11, 19, 14,0,0), Weekly = true},
+                new Availability{ Start = new DateTime(2019, 11, 19, 14,0,0), End = new DateTime(2019, 11, 19, 16,0,0), Weekly = true},
+                new Availability{ Start = new DateTime(2019, 11, 19, 16,0,0), End = new DateTime(2019, 11, 19, 18,0,0), Weekly = true},
+
+                new Availability{ Start = new DateTime(2019, 11, 20, 8,0,0), End = new DateTime(2019, 11, 20, 10,0,0), Weekly = true },
+                new Availability{ Start = new DateTime(2019, 11, 20, 10,0,0), End = new DateTime(2019, 11, 20, 12,0,0), Weekly = true },
+                new Availability{ Start = new DateTime(2019, 11, 20, 12,0,0), End = new DateTime(2019, 11, 20, 14,0,0), Weekly = true},
+                new Availability{ Start = new DateTime(2019, 11, 20, 14,0,0), End = new DateTime(2019, 11, 20, 16,0,0), Weekly = true},
+                new Availability{ Start = new DateTime(2019, 11, 20, 16,0,0), End = new DateTime(2019, 11, 20, 18,0,0), Weekly = true},
+
+                new Availability{ Start = new DateTime(2019, 11, 21, 8,0,0), End = new DateTime(2019, 11, 21, 10,0,0), Weekly = true },
+                new Availability{ Start = new DateTime(2019, 11, 21, 10,0,0), End = new DateTime(2019, 11, 21, 12,0,0), Weekly = true },
+                new Availability{ Start = new DateTime(2019, 11, 21, 12,0,0), End = new DateTime(2019, 11, 21, 14,0,0), Weekly = true},
+                new Availability{ Start = new DateTime(2019, 11, 21, 14,0,0), End = new DateTime(2019, 11, 21, 16,0,0), Weekly = true},
+                new Availability{ Start = new DateTime(2019, 11, 21, 16,0,0), End = new DateTime(2019, 11, 21, 18,0,0), Weekly = true},
+
+                new Availability{ Start = new DateTime(2019, 11, 22, 8,0,0), End = new DateTime(2019, 11, 22, 10,0,0), Weekly = true },
+                new Availability{ Start = new DateTime(2019, 11, 22, 10,0,0), End = new DateTime(2019, 11, 22, 12,0,0), Weekly = true },
+                new Availability{ Start = new DateTime(2019, 11, 22, 12,0,0), End = new DateTime(2019, 11, 22, 14,0,0), Weekly = true},
+                new Availability{ Start = new DateTime(2019, 11, 22, 14,0,0), End = new DateTime(2019, 11, 22, 16,0,0), Weekly = true},
+                new Availability{ Start = new DateTime(2019, 11, 22, 16,0,0), End = new DateTime(2019, 11, 22, 18,0,0), Weekly = true},
+
+                new Availability{ Start = new DateTime(2019, 11, 23, 8,0,0), End = new DateTime(2019, 11, 23, 10,0,0), Weekly = true },
+                new Availability{ Start = new DateTime(2019, 11, 23, 10,0,0), End = new DateTime(2019, 11, 23, 12,0,0), Weekly = true },
+                new Availability{ Start = new DateTime(2019, 11, 23, 12,0,0), End = new DateTime(2019, 11, 23, 14,0,0), Weekly = true},
+                new Availability{ Start = new DateTime(2019, 11, 23, 14,0,0), End = new DateTime(2019, 11, 23, 16,0,0), Weekly = true},
+                new Availability{ Start = new DateTime(2019, 11, 23, 16,0,0), End = new DateTime(2019, 11, 23, 18,0,0), Weekly = true},
+
+                new Availability{ Start = new DateTime(2019, 11, 24, 8,0,0), End = new DateTime(2019, 11, 24, 10,0,0), Weekly = true },
+                new Availability{ Start = new DateTime(2019, 11, 24, 10,0,0), End = new DateTime(2019, 11, 24, 12,0,0), Weekly = true },
+                new Availability{ Start = new DateTime(2019, 11, 24, 12,0,0), End = new DateTime(2019, 11, 24, 14,0,0), Weekly = true},
+                new Availability{ Start = new DateTime(2019, 11, 24, 14,0,0), End = new DateTime(2019, 11, 24, 16,0,0), Weekly = true},
+                new Availability{ Start = new DateTime(2019, 11, 24, 16,0,0), End = new DateTime(2019, 11, 24, 18,0,0), Weekly = true},
             };
                 foreach (Availability a in availabilities)
                 {
