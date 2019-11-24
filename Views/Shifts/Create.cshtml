@@ -16,8 +16,8 @@
 <h4>Shift</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+    <div class="col-md-10">
+        <form asp-action="Create" class="w-75">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Start" class="control-label"></label>
@@ -37,33 +37,30 @@
                 <span asp-validation-for="LocationID" class="text-danger" />
             </div>
             <div class="form-group">
+                <label class="control-label">Skills</label>
                 <div class="col-md-offset-2 col-md-10">
                     <table>
                         <tr>
                             @{
                                 int cnt = 0;
                                 List<Gride.Models.ShiftSkillsData> skills = ViewBag.Skills;
-
                                 foreach (var skill in skills)
                                 {
-                                    if (cnt++ % 3 == 0)
-                                    {
-                                    @:</tr><tr>
-                                    }
-                                    @:<td>
+                                    <tr class="w-100"><td>
                                         <input type="checkbox"
                                                name="selectedSkills"
                                                value="@skill.SkillID"
                                                @(Html.Raw(skill.Assigned ? "checked=\"checked\"" : "")) />
                                         @skill.Name
-                                    @:</td>
+                                    </td></tr>
                                 }
-                            @:</tr>
+                                @:</tr>
                             }
-                    </table>
+                        </table>
+                    </div>
                 </div>
-            </div>
             <div class="form-group">
+                <label class="control-label">Functions</label>
                 <div class="col-md-offset-2 col-md-10">
                     <table>
                         <tr>
@@ -73,17 +70,17 @@
 
                                 foreach (var function in functions)
                                 {
-                                    @:</tr><tr>
-                                    @:<td>
+                                    @:</tr><tr class="w-100">
+                                    @:<td class="w-75">
                                         <input type="checkbox"
                                                name="selectedFunctions"
                                                value="@function.FunctionID"
                                                @(Html.Raw(function.Assigned ? "checked=\"checked\"" : "")) />
                                         @function.Name
                                     @:</td>
-                                    @:<td>
+                                    @:<td class="w-25">
                                         <input name="selectedFunctionsMax"
-                                               value="@function.MaxEmployees" />
+                                               value="@function.MaxEmployees"/>
                                     @:</td>
                                     }
                             @:</tr>
