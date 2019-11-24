@@ -13,11 +13,13 @@ namespace Gride.Models
 		public DateTime Start { get; set; }
         [EndDateValidator]
         public DateTime End { get; set; }
+        public bool Weekly { get; set; }
         public int LocationID { get; set; }
-
         public Location Location { get; set; }
         public ICollection<ShiftFunction> ShiftFunctions { get; set; }
         public ICollection<ShiftSkills> ShiftSkills { get; set; }
         public ICollection<Work> Works { get; set; }
+        public int? ParentShiftID { get; set; }
+        public ICollection<Shift> ShiftChildren { get; set; } = null;
 	}
 }

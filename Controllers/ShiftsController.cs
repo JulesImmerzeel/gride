@@ -105,7 +105,7 @@ namespace Gride.Views.Shift
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Start,End,LocationID,Location")] Models.Shift shift, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax)
+        public async Task<IActionResult> Create([Bind("Start,End,LocationID,Location, Weekly")] Models.Shift shift, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax)
         {
             if (selectedSkills != null)
             {
@@ -138,10 +138,48 @@ namespace Gride.Views.Shift
             {
                 _context.Add(shift);
                 await _context.SaveChangesAsync();
+                if (shift.Weekly)
+                {
+                    ICollection<Models.Shift> children = CreateChildren(shift);
+                    foreach(Models.Shift child in children)
+                    {
+                        _context.Add(child);
+                    }
+                    await _context.SaveChangesAsync();
+                    shift.ShiftChildren = children;
+                }
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             PopulateLocationsDropDownList(shift);
             return View(shift);
+        }
+
+        private ICollection<Models.Shift> CreateChildren(Models.Shift shift)
+        {
+            Models.Shift tmpShift = new Models.Shift();
+            tmpShift.Start = shift.Start;
+            tmpShift.End = shift.End;
+            tmpShift.Weekly = true;
+            tmpShift.Location = shift.Location;
+            tmpShift.LocationID = shift.LocationID;
+            tmpShift.ShiftFunctions = shift.ShiftFunctions;
+            tmpShift.ShiftSkills = shift.ShiftSkills;
+            tmpShift.ParentShiftID = shift.ShiftID;
+            ICollection<Models.Shift> children = new List<Models.Shift>();
+            for (int i=1; i< 53; i++)
+            {
+                Models.Shift child = new Models.Shift();
+                child.Location = tmpShift.Location;
+                child.LocationID = tmpShift.LocationID;
+                child.ShiftFunctions = tmpShift.ShiftFunctions;
+                child.ShiftSkills = tmpShift.ShiftSkills;
+                child.ParentShiftID = tmpShift.ParentShiftID;
+                child.Start = shift.Start.AddDays(7 * i);
+                child.End = shift.End.AddDays(7 * i);
+                children.Add(child);
+            }
+            return children;
         }
 
 
