@@ -21,6 +21,36 @@
               integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" />
     </environment>
     <link rel="stylesheet" href="~/css/site.css" />
+
+    <style>
+        .selected_Roster {
+            color: black;
+        }
+        .selected_Shift {
+            color: black;
+        }
+        .selected_Availability {
+            color: black;
+        }
+        .selected_Employee {
+            color: black;
+        }
+        .selected_Messages {
+            color: black;
+        } 
+        .selected_Skills{
+            color: black;
+        }
+        .selected_Function{
+            color: black;
+        }
+        .selected_Location{
+            color: black;
+        } 
+        .selected_Works{
+            color: black;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -36,38 +66,47 @@
                     <ul class="navbar-nav flex-grow-1">
                         @if (SignInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
                         {
-                            <li class="nav-item">
+                            <li class="selected_Roster">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Roster" asp-action="Index">Roster</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="selected_Shift">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Shifts" asp-action="Index">Shifts</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="selected_Availability">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Availability" asp-action="Index">Availabilities</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="selected_Employee">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Employee" asp-action="Index">Employees</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="selected_Works">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Works" asp-action="Index">Works</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="selected_Messages">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Message" asp-action="Index">Messages</a>
+                            </li>
+                            <li class="selected_Skills">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Skills" asp-action="Index">Skills</a>
+                            </li>
+                            <li class="selected_Location">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Location" asp-action="Index">Location</a>
+                            </li>
+                            <li class="selected_Function">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Function" asp-action="Index">Function</a>
                             </li>
                         }
 
                         @if (SignInManager.IsSignedIn(User) && !_context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
                         {
-                            <li class="nav-item">
+                            <li class="selected_Roster">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Roster" asp-action="Index">Roster</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="selected_Shift">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Shifts" asp-action="Index">Shifts</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="selected_Availability">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Availability" asp-action="Index">Availabilities</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="selected_Messages">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Message" asp-action="Index">Messages</a>
                             </li>
                         }
@@ -84,7 +123,7 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
+        <div class="selected_Personal">
             &copy; 2019 - Gride - <a asp-area="" asp-controller="User" asp-action="Index">@User.Identity.Name</a>
         </div>
     </footer>
