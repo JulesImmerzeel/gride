@@ -35,7 +35,11 @@ namespace Gride.Controllers
 			}
 
 			var shift = await _context.Shift
-				.FirstOrDefaultAsync(m => m.ShiftID == id);
+                .Include(s => s.ShiftFunctions).ThenInclude(s => s.Function)
+                .Include(s => s.ShiftSkills).ThenInclude(s => s.Skill)
+                .Include(s => s.Works).ThenInclude(s => s.Employee)
+                .Include(s => s.Location)
+                .FirstOrDefaultAsync(m => m.ShiftID == id);
 			if (shift == null)
 			{
 				return NotFound();
@@ -145,33 +149,89 @@ namespace Gride.Controllers
 			}
 			if (selectedFunctions != null)
 			{
-				shift.ShiftFunctions = new List<ShiftFunction>();
-				int cnt = 0;
-				foreach (var function in selectedFunctions)
-				{
-					var functionToAdd = new ShiftFunction
-					{
-						ShiftID = shift.ShiftID,
-						Shift = shift,
-						FunctionID = int.Parse(function),
-						Function = _context.Function.Single(f => f.FunctionID == int.Parse(function)),
-						MaxEmployees = selectedFunctionsMax[cnt]
-					};
-					shift.ShiftFunctions.Add(functionToAdd);
-					cnt++;
-				}
+                shift.ShiftFunctions = new List<ShiftFunction>();
+                foreach (var function in selectedFunctions)
+                {
+                    int functionID = int.Parse(function);
+                    int maxCnt = functionID - 1;
+                    var functionToAdd = new ShiftFunction
+                    {
+                        ShiftID = shift.ShiftID,
+                        Shift = shift,
+                        FunctionID = functionID,
+                        Function = _context.Function.Single(f => f.FunctionID == int.Parse(function)),
+                        MaxEmployees = selectedFunctionsMax[maxCnt]
+                    };
+                    shift.ShiftFunctions.Add(functionToAdd);
+                }
 			}
 			if (ModelState.IsValid)
 			{
-				_context.Add(shift);
-				await _context.SaveChangesAsync();
-				AssignStaff(shift);
-				return RedirectToAction(nameof(Index));
+                _context.Add(shift);
+                await _context.SaveChangesAsync();
+                if (shift.Weekly)
+                {
+                    ICollection<Shift> children = CreateChildren(shift);
+                    foreach (Shift child in children)
+                    {
+                        _context.Add(child);
+                        child.ShiftFunctions = new List<ShiftFunction>();
+                        foreach (ShiftFunction sf in shift.ShiftFunctions)
+                        {
+                            ShiftFunction shiftFunction = new ShiftFunction
+                            {
+                                Function = sf.Function,
+                                FunctionID = sf.FunctionID,
+                                MaxEmployees = sf.MaxEmployees,
+                                ShiftID = child.ShiftID
+                            };
+                            child.ShiftFunctions.Add(shiftFunction);
+                        }
+                        child.ShiftSkills = new List<ShiftSkills>();
+                        foreach (ShiftSkills ss in shift.ShiftSkills)
+                        {
+                            ShiftSkills shiftSkills = new ShiftSkills
+                            {
+                                Skill = ss.Skill,
+                                SkillID = ss.SkillID,
+                                ShiftID = child.ShiftID
+                            };
+                            child.ShiftSkills.Add(shiftSkills);
+                        }
+                    }
+                    await _context.SaveChangesAsync();
+                    shift.ShiftChildren = children;
+                }
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
 			}
 			PopulateLocationsDropDownList(shift);
 			return View(shift);
 		}
 
+        private ICollection<Shift> CreateChildren(Shift shift)
+        {
+            Shift tmpShift = new Shift();
+            tmpShift.Start = shift.Start;
+            tmpShift.End = shift.End;
+            tmpShift.Weekly = true;
+            tmpShift.Location = shift.Location;
+            tmpShift.LocationID = shift.LocationID;
+            tmpShift.ParentShiftID = shift.ShiftID;
+            ICollection<Shift> children = new List<Shift>();
+            for (int i = 1; i < 52; i++)
+            {
+                Shift child = new Shift();
+                child.Weekly = true;
+                child.Location = tmpShift.Location;
+                child.LocationID = tmpShift.LocationID;
+                child.ParentShiftID = tmpShift.ParentShiftID;
+                child.Start = shift.Start.AddDays(7 * i);
+                child.End = shift.End.AddDays(7 * i);
+                children.Add(child);
+            }
+            return children;
+        }
 
 		// GET: Shifts/Edit/5
 		public async Task<IActionResult> Edit(int? id)
@@ -429,8 +489,6 @@ namespace Gride.Controllers
 					}
 				}
 			}
-
-
 		}
 
 		private void UpdateShiftFunctions(string[] selectedFunctions, int[] selectedFunctionsMax, Shift shiftToUpdate)
@@ -517,12 +575,37 @@ namespace Gride.Controllers
 		[HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int id)
-		{
-			var shift = await _context.Shift.FindAsync(id);
-			_context.Shift.Remove(shift);
-			await _context.SaveChangesAsync();
-			return RedirectToAction(nameof(Index));
+		{ 
+            var shift = await _context.Shift
+                .Include(s => s.ShiftChildren)
+                .Include(s => s.ShiftFunctions).ThenInclude(f => f.Function)
+                .Include(s => s.ShiftSkills).ThenInclude(s => s.Skill)
+                .Include(s => s.Location)
+                .FirstOrDefaultAsync(s => s.ShiftID == id);
+            if (shift.Weekly)
+            {
+                if (shift.ShiftChildren.Count() > 0)
+                {
+                    TransferShiftChildren(shift);
+                }
+            }
+            _context.Shift.Remove(shift);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
 		}
+
+        private void TransferShiftChildren(Shift shift)
+        {
+            ICollection<Shift> children = shift.ShiftChildren;
+            Shift newParent = children.First();
+            children.Remove(newParent);
+            foreach (Shift c in children)
+            {
+                c.ParentShiftID = newParent.ShiftID;
+            }
+            newParent.ShiftChildren = children;
+            newParent.ParentShiftID = null;
+        }
 
 		private bool ShiftExists(int id)
 		{
@@ -534,5 +617,52 @@ namespace Gride.Controllers
 			ViewData.Add("trystring", "HOLY SHIT THIS WORKS");
 			return View();
 		}
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteAllFollowing(int id)
+
+        {
+            var shift = await _context.Shift
+                .Include(s => s.ShiftChildren)
+                .Include(s => s.ShiftFunctions).ThenInclude(f => f.Function)
+                .Include(s => s.ShiftSkills).ThenInclude(s => s.Skill)
+                .Include(s => s.Location)
+                .FirstOrDefaultAsync(s => s.ShiftID == id);
+            if (shift.Weekly)
+            {
+                if (shift.ShiftChildren.Count() > 0)
+                {
+                    shift.ShiftChildren = new List<Shift>();
+                    _context.Shift.Remove(shift);
+                }
+                else
+                {
+                    Shift parentShift = _context.Shift
+                        .Include(s => s.ShiftChildren)
+                        .Single(s => s.ShiftID == shift.ParentShiftID);
+                    List<Shift> tmpChildren = new List<Shift>();
+                    List<Shift> children = parentShift.ShiftChildren.OrderBy(s => s.Start).ToList();
+                    bool foundChild = false;
+                    foreach (Shift child in children)
+                    {
+                        if (child.ShiftID == shift.ShiftID)
+                        {
+                            foundChild = true;
+                        }
+                        if (foundChild)
+                        {
+                            _context.Remove(child);
+                        } else
+                        {
+                            tmpChildren.Add(child);
+                        }
+                    }
+                    parentShift.ShiftChildren = tmpChildren;
+                }
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
 	}
 }

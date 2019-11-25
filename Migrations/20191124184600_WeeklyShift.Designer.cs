@@ -4,14 +4,16 @@ using Gride.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Gride.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191124184600_WeeklyShift")]
+    partial class WeeklyShift
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -253,8 +255,6 @@ namespace Gride.Migrations
                     b.Property<int?>("ShiftID1");
 
                     b.Property<DateTime>("Start");
-
-                    b.Property<bool>("Weekly");
 
                     b.HasKey("ShiftID");
 

@@ -29,6 +29,10 @@
                 <input asp-for="End" class="form-control" />
                 <span asp-validation-for="End" class="text-danger"></span>
             </div>
+            <div class="form-check">
+                <input asp-for="Weekly" class="form-check-input" />
+                <label asp-for="Weekly" class="form-check-label"></label>
+            </div>
             <div class="form-group">
                 <label asp-for="Location" class="control-label"></label>
                 <select asp-for="LocationID" class="form-control" asp-items="ViewBag.LocationID">
@@ -46,31 +50,34 @@
                                 List<Gride.Models.ShiftSkillsData> skills = ViewBag.Skills;
                                 foreach (var skill in skills)
                                 {
-                                    <tr class="w-100"><td>
+                                <tr class="w-100">
+                                    <td>
                                         <input type="checkbox"
                                                name="selectedSkills"
                                                value="@skill.SkillID"
                                                @(Html.Raw(skill.Assigned ? @"checked=""checked""" : "")) />
                                         @skill.Name
-                                    </td></tr>
-                                }
-                                @:</tr>
+                                    </td>
+                                </tr>
+                            }
+                            @:</tr>
                             }
                         </table>
                     </div>
                 </div>
-            <div class="form-group">
-                <label class="control-label">Functions</label>
-                <div class="col-md-offset-2 col-md-10">
-                    <table>
-                        <tr>
-                            @{
-                                int c = 0;
-                                List<Gride.Models.ShiftFunctionData> functions = ViewBag.Functions;
+                <div class="form-group">
+                    <label class="control-label">Functions</label>
+                    <div class="col-md-offset-2 col-md-10">
+                        <table>
+                            <tr>
+                                @{
+                                    int c = 0;
+                                    List<Gride.Models.ShiftFunctionData> functions = ViewBag.Functions;
 
-                                foreach (var function in functions)
-                                {
+                                    foreach (var function in functions)
+                                    {
                                     @:</tr><tr class="w-100">
+<<<<<<< HEAD
                                     @:<td class="w-75">
                                         <input type="checkbox"
                                                name="selectedFunctions"
@@ -82,16 +89,29 @@
                                         <input name="selectedFunctionsMax"
                                                value="@function.MaxEmployees"/>
                                     @:</td>
+=======
+                                        @:<td class="w-75">
+                                            <input type="checkbox"
+                                                   name="selectedFunctions"
+                                                   value="@function.FunctionID"
+                                                   @(Html.Raw(function.Assigned ? "checked=\"checked\"" : "")) />
+                                            @function.Name
+                                        @:</td>
+                                        @:<td class="w-25">
+                                            <input name="selectedFunctionsMax"
+                                                   value="@function.MaxEmployees" />
+                                        @:</td>
+>>>>>>> 66f1cd27d0625d51010f1ec4846f6c5a57c85256
                                     }
-                            @:</tr>
-                            }
-                    </table>
-                </div>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+                                @:</tr>
+                                }
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
     </div>
 </div>
 
