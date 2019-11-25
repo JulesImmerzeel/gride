@@ -50,7 +50,7 @@
                                         <input type="checkbox"
                                                name="selectedSkills"
                                                value="@skill.SkillID"
-                                               @(Html.Raw(skill.Assigned ? "checked=\"checked\"" : "")) />
+                                               @(Html.Raw(skill.Assigned ? @"checked=""checked""" : "")) />
                                         @skill.Name
                                     </td></tr>
                                 }
@@ -75,7 +75,7 @@
                                         <input type="checkbox"
                                                name="selectedFunctions"
                                                value="@function.FunctionID"
-                                               @(Html.Raw(function.Assigned ? "checked=\"checked\"" : "")) />
+                                               @(Html.Raw(function.Assigned ? @"checked=""checked""" : "")) />
                                         @function.Name
                                     @:</td>
                                     @:<td class="w-25">

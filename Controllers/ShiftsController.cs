@@ -108,6 +108,8 @@ namespace Gride.Controllers
 				{
 					Work w = new Work
 					{
+						FunctionID = funcID,
+						Function = _context.Function.ToList().Find(x => x.FunctionID == funcID),
 						EmployeeID = employee.ID,
 						Employee = _context.EmployeeModel.ToList().Find(x => x.ID == employee.ID),
 						ShiftID = shift.ShiftID,
@@ -285,10 +287,10 @@ namespace Gride.Controllers
 				.Include(s => s.Location)
 				.FirstOrDefaultAsync(s => s.ShiftID == id);
 
-			if (await TryUpdateModelAsync<Shift>(shiftToUpdate, "",
+			if (await TryUpdateModelAsync(shiftToUpdate, "",
 				s => s.Start, s => s.End, s => s.LocationID))
 			{
-				if (String.IsNullOrWhiteSpace(shiftToUpdate.Location.Name))
+				if (string.IsNullOrWhiteSpace(shiftToUpdate.Location.Name))
 				{
 					shiftToUpdate.Location = null;
 				}
@@ -526,6 +528,11 @@ namespace Gride.Controllers
 		{
 			return _context.Shift.Any(e => e.ShiftID == id);
 		}
-
+	
+		public async Task<IActionResult> Generate()
+		{
+			ViewData.Add("trystring", "HOLY SHIT THIS WORKS");
+			return View();
+		}
 	}
 }
