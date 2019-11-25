@@ -29,19 +29,38 @@
             @Html.DisplayFor(model => model.End)
         </dd>
         <dt class="col-sm-2">
+            Weekly
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Weekly)
+            {
+                <text>True</text>
+            }
+            else
+            {
+                <text>False</text>
+            }
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Location)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Location.Name)
+        </dd>
+        <dt class="col-sm-2">
             Skills
         </dt>
         <dd class="col-sm-10">
-            @foreach (var skill in Model.ShiftSkills)
+            @foreach (var skill in Model.ShiftSkills.OrderBy(s => s.Skill.Name))
             {
-                <p>@skill.Skill.Name</p>
+                <div>@skill.Skill.Name</div>
             }
         </dd>
         <dt class="col-sm-2">
             Functions
         </dt>
         <dd class="col-sm-10">
-            @foreach (var function in Model.ShiftFunctions)
+            @foreach (var function in Model.ShiftFunctions.OrderBy(s => s.Function.Name))
             {
                 <div class="row">
                     <div class="col-10">
@@ -59,7 +78,7 @@
         <dd class="col-sm-10">
             @foreach (var work in Model.Works)
             {
-                <p>@work.Employee.Name @work.Employee.LastName</p>
+                <div>@work.Employee.Name @work.Employee.LastName</div>
             }
         </dd>
     </dl>
