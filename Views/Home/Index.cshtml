@@ -5,17 +5,24 @@
     ViewData["Title"] = "Home Page";
     @if (SignInManager.IsSignedIn(User))
     {
-    <div class="text-center">
-        <h1 class="display-4">Welcome @User.Identity.Name!</h1>
-        <p><a asp-area="" asp-controller="Gride" asp-action="Index">Click here</a> to view your personal information.</p>
-    </div>
+        <div class="text-center">
+            <h1 class="display-4">Welcome @User.Identity.Name!</h1>
+            <p><a asp-area="" asp-controller="Gride" asp-action="Index">Click here</a> to view your personal information.</p>
+        </div>
+
+
+
+        <partial name="/Views/Shared/_Schedule.cshtml" />
     }
+
+
+
     else
     {
-    <div class="text-center">
-        <h1 class="display-4">Welcome!</h1>
-        <p>Please login to view your personal information.</p>
-    </div>
+        <div class="text-center">
+            <h1 class="display-4">Welcome!</h1>
+            <p>Please login to view your personal information.</p>
+        </div>
     }
 }
 

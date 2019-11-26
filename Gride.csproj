@@ -14,8 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Data\Migrations\20190929195730_Migrations.cs" />
-    <Compile Remove="Data\Migrations\20190929195730_Migrations.Designer.cs" />
     <Content Remove="compilerconfig.json" />
   </ItemGroup>
 
@@ -26,8 +24,12 @@
 
 
   <ItemGroup>
+    <PackageReference Include="Abp" Version="4.10.0" />
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
+
   </ItemGroup>
+
 </Project>

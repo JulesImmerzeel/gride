@@ -1,0 +1,175 @@
+﻿@model Gride.Models.EmployeeModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+<style>
+    .selected_Employee {
+        font-weight: bold;
+        color: black;
+    }
+</style>
+<h4>Employee</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" enctype="multipart/form-data" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DoB" class="control-label"></label>
+                <input asp-for="DoB" class="form-control" />
+                <span asp-validation-for="DoB" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Gender" class="control-label"></label>
+                <select asp-for="Gender" class="form-control" asp-items="@Html.GetEnumSelectList<Gender>()"></select>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EMail" class="control-label"></label>
+                <input asp-for="EMail" class="form-control" />
+                <span asp-validation-for="EMail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNumber" class="control-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Admin" /> @Html.DisplayNameFor(model => model.Admin)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Experience" class="control-label"></label>
+                <input asp-for="Experience" class="form-control" />
+                <span asp-validation-for="Experience" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <p>Skills</p>
+                    <table>
+                        <tr>
+                            @{
+                                List<Gride.Models.ShiftSkillsData> skills = ViewBag.Skills;
+
+                                foreach (var skill in skills)
+                                {
+                                    @:<td>
+                                        <input type="checkbox"
+                                               name="selectedSkills"
+                                               value="@skill.SkillID"
+                                               @(Html.Raw(skill.Assigned ? "checked=\"checked\"" : "")) />
+                                        @skill.Name
+                                    @:</td>
+                                }
+                            @:</tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <p>Functions</p>
+                        <table>
+                            <tr>
+                                @{
+                                    List<Gride.Models.ShiftFunctionData> functions = ViewBag.Functions;
+
+                                    foreach (var function in functions)
+                                    {
+                                        @:<td>
+                                            <input type="checkbox"
+                                                   name="selectedFunctions"
+                                                   value="@function.FunctionID"
+                                                   @(Html.Raw(function.Assigned ? "checked=\"checked\"" : "")) />
+                                            @function.Name
+                                        @:</td>
+                                    }
+                                @:</tr>
+                                }
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <p>Locations</p>
+                            <table>
+                                <tr>
+                                    @{
+                                        List<Gride.Models.LocationData> locations = ViewBag.Locations;
+
+                                        foreach (var location in locations)
+                                        {
+                                            @:<td>
+                                                <input type="checkbox"
+                                                       name="selectedLocations"
+                                                       value="@location.LocationID"
+                                                       @(Html.Raw(location.Assigned ? "checked=\"checked\"" : "")) />
+                                                @location.Name
+                                            @:</td>
+                                        }
+                                    @:</tr>
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                    <div class="form-group">
+                        <div class="custom-file">
+                            <label asp-for="ProfileImage" class="control-label"></label>
+                            <input asp-for="ProfileImage" type="file" class="form-control custom-file-input" />
+                        </div>
+                        <hr />
+                        <p>Current image:</p>
+                        <div class="row">
+                            <div class="col-12">
+                                @if (!String.IsNullOrEmpty(Model.ProfileImage))
+                                {
+                                    <img class="img img-profile" src="/images/@Model.ProfileImage" alt="Profile Image" />
+                                }
+                            </div>
+                        </div>
+                    </div>
+                        <div class="form-group">
+                            <label asp-for="SupervisorID" class="control-label"></label>
+                            <select asp-for="SupervisorID" class="form-control" asp-items="ViewBag.SupervisorID">
+                                <option value="">-- Select Supervisor --</option>
+                            </select>
+                            <span asp-validation-for="SupervisorID" class="text-danger" />
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                        </div>
+                    </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to employees</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            $('.custom-file-input').on("change", function () {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).next('.custom-file-label').html(fileName);
+            });
+        });
+    </script>
+}

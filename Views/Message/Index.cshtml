@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Gride.Models.Message>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Messages</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<style>
+    .selected_Messages {
+        font-weight: bold;
+        color: black;
+    }
+</style>
+@foreach (var item in Model)
+{
+<div class="card">
+    <div class="card-body">
+        <div class="card-title font-weight-bold">
+            @{ var Date = item.Time.ToShortDateString();}
+            @Html.DisplayFor(modelItem => Date) - 
+            @Html.DisplayFor(modelItem => item.Employee.Name) @Html.DisplayFor(modelItem => item.Employee.LastName)
+        </div>
+        <div class="card-text">
+            <p>
+                @Html.DisplayFor(modelItem => item.Text)
+            </p>
+        </div>
+        @if (item.Employee.EMail == User.Identity.Name)
+        {
+            <a class="card-link" asp-action="Edit" asp-route-id="@item.MessageID">Edit</a>
+            <a class="card-link" asp-action="Delete" asp-route-id="@item.MessageID">Delete</a>
+        }
+    </div>
+    <div class="card-footer">
+        @foreach (var comment in item.Comments)
+        {
+            <div class="row">
+                <div class="col-3 font-weight-bold">
+                    @Html.DisplayFor(modelItem => comment.Employee.Name) @Html.DisplayFor(modelItem => comment.Employee.LastName)
+                </div>
+                <div class="col-9">
+                    @Html.DisplayFor(modelItem => comment.Text)
+                </div>
+            </div>
+        }
+        <form asp-action="Comment" asp-route-id="@item.MessageID">
+            <div class="form-group w-75">
+                <label class="control-label">Add comment</label>
+                <input class="w-50" type="text" name="comment" />
+                <input type="submit" value="Post" class="btn" />
+            </div>
+        </form>
+    </div>
+</div>
+}
