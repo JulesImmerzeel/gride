@@ -10,6 +10,15 @@ a.navbar-brand {
     color: #ffffff !important;
 }
 
+/* Links */
+a {
+    color: #A80000;
+}
+
+a:hover {
+    color: #A80000;
+}
+
 .img-profile{
     width: 100%;
     height: auto;
