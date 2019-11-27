@@ -29,9 +29,9 @@ a.navbar-brand {
     color: #ffffff !important;
 }
 
-    .navbar a:hover, .navbar a:active, .navbar button:hover, .navbar button:active {
-        color: #E2B4B4 !important;
-    }
+.navbar a:hover, .navbar a:active, .navbar button:hover, .navbar button:active {
+    color: #E2B4B4 !important;
+}
 
 
 /* Sticky footer styles
@@ -72,6 +72,7 @@ body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
 }
+
 .footer {
   position: absolute;
   bottom: 0;
