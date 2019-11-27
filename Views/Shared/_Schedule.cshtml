@@ -8,21 +8,21 @@
         width: 100%;
         background-color: #ffffff;
         border-collapse: collapse;
-        border-width: 2px;
-        border-color: lightgray;
+        border-width: 1px;
+        border-color: #000;
         border-style: solid;
         color: #000000;
     }
 
         table.GeneratedTable td, table.GeneratedTable th {
-            border-width: 2px;
-            border-color: lightgray;
+            border-width: 1px;
+            border-color: #000;
             border-style: solid;
             padding: 3px;
         }
 
         table.GeneratedTable thead {
-            background-color: lightgray;
+            background-color: #F1DCDB;
             text-align: center;
         }
 
@@ -128,8 +128,9 @@
                 cell = document.getElementById("@(d.ToString() + tdHour.ToString())")
                 if (cell.innerText != "" && window.location.pathname.includes("/Roster")) {
                     cell.style.backgroundColor = "#A80000";
+
                 } else if (cell.innerText != "" && window.location.pathname.includes("/Availability")) {
-                    cell.style.backgroundColor = "grey";
+                    cell.style.backgroundColor = "#575757";
                 } else if (cell.innerText != "") {
                     cell.style.backgroundColor = "#A80000";
                 }
@@ -172,11 +173,11 @@ else
                         <script>
                             cell = document.getElementById("@(d.ToString() + tdHour.ToString())");
                             if (cell.innerText != "" && window.location.pathname.includes("/Roster")) {
-                                cell.style.backgroundColor = "blue";
+                                cell.style.backgroundColor = "#0300a8";
                             } else if (cell.innerText != "" && window.location.pathname.includes("/Availability")) {
-                            cell.style.backgroundColor = "grey";
+                                cell.style.backgroundColor = "#575757";
                         } else if (cell.innerText != "") {
-                            cell.style.backgroundColor = "blue";
+                            cell.style.backgroundColor = "#0300a8";
                         }
                         </script>
                     }
