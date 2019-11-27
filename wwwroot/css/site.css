@@ -102,3 +102,8 @@ body {
 .custom-file-input {
     opacity: 100;
 }
+
+/* Tables */
+.GeneratedTable td {
+    color: #ffffff !important;
+}
