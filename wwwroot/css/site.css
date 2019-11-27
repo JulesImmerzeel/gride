@@ -2,9 +2,12 @@
 for details on configuring this project to bundle and minify static web assets. */
 
 a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: bold;
+    color: #ffffff !important;
 }
 
 .img-profile{
@@ -12,15 +15,29 @@ a.navbar-brand {
     height: auto;
 }
 
-.card{
+.card {
     margin-bottom: 50px;
     padding: 20px;
 }
 
+/* navbar */
+.navbar {
+    background-color: #A80000 !important;
+}
+
+.navbar a, .navbar button {
+    color: #ffffff !important;
+}
+
+    .navbar a:hover, .navbar a:active, .navbar button:hover, .navbar button:active {
+        color: #E2B4B4 !important;
+    }
+
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 @media (min-width: 768px) {
   html {
