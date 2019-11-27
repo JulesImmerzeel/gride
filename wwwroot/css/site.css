@@ -10,6 +10,10 @@ a.navbar-brand {
     color: #ffffff !important;
 }
 
+a.navbar-brand img {
+    height: 50px;
+}
+
 /* Links */
 a {
     color: #A80000;
