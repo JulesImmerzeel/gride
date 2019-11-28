@@ -8,9 +8,8 @@
     <link href="~/css/Roster.css" rel="stylesheet" />
 </head>
 @Html.ActionLink("back", "Index", new { id = Model.currentWeek - 1 }, null)
-@Model._weekNumber
-@Model.month
-@Html.ActionLink("forward", "Index", new { id = Model.currentWeek + 1 }, null)
+Week: @Model._weekNumber @Model.month
+<inline style="float:right;">@Html.ActionLink("forward", "Index", new { id = Model.currentWeek + 1 }, null)</inline>
 
 @if (Model._shifts != null)
 {
