@@ -3,65 +3,10 @@
 @using System.IO;
 @using System;
 @{ int day = (int)DateTime.Now.DayOfWeek; }
-<style>
-    table.GeneratedTable {
-        width: 100%;
-        background-color: #ffffff;
-        border-collapse: collapse;
-        border-width: 2px;
-        border-color: lightgray;
-        border-style: solid;
-        color: #000000;
-    }
 
-        table.GeneratedTable td, table.GeneratedTable th {
-            border-width: 2px;
-            border-color: lightgray;
-            border-style: solid;
-            padding: 3px;
-        }
-
-        table.GeneratedTable thead {
-            background-color: lightgray;
-            text-align: center;
-
-        }
-
-        table.GeneratedTable col {
-            width: 14.29%;
-        }
-
-        table.GeneratedTable td {
-            height: 75px;
-            padding-top: 0px;
-            padding-bottom: 0px;
-            vertical-align: top;
-        }
-
-    #table-wrapper {
-        position: relative;
-    }
-
-    #table-scroll {
-        height: 600px;
-        overflow: auto;
-        margin-top: 20px;
-    }
-
-    #table-wrapper table {
-        width: 100%;
-    }
-
-
-        #table-wrapper table thead th .text {
-            position: absolute;
-            top: -20px;
-            z-index: 2;
-            height: 20px;
-            width: 35%;
-            border: 1px solid red;
-        }
-</style>
+<head>
+    <link href="~/css/Roster.css" rel="stylesheet" />
+</head>
 @Html.ActionLink("back", "Index", new { id = Model.currentWeek - 1 }, null)
 @Model._weekNumber
 @Model.month
