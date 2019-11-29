@@ -13,6 +13,7 @@ namespace Gride.Views.Shift
     public class ShiftsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        public Schedule schedule = new Schedule();
 
         public ShiftsController(ApplicationDbContext context)
         {
@@ -20,9 +21,26 @@ namespace Gride.Views.Shift
         }
 
         // GET: Shifts
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id)
         {
-            return View(await _context.Shift.OrderBy(s => s.Start).ToListAsync());
+            EmployeeModel employee = _context.EmployeeModel
+                .Single(e => e.EMail == User.Identity.Name);
+
+            List<Models.Shift> allShifts = _context.Shift.ToList();
+
+            
+            if (id == null)
+            {
+                id = schedule._weekNumber;
+            }
+
+            schedule.currentWeek = (int)id;
+            schedule.setWeek((int)id);
+            schedule.makeSchedule();
+            schedule.setShifts(allShifts);
+
+
+            return View(schedule);
         }
 
         // GET: Shifts/Details/5

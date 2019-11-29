@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Gride.Validators;
 
 namespace Gride.Models
 {
@@ -20,6 +21,7 @@ namespace Gride.Models
 		public string LastName { get; set; }
         [Display(Name = "Date of Birth")]
         [DataType(DataType.Date)]
+        [DoBValidator]
 		public DateTime DoB { get; set; }
 		public Gender Gender { get; set; } = Gender.Not_Specified;
 		[Required]

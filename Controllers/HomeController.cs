@@ -26,19 +26,40 @@ namespace Gride.Controllers
 
         public IActionResult Index(int? id)
         {
-            List<Shift> allShifts = _context.Shift.ToList();
-
-            if (id == null)
+            if (User.Identity.IsAuthenticated)
             {
-                id = schedule._weekNumber;
-            }
+                EmployeeModel employee = _context.EmployeeModel.Where(e => e.EMail == User.Identity.Name).Single();
+                List<Shift> allShifts = new List<Shift>();
 
-            schedule.currentWeek = (int)id;
-            schedule.setWeek((int)id);
-            schedule.makeSchedule();
-            schedule.setShifts(allShifts);
-           
-            return View(schedule);
+                ICollection<Work> works = _context.Works
+                   .Where(e => e.Employee == employee)
+                   .Include(e => e.Employee)
+                   .Include(e => e.Shift)
+                   .AsNoTracking()
+                   .ToList();
+
+                List<Shift> shifts = new List<Shift>();
+
+                foreach (Work w in works)
+                {
+                    allShifts.Add(w.Shift);
+                }
+
+                if (id == null)
+                {
+                    id = schedule._weekNumber;
+                }
+
+                schedule.currentWeek = (int)id;
+                schedule.setWeek((int)id);
+                schedule.makeSchedule();
+                schedule.setShifts(allShifts);
+
+                return View(schedule);
+            } else
+            {
+                return Redirect("/Identity/Account/Login");
+            }
         }
        
         
