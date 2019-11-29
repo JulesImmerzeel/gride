@@ -9,16 +9,20 @@
             <th>Hours worked</th>
         </tr>
     </thead>
-    @for (int i = 1; i <= 12; i++)
+    @{ int totalWorked = 0; }
+
+    @foreach (WorkOverview w in ViewBag.workOverview)
     {
+
         <tr>
-            <td>@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</td>
-            <td>0</td>
+            <td>@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(w.Month)</td>
+            <td>@w.Worked</td>
         </tr>
+        totalWorked += w.Worked;
     }
 
     <tr class="table-danger">
         <td>Total</td>
-        <td>0</td>
+        <td>@totalWorked</td>
     </tr>
 </table>
