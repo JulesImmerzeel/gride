@@ -26,8 +26,8 @@ namespace Gride.Controllers
 
         public IActionResult Index(int? id)
         {
-            List<Shift> allShifts = _context.Shift.ToList();
-
+            List<Shift> allShifts = _context.Shift.Include(s => s.Works).ToList();
+            
             if (id == null)
             {
                 id = schedule._weekNumber;
