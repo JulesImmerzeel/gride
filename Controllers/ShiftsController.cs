@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Gride.Data;
 using Gride.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Gride.Views.Shift
 {
+    [Authorize]
     public class ShiftsController : Controller
     {
         private readonly ApplicationDbContext _context;
