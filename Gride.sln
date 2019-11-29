@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29001.49
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gride", "Gride.csproj", "{4D42936B-5115-44BD-9DB9-812321D6C6FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestGride", "..\UnitTestGride\UnitTestGride.csproj", "{209CCBD3-6843-42B5-A782-36DCB5BECF6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestGride", "..\UnitTestGride\UnitTestGride.csproj", "{209CCBD3-6843-42B5-A782-36DCB5BECF6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
