@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Gride.Controllers
 {
@@ -16,16 +17,30 @@ namespace Gride.Controllers
     {
 
         private readonly ApplicationDbContext _context;
+        private readonly SignInManager<IdentityUser> signInManager;
+        private readonly UserManager<IdentityUser> userManager;
 
-        public LocationController(ApplicationDbContext context)
+        public LocationController(ApplicationDbContext context, 
+                                  SignInManager<IdentityUser> signInManager,
+                                  UserManager<IdentityUser> userManager)
         {
             _context = context;
+            this.signInManager = signInManager;
+            this.userManager = userManager;
         }
 
         // GET: Location
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Locations.ToListAsync());
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                return View(await _context.Locations.ToListAsync());
+            }
+
+            else
+            {
+                return Redirect("https://localhost:44368/");
+            }
         }
 
         // GET: Location/Details/5
