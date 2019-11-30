@@ -24,7 +24,7 @@ namespace Gride.Gen
 		// TODO: Make it so you can see who is assigned to what function
 		// TODO: Make it so you can get every exception that would have been thrown
 #if DEBUG 
-		public static void Generate(Shift shift, ApplicationDbContext _context, out Dictionary<int, List<EmployeeModel>> result, float avgExp = 2, GeneratorSettings settings = GeneratorSettings.StopOnError | GeneratorSettings.PreferTrios)
+		public static void Generate(Shift shift, ApplicationDbContext _context, ref Dictionary<int, List<EmployeeModel>> result, float avgExp = 2, GeneratorSettings settings = GeneratorSettings.StopOnError | GeneratorSettings.PreferTrios)
 #else
 		public static void Generate(Shift shift, ApplicationDbContext _context, out List<EmployeeModel> result, float avgExp = 2, GeneratorSettings settings = GeneratorSettings.Default | GeneratorSettings.PreferTrios)
 #endif
@@ -36,10 +36,15 @@ namespace Gride.Gen
 				throw new ArgumentNullException("_context");
 			if (shift == null)
 				throw new ArgumentNullException("shift");
+			if (result == null)
+				result = new Dictionary<int, List<EmployeeModel>>();
+
 
 			// A temporary list for operations
 			List<EmployeeModel> cresult = new List<EmployeeModel>();
-			result = new Dictionary<int, List<EmployeeModel>>();
+
+			foreach (List<EmployeeModel> emp in result.Values)
+				cresult.AddRange(emp);
 
 			foreach (ShiftFunction func in _context.ShiftFunctions.ToList().FindAll(x => x.ShiftID == shift.ShiftID))
 			{
@@ -76,12 +81,13 @@ namespace Gride.Gen
 												where el.LocationID == shift.LocationID
 												select employee).ToList();
 
+				int difference = result[func.FunctionID]?.Count() ?? 0;
 				// Checks if enough people are available for that time and location
-				if (func.MaxEmployees > location.Count)
+				if (func.MaxEmployees - difference > location.Count)
 				{
 					// if not enough people are available the result will be set and a NotEnoughStaffExption is thrown
 					cresult.AddRange(location);
-					result.Add(func.FunctionID, location);
+					result[func.FunctionID].AddRange(location);
 					// Checks if the generation should stop
 					if((settings & GeneratorSettings.StopOnError) != 0)
 						throw new NotEnoughStaffException();
@@ -89,10 +95,10 @@ namespace Gride.Gen
 				}
 
 				// check if we have the perfect amount of people
-				if (func.MaxEmployees == location.Count && ((settings & GeneratorSettings.ForceSkills) == 0))
+				if (func.MaxEmployees - difference == location.Count && ((settings & GeneratorSettings.ForceSkills) == 0))
 				{
 					cresult.AddRange(location);
-					result.Add(func.FunctionID, location);
+					result[func.FunctionID].AddRange(location);
 					continue;
 				}
 
@@ -104,11 +110,11 @@ namespace Gride.Gen
 											 where shift.ShiftSkills.Contains(ss)
 											 select employee).ToList();
 
-				if(skill.Count < func.MaxEmployees && (settings & GeneratorSettings.ForceSkills) != 0)
+				if(skill.Count < func.MaxEmployees - difference && (settings & GeneratorSettings.ForceSkills) != 0)
 				{
 					// if not enough people are available the result will be set and a NotEnoughStaffExption is thrown (if possible)
 					cresult.AddRange(skill);
-					result.Add(func.FunctionID, skill);
+					result[func.FunctionID].AddRange(skill);
 					// Checks if the generation should stop
 					if ((settings & GeneratorSettings.StopOnError) != 0)
 						throw new NotEnoughStaffException();
@@ -117,7 +123,7 @@ namespace Gride.Gen
 
 				// Checking if we have enough people
 				// and if not trying to fill up the empty spots
-				while (skill.Count < func.MaxEmployees)
+				while (skill.Count < func.MaxEmployees - difference)
 				{
 					// If not enough people have the required skill set
 					// we go with the most experienced person available
@@ -129,10 +135,10 @@ namespace Gride.Gen
 				}
 
 				// check if we have the required amount of people
-				if(skill.Count == func.MaxEmployees)
+				if(skill.Count == func.MaxEmployees - difference)
 				{
 					cresult.AddRange(skill);
-					result.Add(func.FunctionID, skill);
+					result[func.FunctionID].AddRange(location);
 					continue;
 				}
 
@@ -150,7 +156,7 @@ namespace Gride.Gen
 				}
 
 				// the required experience that the team should have
-				float requiredExp = func.MaxEmployees * avgExp;
+				float requiredExp = (func.MaxEmployees - difference) * avgExp;
 
 				if((settings & GeneratorSettings.PreferLowerExp) != 0)
 				{
@@ -172,7 +178,7 @@ namespace Gride.Gen
 						if(currentExp == requiredExp)
 						{
 							cresult.AddRange(current);
-							result.Add(func.FunctionID, current);
+							result[func.FunctionID].AddRange(current);
 							break;
 						}
 
@@ -200,9 +206,11 @@ namespace Gride.Gen
 					if(done)
 					{
 						cresult.AddRange(closest);
-						result.Add(func.FunctionID, closest);
+						result[func.FunctionID].AddRange(current);
 					}
 					continue;
+
+					throw new NotImplementedException();
 				}
 			}
 		}

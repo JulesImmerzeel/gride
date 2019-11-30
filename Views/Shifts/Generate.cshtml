@@ -1,7 +1,45 @@
-﻿
+﻿@using Gride.Gen;
 @{
     ViewData["Title"] = "Generate";
 }
 
 <h1>Generator</h1>
-<h2>@ViewData["trystring"]</h2>
+<div class="container">
+	<div class="row">
+		<div class="col-md-10">
+			<label class="control-label">Settings</label>
+			<form asp-action="Generate" class="w-75">
+				<div class="form-group">
+					<table>
+						<tr class="w-100">
+							<td style="padding:5px;">
+								<input type="checkbox" name="settings" value="@((int)GeneratorSettings.AllowDoubleBooking)" /> Allow double booking. <br />
+								<input type="checkbox" name="settings" value="@((int)GeneratorSettings.ForceSkills)" /> Force skills. <br />
+								<input type="checkbox" name="settings" value="@((int)GeneratorSettings.StopOnError)" /> Stop on error. <br />
+							</td>
+							<td style="padding:5px;" class="align-baseline">
+								<input type="radio" name="pairSettings" value="@((int)GeneratorSettings.PreferHigerExp)" /> Prefer higher experience. <br />
+								<input type="radio" name="pairSettings" value="@((int)GeneratorSettings.PreferLowerExp)" checked="checked" /> Prefer lower experience. <br />
+							</td>
+							<td style="padding:5px;" class="align-baseline">
+								<input type="radio" name="pairSettings" value="@((int)GeneratorSettings.PreferTrios)" /> Prefer pairs. <br />
+								<input type="radio" name="pairSettings" value="@((int)GeneratorSettings.PreferPairs)" /> Prefer higher experience. <br />
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="form-group">
+					<label class="control-label">average experience</label>
+					<input type="number" name="avgExp" min=".5" max="30" step=".1" />
+				</div>
+				<div class="form-group">
+					<label class="control-label">Start</label>
+					<input type="datetime-local" class="form-control" name="start" /><br />
+					<label class="control-label">End</label>
+					<input type="datetime-local" class="form-control" name="end" /><br />
+				</div>
+				<input type="submit" value="Submit"/>
+			</form>
+		</div>
+	</div>
+</div>

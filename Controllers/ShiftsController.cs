@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Gride.Data;
 using Gride.Models;
 using Gride.Gen;
+using System.Globalization;
 
 namespace Gride.Controllers
 {
@@ -103,9 +104,18 @@ namespace Gride.Controllers
 
 		private void AssignStaff(Shift shift)
 		{
-			Dictionary<int, List<EmployeeModel>> results;
-			Generator.Generate(shift, _context, out results, settings: GeneratorSettings.PreferHigerExp);
-			// TODO: make it possible that we can differentiate what function each work has
+			Dictionary<int, List<EmployeeModel>> results = new Dictionary<int, List<EmployeeModel>>();
+			// look for each function this shift has
+			foreach (int func in from shiftF in _context.ShiftFunctions
+								  where shiftF.ShiftID == shift.ShiftID
+								  select shiftF.FunctionID)
+			{
+				// Adds already assigned people to the list
+				results.Add(func, (from work in _context.Works
+								   where work.FunctionID == func && work.ShiftID == shift.ShiftID
+								   select work.Employee).ToList());
+			}
+			Generator.Generate(shift, _context, ref results, settings: GeneratorSettings.PreferHigerExp);
 			foreach (int funcID in results.Keys)
 			{
 				foreach (EmployeeModel employee in results[funcID])
@@ -617,7 +627,80 @@ namespace Gride.Controllers
 			ViewData.Add("trystring", "HOLY SHIT THIS WORKS");
 			return View();
 		}
-        
+
+		/// <summary>
+		/// Generates a roster for the time given between <paramref name="start"/> and <paramref name="end"/> with the settings specified in <paramref name="Settings"/>
+		/// </summary>
+		/// <param name="Settings">a List of numbers</param>
+		/// <param name="start">the start date of the generation</param>
+		/// <param name="end">the end date of the generation</param>
+		/// <remarks>If <paramref name="start"/> is <see cref="null"/> then it is set to now.
+		/// If <paramref name="end"/> is <see cref="null"/> then it's set to 2 weeks from <paramref name="start"/></remarks>
+		/// <exception cref="ArgumentException">thrown when one of the Settings is wrong</exception>
+		/// <exception cref="ArgumentException">thrown when <paramref name="end"/> is earlier then <paramref name="start"/></exception>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Generate(int[] settings, int pairSettings, string avgExp, DateTime? start = null, DateTime? end = null)
+		{
+			// sets the value for start and end when they are null
+			if (!start.HasValue)
+				start = DateTime.Now;
+			if (!end.HasValue)
+				end = start.Value.AddDays(14);
+			if (end < start)
+				throw new ArgumentException();
+
+			// fixes some C# floating point parsing bullshit
+			float actAvgExp = float.Parse(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator == "," ? avgExp.Replace('.', ','): avgExp.Replace(',','.'));
+			
+			// sets the settings ready for use
+			GeneratorSettings genSettings = 0;
+			try
+			{
+				foreach (GeneratorSettings i in (from i in settings select (GeneratorSettings)i))
+					genSettings |= i;
+				genSettings |= (GeneratorSettings)pairSettings;
+			}
+			catch
+			{
+				throw new ArgumentException("one of the values passed to Settings isn't viable", nameof(settings));
+			}
+
+			Dictionary<int, Dictionary<int, List<EmployeeModel>>> results = new Dictionary<int, Dictionary<int, List<EmployeeModel>>>();
+
+			try
+			{
+				foreach (Shift shift in from shift in _context.Shift
+										where shift.Start >= start && shift.End <= end
+										select shift)
+				{
+					Dictionary<int, List<EmployeeModel>> thisShiftResults = new Dictionary<int, List<EmployeeModel>>();
+					// look for each function this shift has
+					foreach (int func in from shiftF in _context.ShiftFunctions
+										 where shiftF.ShiftID == shift.ShiftID
+										 select shiftF.FunctionID)
+					{
+						// Adds already assigned people to the list
+						thisShiftResults.Add(func, (from work in _context.Works
+													where work.FunctionID == func && work.ShiftID == shift.ShiftID
+													select work.Employee).ToList());
+					}
+					Generator.Generate(shift, _context, ref thisShiftResults, 2, genSettings);
+					results.Add(shift.ShiftID, thisShiftResults);
+				}
+			}
+			catch
+			{
+				throw new NotImplementedException("generator error handling not implemented yet");
+			}
+			return RedirectToAction(nameof(Generated), results);
+		}
+
+		public async Task<IActionResult> Generated(Dictionary<int,Dictionary<int, List<EmployeeModel>>> result)
+		{
+			return View(result);
+		}
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteAllFollowing(int id)
