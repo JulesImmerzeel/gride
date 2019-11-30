@@ -46,19 +46,29 @@ namespace Gride.Controllers
         // GET: Location/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+
+
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var function = await _context.Locations
+                    .FirstOrDefaultAsync(m => m.LocationID == id);
+                if (function == null)
+                {
+                    return NotFound();
+                }
+
+                return View(function);
+            }
+            else
             {
                 return NotFound();
+                return Redirect("https://localhost:44368/");
             }
-
-            var function = await _context.Locations
-                .FirstOrDefaultAsync(m => m.LocationID == id);
-            if (function == null)
-            {
-                return NotFound();
-            }
-
-            return View(function);
         }
 
         // GET: Location/Create
@@ -74,19 +84,28 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("LocationID,Name,Street, StreetNumber, Additions, Postalcode, City, Country")] Location location)
         {
-            if (ModelState.IsValid)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
-                _context.Add(location);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(location);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(location);
             }
-            return View(location);
+            else
+            {
+                return Redirect("https://localhost:44368/");
+            }
         }
 
         // GET: Location/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
             {
                 return NotFound();
             }
@@ -97,6 +116,11 @@ namespace Gride.Controllers
                 return NotFound();
             }
             return View(location);
+            }
+            else
+            {
+                return Redirect("https://localhost:44368/");
+            }
         }
 
         // POST: Location/Edit/5
@@ -106,7 +130,9 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind( "LocationID,Name,Street, StreetNumber, Additions, Postalcode, City, Country")] Location location)
         {
-            if (id != location.LocationID)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id != location.LocationID)
             {
                 return NotFound();
             }
@@ -132,12 +158,20 @@ namespace Gride.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(location);
+
+            }
+            else
+            {
+                return Redirect("https://localhost:44368/");
+            }
         }
 
         // GET: Location/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
             {
                 return NotFound();
             }
@@ -150,6 +184,11 @@ namespace Gride.Controllers
             }
 
             return View(function);
+            }
+            else
+            {
+                return Redirect("https://localhost:44368/");
+            }
         }
 
         // POST: Location/Delete/5
@@ -157,10 +196,17 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var location = await _context.Locations.FindAsync(id);
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                var location = await _context.Locations.FindAsync(id);
             _context.Locations.Remove(location);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return Redirect("https://localhost:44368/");
+            }
         }
 
         private bool LocationExists(int id)
