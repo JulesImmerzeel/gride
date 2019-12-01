@@ -9,6 +9,7 @@ using Gride.Data;
 using Gride.Models;
 using Gride.Gen;
 using System.Globalization;
+using Newtonsoft.Json;
 
 namespace Gride.Controllers
 {
@@ -624,7 +625,6 @@ namespace Gride.Controllers
 	
 		public async Task<IActionResult> Generate()
 		{
-			ViewData.Add("trystring", "HOLY SHIT THIS WORKS");
 			return View();
 		}
 
@@ -685,7 +685,7 @@ namespace Gride.Controllers
 													where work.FunctionID == func && work.ShiftID == shift.ShiftID
 													select work.Employee).ToList());
 					}
-					Generator.Generate(shift, _context, ref thisShiftResults, 2, genSettings);
+					Generator.Generate(shift, _context, ref thisShiftResults, actAvgExp, genSettings);
 					results.Add(shift.ShiftID, thisShiftResults);
 				}
 			}
@@ -693,12 +693,35 @@ namespace Gride.Controllers
 			{
 				throw new NotImplementedException("generator error handling not implemented yet");
 			}
-			return RedirectToAction(nameof(Generated), results);
+			return RedirectToAction(nameof(Generated), "Shifts", JsonConvert.SerializeObject(results));
 		}
 
-		public async Task<IActionResult> Generated(Dictionary<int,Dictionary<int, List<EmployeeModel>>> result)
+		public async Task<IActionResult> Generated(string result = "")
 		{
-			return View(result);
+			// this is going to look so good in the url
+			Dictionary<int, Dictionary<int, List<EmployeeModel>>> actResult = JsonConvert.DeserializeObject<Dictionary<int, Dictionary<int, List<EmployeeModel>>>>(result) ?? new Dictionary<int, Dictionary<int, List<EmployeeModel>>>();
+			return View(actResult);
+		}
+
+		[HttpPost, ActionName("Generated")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> GeneratedConfirmed(string[] selected)
+		{
+			Parallel.ForEach(selected, new ParallelOptions { MaxDegreeOfParallelism = 10}, async s =>
+			{
+				int[] IDs = (from id in s.Split(',')
+							 select int.Parse(id.Trim())).ToArray();
+				await _context.Works.AddAsync(new Work
+				{
+					Shift = _context.Shift.Single(x => x.ShiftID == IDs[0]),
+					ShiftID = IDs[0],
+					Function = _context.Function.Single(x => x.FunctionID == IDs[0]),
+					FunctionID = IDs[1],
+					Employee = _context.EmployeeModel.Single(x => x.ID == IDs[2]),
+				});
+			});
+			await _context.SaveChangesAsync();
+			return RedirectToAction(nameof(Index));
 		}
 
         [HttpPost]
