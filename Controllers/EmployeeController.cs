@@ -75,6 +75,32 @@ namespace Gride.Controllers
                 return NotFound();
             }
 
+            List<Work> works = _context.Works.Where(e => e.Employee == employeeModel).Include(m => m.Employee).Include(s => s.Shift).ToList();
+            var workOverviewlist = new List<WorkOverview>();
+
+            for (int i = 1; i <= 12; i++)
+            {
+                var workOverview = new WorkOverview
+                {
+                    Month = i
+                };
+
+
+                foreach (Work w in works)
+                {
+                    if (w.Shift.Start.Year == 2019 && w.Shift.Start.Month == i)
+                    {
+                        workOverview.AddHours((int)(w.Shift.End - w.Shift.Start).TotalHours);
+                        workOverview.SubtractHours(w.Delay);
+                        workOverview.AddHours(w.Overtime);
+                    }
+                }
+
+                workOverviewlist.Add(workOverview);
+            }
+
+            ViewData["workOverview"] = workOverviewlist;
+
             return View(employeeModel);
         }
 
