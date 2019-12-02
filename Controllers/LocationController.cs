@@ -39,7 +39,7 @@ namespace Gride.Controllers
 
             else
             {
-                return Redirect("https://localhost:44368/");
+                return Forbid();
             }
         }
 
@@ -66,8 +66,7 @@ namespace Gride.Controllers
             }
             else
             {
-                return NotFound();
-                return Redirect("https://localhost:44368/");
+                return Forbid();
             }
         }
 
@@ -96,7 +95,7 @@ namespace Gride.Controllers
             }
             else
             {
-                return Redirect("https://localhost:44368/");
+                return Forbid();
             }
         }
 
@@ -119,7 +118,7 @@ namespace Gride.Controllers
             }
             else
             {
-                return Redirect("https://localhost:44368/");
+                return Forbid();
             }
         }
 
@@ -162,7 +161,7 @@ namespace Gride.Controllers
             }
             else
             {
-                return Redirect("https://localhost:44368/");
+                return Forbid();
             }
         }
 
@@ -187,7 +186,7 @@ namespace Gride.Controllers
             }
             else
             {
-                return Redirect("https://localhost:44368/");
+                return Forbid();
             }
         }
 
@@ -205,7 +204,7 @@ namespace Gride.Controllers
             }
             else
             {
-                return Redirect("https://localhost:44368/");
+                return Forbid();
             }
         }
 
