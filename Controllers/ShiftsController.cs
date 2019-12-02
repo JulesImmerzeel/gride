@@ -693,6 +693,7 @@ namespace Gride.Controllers
 			{
 				throw new NotImplementedException("generator error handling not implemented yet");
 			}
+			// TODO: Post not get
 			return RedirectToAction(nameof(Generated), "Shifts", JsonConvert.SerializeObject(results));
 		}
 
