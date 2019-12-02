@@ -26,15 +26,15 @@ namespace Gride.Controllers
 
         public IActionResult Index(int? id)
         {
-            EmployeeModel employee = _context.EmployeeModel
-                .Single(e => e.EMail == User.Identity.Name);
-
             List<Shift> allShifts = _context.Shift.ToList();
 
             if (id == null)
             {
                 id = schedule._weekNumber;
             }
+
+            EmployeeModel employee = _context.EmployeeModel
+                .Single(e => e.EMail == User.Identity.Name);
 
             List<Work> works = _context.Works.Where(e => e.Employee == employee).Include(m => m.Employee).Include(s => s.Shift).ToList();
             var workOverviewlist = new List<WorkOverview>();

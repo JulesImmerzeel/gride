@@ -41,6 +41,9 @@ namespace Gride.Models
 		public ICollection<EmployeeFunction> EmployeeFunctions { get; set; }
         public ICollection<EmployeeLocations> EmployeeLocations { get; set; }
         public ICollection<EmployeeAvailability> EmployeeAvailabilities { get; set; }
+
+        public WorkOverview Workoverview;
+
     }
 	public enum Gender
 	{
