@@ -1,0 +1,28 @@
+﻿@using System.Globalization;
+
+<hr />
+<h2>Hours worked  <b class="float-right">2019</b></h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Month</th>
+            <th>Hours worked</th>
+        </tr>
+    </thead>
+    @{ int totalWorked = 0; }
+
+    @foreach (WorkOverview w in ViewBag.workOverview)
+    {
+
+        <tr>
+            <td>@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(w.Month)</td>
+            <td>@w.Worked</td>
+        </tr>
+        totalWorked += w.Worked;
+    }
+
+    <tr class="table-danger">
+        <td>Total</td>
+        <td>@totalWorked</td>
+    </tr>
+</table>
