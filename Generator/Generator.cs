@@ -55,7 +55,7 @@ namespace Gride.Gen
 												 join employee in _context.EmployeeModel on ea.EmployeeID equals employee.ID
 												 where row.Weekly ? 
 												 // if availability is weekly
-												 row.Start.Day.Equals(shift.Start.Day) && row.End.Day.Equals(shift.End.Day) && 
+												 row.Start.DayOfWeek == shift.Start.DayOfWeek && row.End.DayOfWeek == shift.End.DayOfWeek && 
 												 (shift.Start.TimeOfDay >= row.Start.TimeOfDay && shift.End.TimeOfDay <= row.End.TimeOfDay) : 
 												 // if not
 												 (shift.Start >= row.Start && shift.End <= row.End)

@@ -6,8 +6,7 @@
 }
 
 <h1>Generated</h1>
-
-<form>
+<form asp-action="Generated">
 	@foreach (int shiftID in Model.Keys)
 	{
 		Shift shift = _context.Shift.ToList().Find(x => x.ShiftID == shiftID);
@@ -20,7 +19,7 @@
 					<div class="form-group">
 						@foreach (EmployeeModel employee in Model[shiftID][functionID])
 						{
-							<input type="checkbox" checked="checked" value="@($"{shiftID}, {functionID}, {employee.ID}")" /> @(employee.Name + ' ' + employee.LastName) <br />
+							<input type="checkbox" name="selected" checked="checked" value="@($"{shiftID}, {functionID}, {employee.ID}")" /> @(employee.Name + ' ' + employee.LastName) <br />
 						}
 					</div>
 				</div>

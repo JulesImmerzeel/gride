@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Gride.Data;
+using Gride.Gen;
+using Gride.Models;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Gride.Data;
-using Gride.Models;
-using Gride.Gen;
-using System.Globalization;
+
 using Newtonsoft.Json;
+
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Gride.Controllers
 {
@@ -693,22 +696,45 @@ namespace Gride.Controllers
 			{
 				throw new NotImplementedException("generator error handling not implemented yet");
 			}
-			// TODO: Post not get
-			return RedirectToAction(nameof(Generated), "Shifts", JsonConvert.SerializeObject(results));
+
+			// please someone find something better than this abomination
+			Dictionary<int, Dictionary<int, List<int>>> IDres = new Dictionary<int, Dictionary<int, List<int>>>();
+			Parallel.ForEach(results.Keys, new ParallelOptions { MaxDegreeOfParallelism = 10 }, sID =>
+			{
+				Dictionary<int, List<int>> ShiftList = new Dictionary<int, List<int>>();
+				foreach (int fID in results[sID].Keys)
+					ShiftList.Add(fID, (from emp in results[sID][fID]
+										select emp.ID).ToList());
+				lock (IDres)
+					IDres.Add(sID, ShiftList);
+			});
+			// I love it when things that are basically the same don't automatically convert
+			HttpContext.Session.Set("genRes", (from c in JsonConvert.SerializeObject(IDres).ToArray() select (byte)c).ToArray());
+			return RedirectToAction(nameof(Generated));
 		}
 
-		public async Task<IActionResult> Generated(string result = "")
+		public async Task<IActionResult> Generated()
 		{
-			// this is going to look so good in the url
-			Dictionary<int, Dictionary<int, List<EmployeeModel>>> actResult = JsonConvert.DeserializeObject<Dictionary<int, Dictionary<int, List<EmployeeModel>>>>(result) ?? new Dictionary<int, Dictionary<int, List<EmployeeModel>>>();
+			HttpContext.Session.TryGetValue("genRes", out byte[] bytes);
+			Dictionary<int, Dictionary<int, List<int>>> IDResult = JsonConvert.DeserializeObject<Dictionary<int, Dictionary<int, List<int>>>>(new string((from b in bytes select (char)b).ToArray())) ?? new Dictionary<int, Dictionary<int, List<int>>>();
+			Dictionary<int, Dictionary<int, List<EmployeeModel>>> actResult = new Dictionary<int, Dictionary<int, List<EmployeeModel>>>();
+			Parallel.ForEach(IDResult.Keys, new ParallelOptions { MaxDegreeOfParallelism = 10 }, sID =>
+			{
+				Dictionary<int, List<EmployeeModel>> ShiftList = new Dictionary<int, List<EmployeeModel>>();
+				foreach (int fID in IDResult[sID].Keys)
+					ShiftList.Add(fID, (from emp in IDResult[sID][fID]
+										select _context.EmployeeModel.First(x => x.ID == emp)).ToList());
+				lock (actResult)
+					actResult.Add(sID, ShiftList);
+			});
 			return View(actResult);
 		}
 
-		[HttpPost, ActionName("Generated")]
+		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> GeneratedConfirmed(string[] selected)
+		public async Task<IActionResult> Generated(string[] selected)
 		{
-			Parallel.ForEach(selected, new ParallelOptions { MaxDegreeOfParallelism = 10}, async s =>
+			foreach( string s in selected)
 			{
 				int[] IDs = (from id in s.Split(',')
 							 select int.Parse(id.Trim())).ToArray();
@@ -720,8 +746,9 @@ namespace Gride.Controllers
 					FunctionID = IDs[1],
 					Employee = _context.EmployeeModel.Single(x => x.ID == IDs[2]),
 				});
-			});
+			}
 			await _context.SaveChangesAsync();
+			HttpContext.Session.Remove("genRes");
 			return RedirectToAction(nameof(Index));
 		}
 
