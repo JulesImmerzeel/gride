@@ -12,90 +12,90 @@
     }
 </style>
 <div>
-    <h4>Employee</h4>
-    <hr />
     <div class="row">
         <div class="col-sm-6">
+            <h4>Employee</h4>
+            <hr />
             <dl class="row">
-                <dt class="col-sm-2">
+                <dt class="col-sm-6">
                     @Html.DisplayNameFor(model => model.Name)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-6">
                     @Html.DisplayFor(model => model.Name)
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-6">
                     @Html.DisplayNameFor(model => model.LastName)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-6">
                     @Html.DisplayFor(model => model.LastName)
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-6">
                     @Html.DisplayNameFor(model => model.DoB)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-6">
                     @Html.DisplayFor(model => model.DoB)
                 </dd>
                 <dt class="col-sm-2">
                     @Html.DisplayNameFor(model => model.Gender)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-6">
                     @Html.DisplayFor(model => model.Gender)
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-6">
                     @Html.DisplayNameFor(model => model.EMail)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-6">
                     @Html.DisplayFor(model => model.EMail)
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-6">
                     @Html.DisplayNameFor(model => model.PhoneNumber)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-6">
                     @Html.DisplayFor(model => model.PhoneNumber)
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-6">
                     @Html.DisplayNameFor(model => model.Admin)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-6">
                     @Html.DisplayFor(model => model.Admin)
                 </dd>
                 <dt class="col-sm-2">
                     @Html.DisplayNameFor(model => model.Experience)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-6">
                     @Html.DisplayFor(model => model.Experience)
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-6">
                     Skills
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-6">
                     @foreach (var skill in Model.EmployeeSkills)
                     {
                         <p>@skill.Skill.Name</p>
                     }
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-6">
                     Locations
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-6">
                     @foreach (var location in Model.EmployeeLocations)
                     {
                         <p>@location.Location.Name</p>
                     }
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-6">
                     Functions
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-6">
                     @foreach (var function in Model.EmployeeFunctions)
                     {
                         <p>@function.Function.Name</p>
                     }
                 </dd>
-                <dt class="col-sm-2">
+                <dt class="col-sm-6">
                     @Html.DisplayNameFor(model => model.ProfileImage)
                 </dt>
-                <dd class="col-sm-10">
+                <dd class="col-sm-6">
                     <div class="row">
                         <div class="col-4">
                             @if (!String.IsNullOrEmpty(Model.ProfileImage))
@@ -107,10 +107,10 @@
                 </dd>
                 @if (ViewBag.Supervisor != null)
                 {
-                    <dt class="col-sm-2">
+                    <dt class="col-sm-6">
                         Supervisor
                     </dt>
-                    <dd class="col-sm-10">
+                    <dd class="col-sm-6">
                         @{
                             EmployeeModel s = ViewBag.Supervisor;
                             string name = s.Name + " " + s.LastName;
