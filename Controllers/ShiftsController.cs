@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Gride.Controllers
@@ -709,14 +710,14 @@ namespace Gride.Controllers
 					IDres.Add(sID, ShiftList);
 			});
 			// I love it when things that are basically the same don't automatically convert
-			HttpContext.Session.Set("genRes", (from c in JsonConvert.SerializeObject(IDres).ToArray() select (byte)c).ToArray());
+			HttpContext.Session.Set("genRes", Encoding.Default.GetBytes(JsonConvert.SerializeObject(IDres)));
 			return RedirectToAction(nameof(Generated));
 		}
 
 		public async Task<IActionResult> Generated()
 		{
 			HttpContext.Session.TryGetValue("genRes", out byte[] bytes);
-			Dictionary<int, Dictionary<int, List<int>>> IDResult = JsonConvert.DeserializeObject<Dictionary<int, Dictionary<int, List<int>>>>(new string((from b in bytes select (char)b).ToArray())) ?? new Dictionary<int, Dictionary<int, List<int>>>();
+			Dictionary<int, Dictionary<int, List<int>>> IDResult = JsonConvert.DeserializeObject<Dictionary<int, Dictionary<int, List<int>>>>(Encoding.Default.GetString(bytes)) ?? new Dictionary<int, Dictionary<int, List<int>>>();
 			Dictionary<int, Dictionary<int, List<EmployeeModel>>> actResult = new Dictionary<int, Dictionary<int, List<EmployeeModel>>>();
 			Parallel.ForEach(IDResult.Keys, new ParallelOptions { MaxDegreeOfParallelism = 10 }, sID =>
 			{
