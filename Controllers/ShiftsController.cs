@@ -287,14 +287,15 @@ namespace Gride.Controllers
 					delay = _context.Works.FirstOrDefault(f => (f.EmployeeID == employee.ID) && (f.ShiftID == shift.ShiftID)).Delay;
 					overtime = _context.Works.FirstOrDefault(f => (f.EmployeeID == employee.ID) && (f.ShiftID == shift.ShiftID)).Overtime;
 				}
-				viewModel.Add(new WorkData
-				{
-					EmployeeID = employee.ID,
-					Name = employee.Name + " " + employee.LastName,
-					Assigned = shiftEmployees.Contains(employee.ID),
-					Delay = delay,
-					Overtime = overtime
-				});
+				if (shiftEmployees.Contains(employee.ID))
+					viewModel.Add(new WorkData
+					{
+						EmployeeID = employee.ID,
+						Name = employee.Name + " " + employee.LastName,
+						Assigned = true,
+						Delay = delay,
+						Overtime = overtime
+					});
 			}
 			ViewData["Employees"] = viewModel;
 		}
@@ -345,7 +346,6 @@ namespace Gride.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(int? id, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax, string[] selectedEmployees)
-
 		{
 			if (id == null)
 			{
@@ -655,7 +655,9 @@ namespace Gride.Controllers
 				throw new ArgumentException();
 
 			// fixes some C# floating point parsing bullshit
-			float actAvgExp = float.Parse(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator == "," ? avgExp.Replace('.', ','): avgExp.Replace(',','.'));
+			float actAvgExp;
+			if(!float.TryParse(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator == "," ? avgExp.Replace('.', ','): avgExp.Replace(',','.'),out actAvgExp))
+				actAvgExp = 2;
 			
 			// sets the settings ready for use
 			GeneratorSettings genSettings = 0;
@@ -751,6 +753,40 @@ namespace Gride.Controllers
 			await _context.SaveChangesAsync();
 			HttpContext.Session.Remove("genRes");
 			return RedirectToAction(nameof(Index));
+		}
+
+		public async Task<IActionResult> AssignEmployee(int? id)
+		{
+			if (!id.HasValue)
+				return NotFound();
+			return View(id.Value);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> AssignEmployee(int? id, int? EmployeeID, int? FunctionID)
+		{
+			if (!id.HasValue)
+				return NotFound();
+			if (!EmployeeID.HasValue)
+				return NotFound(EmployeeID);
+			if (!FunctionID.HasValue)
+				return NotFound(FunctionID);
+			if (_context.Works.ToList().Exists(x => x.FunctionID == FunctionID && x.EmployeeID == EmployeeID))
+				return BadRequest("User is already assigned to this function with this shift");
+
+
+			_context.Works.Add(new Work
+			{
+				Employee = await _context.EmployeeModel.FirstAsync(x => x.ID == EmployeeID),
+				EmployeeID = EmployeeID.Value,
+				Shift = await _context.Shift.FirstAsync(x => x.ShiftID == id),
+				ShiftID = id.Value,
+				Function = await _context.Function.FirstAsync(x => x.FunctionID == FunctionID),
+				FunctionID = FunctionID.Value,
+			});
+			await _context.SaveChangesAsync();
+			return RedirectToAction(nameof(Details), new{id});
 		}
 
         [HttpPost]

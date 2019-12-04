@@ -70,9 +70,9 @@ namespace Gride.Gen
 
 				available = available.Distinct(new EmployeeComparer()).ToList();
 				List<EmployeeModel> function = (from employee in available
-											   join ef in _context.EmployeeFunctions on employee.ID equals ef.EmployeeID
-											   where ef.FunctionID == func.FunctionID
-											   select employee).ToList();
+												join ef in _context.EmployeeFunctions on employee.ID equals ef.EmployeeID
+												where ef.FunctionID == func.FunctionID
+												select employee).ToList();
 
 				//Iedereen die kan werken, juiste functie heeft en locatie.
 				List<EmployeeModel> location = (from employee in function
