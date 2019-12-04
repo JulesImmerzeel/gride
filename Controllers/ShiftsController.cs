@@ -16,24 +16,40 @@ namespace Gride.Views.Shift
     public class ShiftsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly SignInManager<IdentityUser> signInManager;
+        private readonly UserManager<IdentityUser> userManager;
 
-        public ShiftsController(ApplicationDbContext context)
+        public ShiftsController(ApplicationDbContext context,
+                                SignInManager<IdentityUser> signInManager,
+                                UserManager<IdentityUser> userManager)
         {
+            this.signInManager = signInManager;
+            this.userManager = userManager;
             _context = context;
         }
 
         // GET: Shifts
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Shift.OrderBy(s => s.Start).ToListAsync());
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                return View(await _context.Shift.OrderBy(s => s.Start).ToListAsync());
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         // GET: Shifts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
             {
                 return NotFound();
+
             }
 
             var shift = await _context.Shift
@@ -48,18 +64,30 @@ namespace Gride.Views.Shift
             }
 
             return View(shift);
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         // GET: Shifts/Create
         public IActionResult Create()
         {
-            var shift = new Models.Shift();
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                var shift = new Models.Shift();
             shift.ShiftSkills = new List<ShiftSkills>();
             shift.ShiftFunctions = new List<ShiftFunction>();
             PopulateAssignedFunction(shift);
             PopulateAssignedSkills(shift);
             PopulateLocationsDropDownList();
             return View();
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         private void PopulateSkills()
@@ -97,6 +125,7 @@ namespace Gride.Views.Shift
 
         private void PopulateLocationsDropDownList(object selectedLocation = null)
         {
+
             var locationQuery = from l in _context.Locations
                                 orderby l.Name
                                 select l;
@@ -110,7 +139,9 @@ namespace Gride.Views.Shift
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Start,End,LocationID,Location")] Models.Shift shift, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax)
         {
-            if (selectedSkills != null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (selectedSkills != null)
             {
                 shift.ShiftSkills = new List<ShiftSkills>();
                 foreach (var skill in selectedSkills)
@@ -145,13 +176,20 @@ namespace Gride.Views.Shift
             }
             PopulateLocationsDropDownList(shift);
             return View(shift);
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
 
         // GET: Shifts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
             {
                 return NotFound();
             }
@@ -172,6 +210,11 @@ namespace Gride.Views.Shift
             PopulateAssignedFunction(shift);
             PopulateAssignedEmployees(shift);
             return View(shift);
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         private void PopulateAssignedEmployees(Models.Shift shift)
@@ -247,7 +290,9 @@ namespace Gride.Views.Shift
         public async Task<IActionResult> Edit(int? id, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax, string[] selectedEmployees)
         
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
             {
                 return NotFound();
             }
@@ -290,6 +335,11 @@ namespace Gride.Views.Shift
             PopulateAssignedFunction(shiftToUpdate);
             PopulateAssignedEmployees(shiftToUpdate);
             return View(shiftToUpdate);
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         private void UpdateShiftEmployees(string[] selectedEmployees, Models.Shift shiftToUpdate)
@@ -469,8 +519,11 @@ namespace Gride.Views.Shift
 
         // GET: Shifts/Delete/5
         public async Task<IActionResult> Delete(int? id)
+
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
             {
                 return NotFound();
             }
@@ -483,6 +536,11 @@ namespace Gride.Views.Shift
             }
 
             return View(shift);
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         // POST: Shifts/Delete/5
@@ -490,10 +548,17 @@ namespace Gride.Views.Shift
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var shift = await _context.Shift.FindAsync(id);
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                var shift = await _context.Shift.FindAsync(id);
             _context.Shift.Remove(shift);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         private bool ShiftExists(int id)
