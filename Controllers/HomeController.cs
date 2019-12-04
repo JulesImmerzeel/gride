@@ -61,6 +61,7 @@ namespace Gride.Controllers
                     allShifts.Add(w.Shift);
                 }
 
+
                 if (id == null)
                 {
                     id = schedule._weekNumber;
