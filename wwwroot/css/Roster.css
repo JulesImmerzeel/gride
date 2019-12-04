@@ -1,4 +1,4 @@
-﻿table {
+﻿.roster {
     width: 100%;
     background-color: #ffffff;
     border-collapse: collapse;
@@ -8,41 +8,41 @@
     color: #000000;
 }
 
-td, th {
+.roster td,  .roster th {
     border-width: 2px;
     border-color: lightgray;
     border-style: solid;
     padding: 3px;
 }
 
-thead {
+.roster thead{
     background-color: lightgray;
     text-align: center;
 }
 
-col {
+.roster col {
     width: 14.29%;
 }
 
-td {
+.roster td {
     height: 75px;
     padding-top: 0px;
     padding-bottom: 0px;
     vertical-align: top;
 }
 
-table tbody, table thead {
+.roster tbody,.roster thead {
     display: block;
 }
-table tbody {
+.roster tbody {
     overflow: auto;
     height: 500px;
 }
 
-th {
+.roster th {
     width: 155px;
 }
 
-td {
+.roster td {
     width: 155px;
 }

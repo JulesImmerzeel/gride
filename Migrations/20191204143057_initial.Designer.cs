@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gride.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191124191836_ShiftWeeklyBool")]
-    partial class ShiftWeeklyBool
+    [Migration("20191204143057_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
