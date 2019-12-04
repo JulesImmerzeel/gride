@@ -26,48 +26,40 @@ namespace Gride.Controllers
 
         public IActionResult Index(int? id)
         {
-            List<Shift> allShifts = _context.Shift.ToList();
-
-            if (id == null)
+            if (User.Identity.IsAuthenticated)
             {
-                id = schedule._weekNumber;
-            }
+                EmployeeModel employee = _context.EmployeeModel.Where(e => e.EMail == User.Identity.Name).Single();
+                List<Shift> allShifts = new List<Shift>();
 
-            EmployeeModel employee = _context.EmployeeModel
-                .Single(e => e.EMail == User.Identity.Name);
+                ICollection<Work> works = _context.Works
+                   .Where(e => e.Employee == employee)
+                   .Include(e => e.Employee)
+                   .Include(e => e.Shift)
+                   .AsNoTracking()
+                   .ToList();
 
-            List<Work> works = _context.Works.Where(e => e.Employee == employee).Include(m => m.Employee).Include(s => s.Shift).ToList();
-            var workOverviewlist = new List<WorkOverview>();
-
-            for (int i = 1; i <= 12; i++)
-            {
-                var workOverview = new WorkOverview
-                {
-                    Month = i
-                };
-
+                List<Shift> shifts = new List<Shift>();
 
                 foreach (Work w in works)
                 {
-                    if(w.Shift.Start.Year == 2019 && w.Shift.Start.Month == i)
-                    {
-                        workOverview.AddHours((int)(w.Shift.End - w.Shift.Start).TotalHours);
-                        workOverview.SubtractHours(w.Delay);
-                        workOverview.AddHours(w.Overtime);
-                    }
+                    allShifts.Add(w.Shift);
                 }
 
-                workOverviewlist.Add(workOverview);
+                if (id == null)
+                {
+                    id = schedule._weekNumber;
+                }
+
+                schedule.currentWeek = (int)id;
+                schedule.setWeek((int)id);
+                schedule.makeSchedule();
+                schedule.setShifts(allShifts);
+
+                return View(schedule);
+            } else
+            {
+                return Redirect("/Identity/Account/Login");
             }
-
-            schedule.currentWeek = (int)id;
-            schedule.setWeek((int)id);
-            schedule.makeSchedule();
-            schedule.setShifts(allShifts);
-
-            ViewData["workOverview"] = workOverviewlist;
-
-            return View(schedule);
         }
        
         
