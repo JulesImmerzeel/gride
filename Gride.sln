@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29001.49
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gride", "Gride.csproj", "{4D42936B-5115-44BD-9DB9-812321D6C6FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestGride", "..\UnitTestGride\UnitTestGride.csproj", "{240F5C3C-3BF6-4DBA-A2FE-641E5CA26B06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestGride", "..\UnitTestGride\UnitTestGride.csproj", "{209CCBD3-6843-42B5-A782-36DCB5BECF6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{4D42936B-5115-44BD-9DB9-812321D6C6FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D42936B-5115-44BD-9DB9-812321D6C6FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D42936B-5115-44BD-9DB9-812321D6C6FC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{240F5C3C-3BF6-4DBA-A2FE-641E5CA26B06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{240F5C3C-3BF6-4DBA-A2FE-641E5CA26B06}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{240F5C3C-3BF6-4DBA-A2FE-641E5CA26B06}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{240F5C3C-3BF6-4DBA-A2FE-641E5CA26B06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{209CCBD3-6843-42B5-A782-36DCB5BECF6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{209CCBD3-6843-42B5-A782-36DCB5BECF6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{209CCBD3-6843-42B5-A782-36DCB5BECF6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{209CCBD3-6843-42B5-A782-36DCB5BECF6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

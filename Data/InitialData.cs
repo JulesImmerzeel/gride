@@ -179,6 +179,9 @@ namespace Gride.Data
         Random rnd = new Random();
         public int RandomID(int range)
         {
+            if (range <= 0)
+                return 1;
+
             int cnt = rnd.Next(range);
             foreach (int c in counts)
             {

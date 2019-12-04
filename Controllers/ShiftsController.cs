@@ -62,6 +62,8 @@ namespace Gride.Views.Shift
                 return NotFound();
             }
 
+            ViewData["Shiftlength"] = (int)(shift.End - shift.Start).TotalHours;
+
             return View(shift);
         }
 
