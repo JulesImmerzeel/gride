@@ -67,6 +67,7 @@ namespace Gride.Controllers
                     id = schedule._weekNumber;
                 }
 
+
                 schedule.currentWeek = (int)id;
                 schedule.setWeek((int)id);
                 schedule.makeSchedule();

@@ -74,6 +74,7 @@ namespace Gride.Migrations
                     Gender = table.Column<int>(nullable: false),
                     EMail = table.Column<string>(maxLength: 100, nullable: false),
                     PhoneNumber = table.Column<string>(maxLength: 12, nullable: false),
+                    SupervisorID = table.Column<int>(nullable: true),
                     Admin = table.Column<bool>(nullable: false),
                     Experience = table.Column<float>(nullable: false),
                     ProfileImage = table.Column<string>(nullable: true)
@@ -282,7 +283,7 @@ namespace Gride.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EmployeeFunction",
+                name: "EmployeeFunctions",
                 columns: table => new
                 {
                     EmployeeFunctionID = table.Column<int>(nullable: false)
@@ -292,15 +293,15 @@ namespace Gride.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeeFunction", x => x.EmployeeFunctionID);
+                    table.PrimaryKey("PK_EmployeeFunctions", x => x.EmployeeFunctionID);
                     table.ForeignKey(
-                        name: "FK_EmployeeFunction_EmployeeModel_EmployeeID",
+                        name: "FK_EmployeeFunctions_EmployeeModel_EmployeeID",
                         column: x => x.EmployeeID,
                         principalTable: "EmployeeModel",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EmployeeFunction_Function_FunctionID",
+                        name: "FK_EmployeeFunctions_Function_FunctionID",
                         column: x => x.FunctionID,
                         principalTable: "Function",
                         principalColumn: "FunctionID",
@@ -341,7 +342,10 @@ namespace Gride.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Start = table.Column<DateTime>(nullable: false),
                     End = table.Column<DateTime>(nullable: false),
-                    LocationID = table.Column<int>(nullable: false)
+                    Weekly = table.Column<bool>(nullable: false),
+                    LocationID = table.Column<int>(nullable: false),
+                    ParentShiftID = table.Column<int>(nullable: true),
+                    ShiftID1 = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -352,10 +356,16 @@ namespace Gride.Migrations
                         principalTable: "Locations",
                         principalColumn: "LocationID",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Shift_Shift_ShiftID1",
+                        column: x => x.ShiftID1,
+                        principalTable: "Shift",
+                        principalColumn: "ShiftID",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "EmployeeSkill",
+                name: "EmployeeSkills",
                 columns: table => new
                 {
                     EmployeeSkillID = table.Column<int>(nullable: false)
@@ -365,15 +375,15 @@ namespace Gride.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeeSkill", x => x.EmployeeSkillID);
+                    table.PrimaryKey("PK_EmployeeSkills", x => x.EmployeeSkillID);
                     table.ForeignKey(
-                        name: "FK_EmployeeSkill_EmployeeModel_EmployeeModelID",
+                        name: "FK_EmployeeSkills_EmployeeModel_EmployeeModelID",
                         column: x => x.EmployeeModelID,
                         principalTable: "EmployeeModel",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EmployeeSkill_Skill_SkillID",
+                        name: "FK_EmployeeSkills_Skill_SkillID",
                         column: x => x.SkillID,
                         principalTable: "Skill",
                         principalColumn: "SkillID",
@@ -549,13 +559,13 @@ namespace Gride.Migrations
                 column: "EmployeeID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeeFunction_EmployeeID",
-                table: "EmployeeFunction",
+                name: "IX_EmployeeFunctions_EmployeeID",
+                table: "EmployeeFunctions",
                 column: "EmployeeID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeeFunction_FunctionID",
-                table: "EmployeeFunction",
+                name: "IX_EmployeeFunctions_FunctionID",
+                table: "EmployeeFunctions",
                 column: "FunctionID");
 
             migrationBuilder.CreateIndex(
@@ -569,13 +579,13 @@ namespace Gride.Migrations
                 column: "LocationID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeeSkill_EmployeeModelID",
-                table: "EmployeeSkill",
+                name: "IX_EmployeeSkills_EmployeeModelID",
+                table: "EmployeeSkills",
                 column: "EmployeeModelID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeeSkill_SkillID",
-                table: "EmployeeSkill",
+                name: "IX_EmployeeSkills_SkillID",
+                table: "EmployeeSkills",
                 column: "SkillID");
 
             migrationBuilder.CreateIndex(
@@ -587,6 +597,11 @@ namespace Gride.Migrations
                 name: "IX_Shift_LocationID",
                 table: "Shift",
                 column: "LocationID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Shift_ShiftID1",
+                table: "Shift",
+                column: "ShiftID1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ShiftFunctions_FunctionID",
@@ -643,13 +658,13 @@ namespace Gride.Migrations
                 name: "EmployeeAvailabilities");
 
             migrationBuilder.DropTable(
-                name: "EmployeeFunction");
+                name: "EmployeeFunctions");
 
             migrationBuilder.DropTable(
                 name: "EmployeeLocations");
 
             migrationBuilder.DropTable(
-                name: "EmployeeSkill");
+                name: "EmployeeSkills");
 
             migrationBuilder.DropTable(
                 name: "ShiftFunctions");
