@@ -330,6 +330,8 @@ namespace Gride.Migrations
 
                     b.Property<int>("EmployeeID");
 
+                    b.Property<int>("FunctionID");
+
                     b.Property<int>("Overtime");
 
                     b.Property<int>("ShiftID");
@@ -337,6 +339,8 @@ namespace Gride.Migrations
                     b.HasKey("WorkID");
 
                     b.HasIndex("EmployeeID");
+
+                    b.HasIndex("FunctionID");
 
                     b.HasIndex("ShiftID");
 
@@ -621,6 +625,11 @@ namespace Gride.Migrations
                     b.HasOne("Gride.Models.EmployeeModel", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Gride.Models.Function", "Function")
+                        .WithMany()
+                        .HasForeignKey("FunctionID")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Gride.Models.Shift", "Shift")

@@ -1,15 +1,21 @@
 ﻿@{
+    @using Gride.Models
     @using Microsoft.AspNetCore.Identity
+    @using System.Linq
+    @inject ApplicationDbContext _context
     @inject SignInManager<IdentityUser> SignInManager
     @inject UserManager<IdentityUser> UserManager
     ViewData["Title"] = "Home Page";
     @if (SignInManager.IsSignedIn(User))
     {
-        <div class="text-center">
-            <h1 class="display-4">Welcome @User.Identity.Name!</h1>
-            <p><a asp-area="" asp-controller="Gride" asp-action="Index">Click here</a> to view your personal information.</p>
-        </div>
 
+        List<String> goood = (from users in _context.EmployeeModel
+                        where users.EMail == User.Identity.Name
+                        select users.Name).ToList();
+                <div class="text-center">
+                    <h1 class="display-4">Welcome @goood[0]!</h1>
+                    <p><a asp-area="" asp-controller="Gride" asp-action="Index">Click here</a> to view your personal information.</p>
+                </div>
 
 
         <partial name="/Views/Shared/_Schedule.cshtml" />
@@ -20,13 +26,12 @@
     }
 
 
-
-    else
-    {
-        <div class="text-center">
-            <h1 class="display-4">Welcome!</h1>
-            <p>Please login to view your personal information.</p>
-        </div>
-    }
+            else
+            {
+                <div class="text-center">
+                    <h1 class="display-4">Welcome!</h1>
+                    <p>Please login to view your personal information.</p>
+                </div>
+            }
 }
 

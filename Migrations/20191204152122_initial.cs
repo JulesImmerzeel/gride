@@ -479,6 +479,7 @@ namespace Gride.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     EmployeeID = table.Column<int>(nullable: false),
                     ShiftID = table.Column<int>(nullable: false),
+                    FunctionID = table.Column<int>(nullable: false),
                     Overtime = table.Column<int>(nullable: false),
                     Delay = table.Column<int>(nullable: false)
                 },
@@ -490,6 +491,12 @@ namespace Gride.Migrations
                         column: x => x.EmployeeID,
                         principalTable: "EmployeeModel",
                         principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Works_Function_FunctionID",
+                        column: x => x.FunctionID,
+                        principalTable: "Function",
+                        principalColumn: "FunctionID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Works_Shift_ShiftID",
@@ -629,6 +636,11 @@ namespace Gride.Migrations
                 column: "EmployeeID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Works_FunctionID",
+                table: "Works",
+                column: "FunctionID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Works_ShiftID",
                 table: "Works",
                 column: "ShiftID");
@@ -688,10 +700,10 @@ namespace Gride.Migrations
                 name: "Availabilities");
 
             migrationBuilder.DropTable(
-                name: "Function");
+                name: "Skill");
 
             migrationBuilder.DropTable(
-                name: "Skill");
+                name: "Function");
 
             migrationBuilder.DropTable(
                 name: "Shift");

@@ -18,6 +18,7 @@ namespace Gride.Controllers
         public int x = 0;
         public Schedule schedule = new Schedule();
 
+
         public HomeController(ApplicationDbContext context)
         {
             _context = context;

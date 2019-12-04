@@ -26,12 +26,12 @@ namespace Gride.Models
 
             Shift shift = (Shift)validationContext.ObjectInstance;
 
-            foreach (ShiftFunction function in functions)
+            foreach (ShiftFunction function in functions ?? new List<ShiftFunction>())
             {
                 maxEmployees += function.MaxEmployees;
             }
             works = shift.Works;
-            if (works.Count > maxEmployees)
+            if ((works?.Count ?? 0) > maxEmployees)
             {
                 return new ValidationResult(GetErrorMessage());
             }
