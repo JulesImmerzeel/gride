@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Gride.Data;
 using Gride.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace Gride.Views.Shift
 {

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Gride.Data;
 using Gride.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace Gride.Controllers
 {
@@ -15,40 +16,68 @@ namespace Gride.Controllers
     public class SkillsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly SignInManager<IdentityUser> signInManager;
+        private readonly UserManager<IdentityUser> userManager;
 
-        public SkillsController(ApplicationDbContext context)
+        public SkillsController(ApplicationDbContext context,
+                                SignInManager<IdentityUser> signInManager,
+                                UserManager<IdentityUser> userManager)
         {
+            this.userManager = userManager;
             _context = context;
+            this.signInManager = signInManager;
         }
 
         // GET: SkillModels
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Skill.ToListAsync());
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                return View(await _context.Skill.ToListAsync());
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         // GET: SkillModels/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-            var skillModel = await _context.Skill
-                .FirstOrDefaultAsync(m => m.SkillID == id);
-            if (skillModel == null)
+                var skillModel = await _context.Skill
+                    .FirstOrDefaultAsync(m => m.SkillID == id);
+                if (skillModel == null)
+                {
+                    return NotFound();
+                }
+
+                return View(skillModel);
+            }
+            else
             {
-                return NotFound();
+                return Forbid();
             }
-
-            return View(skillModel);
         }
 
         // GET: SkillModels/Create
         public IActionResult Create()
         {
-            return View();
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                return View();
+
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         // POST: SkillModels/Create
@@ -58,29 +87,43 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("SkillID,Name,EmployeeModelID")] Skill skillModel)
         {
-            if (ModelState.IsValid)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
-                _context.Add(skillModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(skillModel);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(skillModel);
             }
-            return View(skillModel);
+            else
+            {
+                return Forbid();
+            }
         }
 
         // GET: SkillModels/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-            var skillModel = await _context.Skill.FindAsync(id);
-            if (skillModel == null)
-            {
-                return NotFound();
+                var skillModel = await _context.Skill.FindAsync(id);
+                if (skillModel == null)
+                {
+                    return NotFound();
+                }
+                return View(skillModel);
             }
-            return View(skillModel);
+            else
+            {
+                return Forbid();
+            }
         }
 
         // POST: SkillModels/Edit/5
@@ -90,50 +133,64 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("SkillID,Name")] Skill skillModel)
         {
-            if (id != skillModel.SkillID)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
-                return NotFound();
-            }
+                if (id != skillModel.SkillID)
+                {
+                    return NotFound();
+                }
 
-            if (ModelState.IsValid)
-            {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(skillModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SkillExists(skillModel.SkillID))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(skillModel);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!SkillExists(skillModel.SkillID))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                return View(skillModel);
             }
-            return View(skillModel);
+            else
+            {
+                return Forbid();
+            }
         }
 
         // GET: SkillModels/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-            var skillModel = await _context.Skill
-                .FirstOrDefaultAsync(m => m.SkillID == id);
-            if (skillModel == null)
+                var skillModel = await _context.Skill
+                    .FirstOrDefaultAsync(m => m.SkillID == id);
+                if (skillModel == null)
+                {
+                    return NotFound();
+                }
+
+                return View(skillModel);
+            }
+            else
             {
-                return NotFound();
+                return Forbid();
             }
-
-            return View(skillModel);
         }
 
         // POST: SkillModels/Delete/5
@@ -141,10 +198,17 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var skillModel = await _context.Skill.FindAsync(id);
-            _context.Skill.Remove(skillModel);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                var skillModel = await _context.Skill.FindAsync(id);
+                _context.Skill.Remove(skillModel);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         private bool SkillExists(int id)
