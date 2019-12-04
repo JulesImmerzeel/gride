@@ -4,44 +4,70 @@ using System.Linq;
 using System.Threading.Tasks;
 using Gride.Data;
 using Gride.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Gride.Controllers
 {
+    [Authorize]
     public class LocationController : Controller
     {
 
         private readonly ApplicationDbContext _context;
+        private readonly SignInManager<IdentityUser> signInManager;
+        private readonly UserManager<IdentityUser> userManager;
 
-        public LocationController(ApplicationDbContext context)
+        public LocationController(ApplicationDbContext context, 
+                                  SignInManager<IdentityUser> signInManager,
+                                  UserManager<IdentityUser> userManager)
         {
             _context = context;
+            this.signInManager = signInManager;
+            this.userManager = userManager;
         }
 
         // GET: Location
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Locations.ToListAsync());
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                return View(await _context.Locations.ToListAsync());
+            }
+
+            else
+            {
+                return Forbid();
+            }
         }
 
         // GET: Location/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
-                return NotFound();
-            }
 
-            var function = await _context.Locations
-                .FirstOrDefaultAsync(m => m.LocationID == id);
-            if (function == null)
+
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var function = await _context.Locations
+                    .FirstOrDefaultAsync(m => m.LocationID == id);
+                if (function == null)
+                {
+                    return NotFound();
+                }
+
+                return View(function);
+            }
+            else
             {
-                return NotFound();
+                return Forbid();
             }
-
-            return View(function);
         }
 
         // GET: Location/Create
@@ -57,19 +83,28 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("LocationID,Name,Street, StreetNumber, Additions, Postalcode, City, Country")] Location location)
         {
-            if (ModelState.IsValid)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
-                _context.Add(location);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(location);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(location);
             }
-            return View(location);
+            else
+            {
+                return Forbid();
+            }
         }
 
         // GET: Location/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
             {
                 return NotFound();
             }
@@ -80,6 +115,11 @@ namespace Gride.Controllers
                 return NotFound();
             }
             return View(location);
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         // POST: Location/Edit/5
@@ -89,7 +129,9 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind( "LocationID,Name,Street, StreetNumber, Additions, Postalcode, City, Country")] Location location)
         {
-            if (id != location.LocationID)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id != location.LocationID)
             {
                 return NotFound();
             }
@@ -115,12 +157,20 @@ namespace Gride.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(location);
+
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         // GET: Location/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
             {
                 return NotFound();
             }
@@ -133,6 +183,11 @@ namespace Gride.Controllers
             }
 
             return View(function);
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         // POST: Location/Delete/5
@@ -140,10 +195,17 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var location = await _context.Locations.FindAsync(id);
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                var location = await _context.Locations.FindAsync(id);
             _context.Locations.Remove(location);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         private bool LocationExists(int id)

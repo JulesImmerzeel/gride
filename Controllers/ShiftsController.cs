@@ -5,6 +5,8 @@ using Gride.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 using Newtonsoft.Json;
 
@@ -17,53 +19,104 @@ using System.Threading.Tasks;
 
 namespace Gride.Controllers
 {
+    [Authorize]
 	public class ShiftsController : Controller
 	{
-		private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
+        public Schedule schedule = new Schedule();
+        private readonly SignInManager<IdentityUser> signInManager;
+        private readonly UserManager<IdentityUser> userManager;
 
-		public ShiftsController(ApplicationDbContext context)
-		{
-			_context = context;
-		}
+		public ShiftsController(ApplicationDbContext context,
+                                SignInManager<IdentityUser> signInManager,
+                                UserManager<IdentityUser> userManager)
+        {
+            this.signInManager = signInManager;
+            this.userManager = userManager;
+            _context = context;
+        }
 
 		// GET: Shifts
-		public async Task<IActionResult> Index()
-		{
-			return View(await _context.Shift.OrderBy(s => s.Start).ToListAsync());
-		}
+        public async Task<IActionResult> Index(int? id)
+        {
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+               
+               EmployeeModel employee = _context.EmployeeModel
+                    .Single(e => e.EMail == User.Identity.Name);
+
+                List<Models.Shift> allShifts = _context.Shift.ToList();
+
+            
+                if (id == null)
+                {
+                    id = schedule._weekNumber;
+                }
+
+                schedule.currentWeek = (int)id;
+                schedule.setWeek((int)id);
+                schedule.makeSchedule();
+                schedule.setShifts(allShifts);
+
+
+                return View(schedule);
+            }
+             else
+            {
+                return Forbid();
+            }
+            
+        }
 
 		// GET: Shifts/Details/5
 		public async Task<IActionResult> Details(int? id)
 		{
-			if (id == null)
-			{
-				return NotFound();
-			}
+			if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
+                {
+                    return NotFound();
 
-			var shift = await _context.Shift
-                .Include(s => s.ShiftFunctions).ThenInclude(s => s.Function)
-                .Include(s => s.ShiftSkills).ThenInclude(s => s.Skill)
-                .Include(s => s.Works).ThenInclude(s => s.Employee)
-                .Include(s => s.Location)
-                .FirstOrDefaultAsync(m => m.ShiftID == id);
-			if (shift == null)
-			{
-				return NotFound();
-			}
+                }
 
-			return View(shift);
+                var shift = await _context.Shift
+                    .Include(s => s.ShiftFunctions).ThenInclude(s => s.Function)
+                    .Include(s => s.ShiftSkills).ThenInclude(s => s.Skill)
+                    .Include(s => s.Works).ThenInclude(s => s.Employee)
+                    .Include(s => s.Location)
+                    .FirstOrDefaultAsync(m => m.ShiftID == id);
+                if (shift == null)
+                {
+                    return NotFound();
+                }
+
+                ViewData["Shiftlength"] = (int)(shift.End - shift.Start).TotalHours;
+
+                return View(shift);
+            }
+            else
+            {
+                return Forbid();
+            }
 		}
 
 		// GET: Shifts/Create
 		public IActionResult Create()
 		{
-			var shift = new Shift();
-			shift.ShiftSkills = new List<ShiftSkills>();
-			shift.ShiftFunctions = new List<ShiftFunction>();
-			PopulateAssignedFunction(shift);
-			PopulateAssignedSkills(shift);
-			PopulateLocationsDropDownList();
-			return View();
+			if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                var shift = new Models.Shift();
+                shift.ShiftSkills = new List<ShiftSkills>();
+                shift.ShiftFunctions = new List<ShiftFunction>();
+                PopulateAssignedFunction(shift);
+                PopulateAssignedSkills(shift);
+                PopulateLocationsDropDownList();
+                return View();
+            }
+            else
+            {
+                return Forbid();
+            }
 		}
 
 		private void PopulateSkills()
@@ -147,6 +200,8 @@ namespace Gride.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create([Bind("Start,End,LocationID,Location")] Shift shift, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax)
 		{
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
 			if (selectedSkills != null)
 			{
 				shift.ShiftSkills = new List<ShiftSkills>();
@@ -219,10 +274,14 @@ namespace Gride.Controllers
                 }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-			}
-			PopulateLocationsDropDownList(shift);
-			return View(shift);
-		}
+            }
+            PopulateLocationsDropDownList(shift);
+            return View(shift);
+            }
+            else{
+                return Forbid();
+            }
+        }
 
         private ICollection<Shift> CreateChildren(Shift shift)
         {
@@ -251,27 +310,34 @@ namespace Gride.Controllers
 		// GET: Shifts/Edit/5
 		public async Task<IActionResult> Edit(int? id)
 		{
-			if (id == null)
-			{
-				return NotFound();
-			}
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-			var shift = await _context.Shift
-				.Include(s => s.ShiftFunctions).ThenInclude(s => s.Function)
-				.Include(s => s.ShiftSkills).ThenInclude(s => s.Skill)
-				.Include(s => s.Works).ThenInclude(s => s.Employee)
-				.Include(s => s.Location)
-				.AsNoTracking()
-				.FirstOrDefaultAsync(m => m.ShiftID == id);
-			if (shift == null)
-			{
-				return NotFound();
-			}
-			PopulateLocationsDropDownList(shift.LocationID);
-			PopulateAssignedSkills(shift);
-			PopulateAssignedFunction(shift);
-			PopulateAssignedEmployees(shift);
-			return View(shift);
+                var shift = await _context.Shift
+                    .Include(s => s.ShiftFunctions).ThenInclude(s => s.Function)
+                    .Include(s => s.ShiftSkills).ThenInclude(s => s.Skill)
+                    .Include(s => s.Works).ThenInclude(s => s.Employee)
+                    .Include(s => s.Location)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(m => m.ShiftID == id);
+                if (shift == null)
+                {
+                    return NotFound();
+                }
+                PopulateLocationsDropDownList(shift.LocationID);
+                PopulateAssignedSkills(shift);
+                PopulateAssignedFunction(shift);
+                PopulateAssignedEmployees(shift);
+                return View(shift);
+            }
+            else
+            {
+                return Forbid();
+            }
 		}
 
 		private void PopulateAssignedEmployees(Shift shift)
@@ -343,54 +409,62 @@ namespace Gride.Controllers
 		// POST: Shifts/Edit/5
 		// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
 		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int? id, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax, string[] selectedEmployees)
-		{
-			if (id == null)
-			{
-				return NotFound();
-			}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int? id, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax, string[] selectedEmployees)
 
-			var shiftToUpdate = await _context.Shift
-				.Include(s => s.ShiftSkills)
-					.ThenInclude(s => s.Skill)
-				.Include(s => s.ShiftFunctions)
-					.ThenInclude(s => s.Function)
-				.Include(s => s.Works)
-					.ThenInclude(s => s.Employee)
-				.Include(s => s.Location)
-				.FirstOrDefaultAsync(s => s.ShiftID == id);
+        {
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-			if (await TryUpdateModelAsync(shiftToUpdate, "",
-				s => s.Start, s => s.End, s => s.LocationID))
-			{
-				if (string.IsNullOrWhiteSpace(shiftToUpdate.Location.Name))
-				{
-					shiftToUpdate.Location = null;
-				}
-				UpdateShiftSkills(selectedSkills, shiftToUpdate);
-				UpdateShiftFunctions(selectedFunctions, selectedFunctionsMax, shiftToUpdate);
-				UpdateShiftEmployees(selectedEmployees, shiftToUpdate);
-				try
-				{
-					await _context.SaveChangesAsync();
-				}
-				catch (DbUpdateException /* ex */)
-				{
-					//Log the error (uncomment ex variable name and write a log.)
-					ModelState.AddModelError("", "Unable to save changes. " +
-						"Try again, and if the problem persists, " +
-						"see your system administrator.");
-				}
-				return RedirectToAction(nameof(Index));
-			}
-			PopulateLocationsDropDownList(shiftToUpdate.LocationID);
-			PopulateAssignedSkills(shiftToUpdate);
-			PopulateAssignedFunction(shiftToUpdate);
-			PopulateAssignedEmployees(shiftToUpdate);
-			return View(shiftToUpdate);
-		}
+                var shiftToUpdate = await _context.Shift
+                    .Include(s => s.ShiftSkills)
+                        .ThenInclude(s => s.Skill)
+                    .Include(s => s.ShiftFunctions)
+                        .ThenInclude(s => s.Function)
+                    .Include(s => s.Works)
+                        .ThenInclude(s => s.Employee)
+                    .Include(s => s.Location)
+                    .FirstOrDefaultAsync(s => s.ShiftID == id);
+
+                if (await TryUpdateModelAsync<Models.Shift>(shiftToUpdate, "",
+                    s => s.Start, s => s.End, s => s.LocationID))
+                {
+                    if (String.IsNullOrWhiteSpace(shiftToUpdate.Location.Name))
+                    {
+                        shiftToUpdate.Location = null;
+                    }
+                    UpdateShiftSkills(selectedSkills, shiftToUpdate);
+                    UpdateShiftFunctions(selectedFunctions, selectedFunctionsMax, shiftToUpdate);
+                    UpdateShiftEmployees(selectedEmployees, shiftToUpdate);
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateException /* ex */)
+                    {
+                        //Log the error (uncomment ex variable name and write a log.)
+                        ModelState.AddModelError("", "Unable to save changes. " +
+                            "Try again, and if the problem persists, " +
+                            "see your system administrator.");
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+                PopulateLocationsDropDownList(shiftToUpdate.LocationID);
+                PopulateAssignedSkills(shiftToUpdate);
+                PopulateAssignedFunction(shiftToUpdate);
+                PopulateAssignedEmployees(shiftToUpdate);
+                return View(shiftToUpdate);
+            }
+            else
+            {
+                return Forbid();
+            }
+        }
 
 		private void UpdateShiftEmployees(string[] selectedEmployees, Shift shiftToUpdate)
 		{
@@ -571,19 +645,26 @@ namespace Gride.Controllers
 		// GET: Shifts/Delete/5
 		public async Task<IActionResult> Delete(int? id)
 		{
-			if (id == null)
-			{
-				return NotFound();
-			}
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-			var shift = await _context.Shift
-				.FirstOrDefaultAsync(m => m.ShiftID == id);
-			if (shift == null)
-			{
-				return NotFound();
-			}
+                var shift = await _context.Shift
+                    .FirstOrDefaultAsync(m => m.ShiftID == id);
+                if (shift == null)
+                {
+                    return NotFound();
+                }
 
-			return View(shift);
+                return View(shift);
+            }
+            else
+            {
+                return Forbid();
+            }
 		}
 
 		// POST: Shifts/Delete/5
@@ -591,7 +672,9 @@ namespace Gride.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int id)
 		{ 
-            var shift = await _context.Shift
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {            
+                var shift = await _context.Shift
                 .Include(s => s.ShiftChildren)
                 .Include(s => s.ShiftFunctions).ThenInclude(f => f.Function)
                 .Include(s => s.ShiftSkills).ThenInclude(s => s.Skill)
@@ -607,7 +690,12 @@ namespace Gride.Controllers
             _context.Shift.Remove(shift);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-		}
+            }
+            else
+            {
+                return Forbid();
+            }
+        }
 
         private void TransferShiftChildren(Shift shift)
         {

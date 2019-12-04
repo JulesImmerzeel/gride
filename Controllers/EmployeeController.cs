@@ -1,84 +1,142 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Gride.Data;
+﻿using Gride.Data;
 using Gride.Models;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
 using Gride.ViewModels;
-using System.IO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Gride.Controllers
 {
+    [Authorize]
     public class EmployeeController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IHostingEnvironment _env;
+        private readonly SignInManager<IdentityUser> signInManager;
+        private readonly UserManager<IdentityUser> userManager;
 
-        public EmployeeController(ApplicationDbContext context, IHostingEnvironment env)
+        public EmployeeController(ApplicationDbContext context, IHostingEnvironment env,
+                                  SignInManager<IdentityUser> signInManager,
+                                  UserManager<IdentityUser> userManager)
         {
-            _context = context;
-            _env = env;
+            this.userManager = userManager;
+            this._context = context;
+            this._env = env;
+            this.signInManager = signInManager;
         }
 
         // GET: EmployeeModels
         public async Task<IActionResult> Index()
         {
-            return View(await _context.EmployeeModel.ToListAsync());
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                return View(await _context.EmployeeModel.ToListAsync());
+            }
+
+            else
+            {
+                return Forbid();
+            }
         }
+
 
         // GET: EmployeeModels/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-            var employeeModel = await _context.EmployeeModel
-                                        .Include(e => e.EmployeeSkills)
-                                            .ThenInclude(e => e.Skill)
-                                        .Include(f => f.EmployeeFunctions)
-                                            .ThenInclude(f => f.Function)
-                                        .Include(l => l.EmployeeLocations)
-                                            .ThenInclude(l => l.Location)
-                                        .AsNoTracking()
-                                        .FirstOrDefaultAsync(m => m.ID == id);
+                var employeeModel = await _context.EmployeeModel
+                                            .Include(e => e.EmployeeSkills)
+                                                .ThenInclude(e => e.Skill)
+                                            .Include(f => f.EmployeeFunctions)
+                                                .ThenInclude(f => f.Function)
+                                            .Include(l => l.EmployeeLocations)
+                                                .ThenInclude(l => l.Location)
+                                            .AsNoTracking()
+                                            .FirstOrDefaultAsync(m => m.ID == id);
 
-            ViewBag.Supervisor = _context.EmployeeModel.FirstOrDefault(s => s.ID == employeeModel.SupervisorID);
-            if (employeeModel == null)
+                ViewBag.Supervisor = _context.EmployeeModel.FirstOrDefault(s => s.ID == employeeModel.SupervisorID);
+                if (employeeModel == null)
+                {
+                    return NotFound();
+                }
+
+                List<Work> works = _context.Works.Where(e => e.Employee == employeeModel).Include(m => m.Employee).Include(s => s.Shift).ToList();
+                var workOverviewlist = new List<WorkOverview>();
+
+                for (int i = 1; i <= 12; i++)
+                {
+                    var workOverview = new WorkOverview
+                    {
+                        Month = i
+                    };
+
+
+                    foreach (Work w in works)
+                    {
+                        if (w.Shift.Start.Year == 2019 && w.Shift.Start.Month == i)
+                        {
+                            workOverview.AddHours((int)(w.Shift.End - w.Shift.Start).TotalHours);
+                            workOverview.SubtractHours(w.Delay);
+                            workOverview.AddHours(w.Overtime);
+                        }
+                    }
+
+                    workOverviewlist.Add(workOverview);
+                }
+
+                ViewData["workOverview"] = workOverviewlist;
+
+                return View(employeeModel);
+            } else
             {
-                return NotFound();
+                return Forbid();
             }
-
-            return View(employeeModel);
         }
 
         // GET: EmployeeModels/Create
         public IActionResult Create()
         {
-            var employee = new EmployeeModel();
-            employee.EmployeeSkills = new List<EmployeeSkill>();
-            employee.EmployeeFunctions = new List<EmployeeFunction>();
-            employee.EmployeeLocations = new List<EmployeeLocations>();
-            PopulateAssignedFunctions(employee);
-            PopulateAssignedSkills(employee);
-            PopulateAssignedLocations(employee);
-            PopulateSupervisorsDropDownList();
-            return View();
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                var employee = new EmployeeModel();
+                employee.EmployeeSkills = new List<EmployeeSkill>();
+                employee.EmployeeFunctions = new List<EmployeeFunction>();
+                employee.EmployeeLocations = new List<EmployeeLocations>();
+                PopulateAssignedFunctions(employee);
+                PopulateAssignedSkills(employee);
+                PopulateAssignedLocations(employee);
+                PopulateSupervisorsDropDownList();
+                return View();
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         private void PopulateSupervisorsDropDownList(object selectedSupervisor = null)
         {
+
             var supervisors = _context.EmployeeModel
                 .Where(e => e.Admin == true)
                 .AsNoTracking()
                 .ToList();
 
-            ViewBag.SupervisorID = new SelectList(supervisors,"ID","Name",selectedSupervisor);
+            ViewBag.SupervisorID = new SelectList(supervisors, "ID", "Name", selectedSupervisor);
         }
 
         // POST: EmployeeModels/Create
@@ -86,20 +144,22 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage,SupervisorID")] EmployeeModel employeeModel , string[] selectedSkills, string[] selectedFunctions, string[] selectedLocations, EmployeeViewModel model)
+        public async Task<IActionResult> Create([Bind("ID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage,SupervisorID")] EmployeeModel employeeModel, string[] selectedSkills, string[] selectedFunctions, string[] selectedLocations, EmployeeViewModel model)
         {
-            //employeeModel = setSupervisor(employeeModel);
-            if (selectedSkills != null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                //employeeModel = setSupervisor(employeeModel);
+                if (selectedSkills != null)
             {
                 employeeModel.EmployeeSkills = new List<EmployeeSkill>();
                 foreach (var skill in selectedSkills)
                 {
-                    var skillToAdd = new EmployeeSkill 
-                    { 
-                        EmployeeModelID = employeeModel.ID, 
-                        Employee = employeeModel, 
-                        SkillID = int.Parse(skill), 
-                        Skill = _context.Skill.Single(s => s.SkillID == int.Parse(skill)) 
+                    var skillToAdd = new EmployeeSkill
+                    {
+                        EmployeeModelID = employeeModel.ID,
+                        Employee = employeeModel,
+                        SkillID = int.Parse(skill),
+                        Skill = _context.Skill.Single(s => s.SkillID == int.Parse(skill))
                     };
                     employeeModel.EmployeeSkills.Add(skillToAdd);
                 }
@@ -166,18 +226,25 @@ namespace Gride.Controllers
 
                 //return RedirectToAction(nameof(Index));
             }
-            
+
             PopulateSupervisorsDropDownList(employeeModel.SupervisorID);
             PopulateAssignedFunctions(employeeModel);
             PopulateAssignedSkills(employeeModel);
             PopulateAssignedLocations(employeeModel);
             return View(employeeModel);
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         // GET: EmployeeModels/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
             {
                 return NotFound();
             }
@@ -199,7 +266,12 @@ namespace Gride.Controllers
             PopulateAssignedLocations(employeeModel);
             PopulateSupervisorsDropDownList(employeeModel.SupervisorID);
             return View(employeeModel);
-        }    
+            }
+            else
+            {
+                return Forbid();
+            }
+        }
 
         // POST: EmployeeModels/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
@@ -208,7 +280,9 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int? id, string[] selectedSkills, string[] selectedFunctions, string[] selectedLocations, EmployeeViewModel model)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
             {
                 return NotFound();
             }
@@ -248,9 +322,9 @@ namespace Gride.Controllers
                 UpdateEmployeeFunctions(selectedFunctions, employeeToUpdate);
                 UpdateEmployeeSkills(selectedSkills, employeeToUpdate);
 
-    
+
                 employeeToUpdate.ProfileImage = uniqueFileName;
- 
+
 
                 try
                 {
@@ -266,12 +340,19 @@ namespace Gride.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(employeeToUpdate);
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         // GET: EmployeeModels/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
             {
                 return NotFound();
             }
@@ -284,6 +365,11 @@ namespace Gride.Controllers
             }
 
             return View(employeeModel);
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         // POST: EmployeeModels/Delete/5
@@ -291,10 +377,17 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var employeeModel = await _context.EmployeeModel.FindAsync(id);
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                var employeeModel = await _context.EmployeeModel.FindAsync(id);
             _context.EmployeeModel.Remove(employeeModel);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         private bool EmployeeModelExists(int id)
@@ -305,6 +398,7 @@ namespace Gride.Controllers
 
         private void PopulateAssignedSkills(EmployeeModel employee)
         {
+
             if (employee.EmployeeSkills == null)
             {
                 employee.EmployeeSkills = new List<EmployeeSkill>();
