@@ -105,11 +105,12 @@ Week: @Model._weekNumber @Model.month
                             <script>
                 cell = document.getElementById("@(d.ToString() + tdHour.ToString())")
                 if (cell.innerText != "" && window.location.pathname.includes("/Roster")) {
-                    cell.style.backgroundColor = "red";
+                    cell.style.backgroundColor = "#A80000";
+
                 } else if (cell.innerText != "" && window.location.pathname.includes("/Availability")) {
-                    cell.style.backgroundColor = "grey";
+                    cell.style.backgroundColor = "#575757";
                 } else if (cell.innerText != "") {
-                    cell.style.backgroundColor = "red";
+                    cell.style.backgroundColor = "#A80000";
                 }
 
                             </script>
@@ -151,11 +152,11 @@ else
                         <script>
                             cell = document.getElementById("@(d.ToString() + tdHour.ToString())");
                             if (cell.innerText != "" && window.location.pathname.includes("/Roster")) {
-                                cell.style.backgroundColor = "blue";
+                                cell.style.backgroundColor = "#0300a8";
                             } else if (cell.innerText != "" && window.location.pathname.includes("/Availability")) {
-                            cell.style.backgroundColor = "grey";
+                                cell.style.backgroundColor = "#575757";
                         } else if (cell.innerText != "") {
-                            cell.style.backgroundColor = "blue";
+                            cell.style.backgroundColor = "#0300a8";
                         }
                         </script>
                     }
