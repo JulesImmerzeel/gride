@@ -4,49 +4,80 @@ using System.Linq;
 using System.Threading.Tasks;
 using Gride.Data;
 using Gride.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Gride.Controllers
 {
-    public class FunctionController : Controller { 
+    [Authorize]
+    public class FunctionController : Controller
+    {
 
         private readonly ApplicationDbContext _context;
+        private readonly SignInManager<IdentityUser> signInManager;
+        private readonly UserManager<IdentityUser> userManager;
 
-        public FunctionController(ApplicationDbContext context)
+        public FunctionController(ApplicationDbContext context,
+                                  SignInManager<IdentityUser> signInManager,
+                                  UserManager<IdentityUser> userManager)
         {
             _context = context;
+            this.signInManager = signInManager;
+            this.userManager = userManager;
         }
 
         // GET: Function
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Function.ToListAsync());
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                return View(await _context.Function.ToListAsync());
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         // GET: Function/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-            var function = await _context.Function
-                .FirstOrDefaultAsync(m => m.FunctionID == id);
-            if (function == null)
+                var function = await _context.Function
+                    .FirstOrDefaultAsync(m => m.FunctionID == id);
+                if (function == null)
+                {
+                    return NotFound();
+                }
+
+                return View(function);
+            }
+            else
             {
-                return NotFound();
+                return Forbid();
             }
-
-            return View(function);
         }
 
         // GET: Function/Create
         public IActionResult Create()
         {
-            return View();
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                return View();
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         // POST: Function/Create
@@ -56,29 +87,43 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("FunctionID,Name,EmployeeModelID")] Function function)
         {
-            if (ModelState.IsValid)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
-                _context.Add(function);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(function);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(function);
             }
-            return View(function);
+            else
+            {
+                return Forbid();
+            }
         }
 
         // GET: Function/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-            var function = await _context.Function.FindAsync(id);
-            if (function == null)
-            {
-                return NotFound();
+                var function = await _context.Function.FindAsync(id);
+                if (function == null)
+                {
+                    return NotFound();
+                }
+                return View(function);
             }
-            return View(function);
+            else
+            {
+                return Forbid();
+            }
         }
 
         // POST: Function/Edit/5
@@ -88,50 +133,64 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("FunctionID,Name,EmployeeID")] Function function)
         {
-            if (id != function.FunctionID)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
-                return NotFound();
-            }
+                if (id != function.FunctionID)
+                {
+                    return NotFound();
+                }
 
-            if (ModelState.IsValid)
-            {
-                try
+                if (ModelState.IsValid)
                 {
-                    _context.Update(function);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FunctionExists(function.FunctionID))
+                    try
                     {
-                        return NotFound();
+                        _context.Update(function);
+                        await _context.SaveChangesAsync();
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        if (!FunctionExists(function.FunctionID))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                return View(function);
             }
-            return View(function);
+            else
+            {
+                return Forbid();
+            }
         }
 
         // GET: Function/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-            var function = await _context.Function
-                .FirstOrDefaultAsync(m => m.FunctionID == id);
-            if (function == null)
+                var function = await _context.Function
+                    .FirstOrDefaultAsync(m => m.FunctionID == id);
+                if (function == null)
+                {
+                    return NotFound();
+                }
+
+                return View(function);
+            }
+            else
             {
-                return NotFound();
+                return Forbid();
             }
-
-            return View(function);
         }
 
         // POST: Function/Delete/5
@@ -139,10 +198,17 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var function = await _context.Function.FindAsync(id);
-            _context.Function.Remove(function);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                var function = await _context.Function.FindAsync(id);
+                _context.Function.Remove(function);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
         private bool FunctionExists(int id)

@@ -4,11 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Gride.Data;
 using Gride.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gride.Controllers
 {
+    [Authorize]
     public class RosterController : Controller
     {
         private readonly ApplicationDbContext _context;

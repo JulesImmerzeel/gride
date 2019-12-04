@@ -1,0 +1,48 @@
+﻿.roster {
+    width: 100%;
+    background-color: #ffffff;
+    border-collapse: collapse;
+    border-width: 2px;
+    border-color: lightgray;
+    border-style: solid;
+    color: #000000;
+}
+
+.roster td,  .roster th {
+    border-width: 2px;
+    border-color: lightgray;
+    border-style: solid;
+    padding: 3px;
+}
+
+.roster thead{
+    background-color: lightgray;
+    text-align: center;
+}
+
+.roster col {
+    width: 14.29%;
+}
+
+.roster td {
+    height: 75px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    vertical-align: top;
+}
+
+.roster tbody,.roster thead {
+    display: block;
+}
+.roster tbody {
+    overflow: auto;
+    height: 500px;
+}
+
+.roster th {
+    width: 155px;
+}
+
+.roster td {
+    width: 155px;
+}

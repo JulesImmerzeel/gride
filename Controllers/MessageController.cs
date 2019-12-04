@@ -4,12 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Gride.Data;
 using Gride.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gride.Controllers
 {
+    [Authorize]
     public class MessageController : Controller { 
 
         private readonly ApplicationDbContext _context;
