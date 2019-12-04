@@ -16,6 +16,7 @@ namespace Gride.Views.Shift
     public class ShiftsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        public Schedule schedule = new Schedule();
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly UserManager<IdentityUser> userManager;
 
@@ -34,25 +35,25 @@ namespace Gride.Views.Shift
             if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
                
-           EmployeeModel employee = _context.EmployeeModel
-                .Single(e => e.EMail == User.Identity.Name);
+               EmployeeModel employee = _context.EmployeeModel
+                    .Single(e => e.EMail == User.Identity.Name);
 
-            List<Models.Shift> allShifts = _context.Shift.ToList();
+                List<Models.Shift> allShifts = _context.Shift.ToList();
 
             
-            if (id == null)
-            {
-                id = schedule._weekNumber;
+                if (id == null)
+                {
+                    id = schedule._weekNumber;
+                }
+
+                schedule.currentWeek = (int)id;
+                schedule.setWeek((int)id);
+                schedule.makeSchedule();
+                schedule.setShifts(allShifts);
+
+
+                return View(schedule);
             }
-
-            schedule.currentWeek = (int)id;
-            schedule.setWeek((int)id);
-            schedule.makeSchedule();
-            schedule.setShifts(allShifts);
-
-
-            return View(schedule);
-        }
              else
             {
                 return Forbid();

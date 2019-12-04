@@ -37,8 +37,24 @@ namespace Gride.Controllers
                    .Include(e => e.Shift)
                    .AsNoTracking()
                    .ToList();
+                var workOverviewlist = new List<WorkOverview>();
 
                 List<Shift> shifts = new List<Shift>();
+
+                for (int i = 1; i <= 12; i++)
+                {
+                    var workOverview = new WorkOverview { Month = i };
+                    foreach (Work w in works)
+                    {
+                        if (w.Shift.Start.Year == 2019 && w.Shift.Start.Month == i)
+                        {
+                            workOverview.AddHours((int)(w.Shift.End - w.Shift.Start).TotalHours);
+                            workOverview.SubtractHours(w.Delay);
+                            workOverview.AddHours(w.Overtime);
+                        }
+                    }
+                    workOverviewlist.Add(workOverview);
+                }
 
                 foreach (Work w in works)
                 {
@@ -50,10 +66,13 @@ namespace Gride.Controllers
                     id = schedule._weekNumber;
                 }
 
+
                 schedule.currentWeek = (int)id;
                 schedule.setWeek((int)id);
                 schedule.makeSchedule();
                 schedule.setShifts(allShifts);
+
+                ViewData["workOverview"] = workOverviewlist;
 
                 return View(schedule);
             } else
