@@ -1,0 +1,30 @@
+﻿@model Dictionary<int, Dictionary<int, List<EmployeeModel>>>
+@inject ApplicationDbContext _context
+
+@{
+    ViewData["Title"] = "Generated";
+}
+
+<h1>Generated</h1>
+<form asp-action="Generated">
+	@foreach (int shiftID in Model.Keys)
+	{
+		Shift shift = _context.Shift.ToList().Find(x => x.ShiftID == shiftID);
+		<div>
+			<h2>@($"shift from {shift.Start} to {shift.End}")</h2>
+			@foreach (int functionID in Model[shiftID].Keys) {
+				Function function = _context.Function.ToList().Find(x => x.FunctionID == functionID);
+				<div>
+					<h3>@function.Name</h3>
+					<div class="form-group">
+						@foreach (EmployeeModel employee in Model[shiftID][functionID])
+						{
+							<input type="checkbox" name="selected" checked="checked" value="@($"{shiftID}, {functionID}, {employee.ID}")" /> @(employee.Name + ' ' + employee.LastName) <br />
+						}
+					</div>
+				</div>
+			}
+		</div>
+	}
+	<input type="submit" value="Conffirm" />
+</form>

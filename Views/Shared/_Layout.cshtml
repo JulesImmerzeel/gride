@@ -56,7 +56,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Gride</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/logo.JPG" alt="GRIDE" /></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -78,20 +78,8 @@
                             <li class="selected_Employee">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Employee" asp-action="Index">Employees</a>
                             </li>
-                            <li class="selected_Works">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Works" asp-action="Index">Works</a>
-                            </li>
                             <li class="selected_Messages">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Message" asp-action="Index">Messages</a>
-                            </li>
-                            <li class="selected_Skills">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Skills" asp-action="Index">Skills</a>
-                            </li>
-                            <li class="selected_Location">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Location" asp-action="Index">Location</a>
-                            </li>
-                            <li class="selected_Function">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Function" asp-action="Index">Function</a>
                             </li>
                         }
 
@@ -99,9 +87,6 @@
                         {
                             <li class="selected_Roster">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Roster" asp-action="Index">Roster</a>
-                            </li>
-                            <li class="selected_Shift">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Shifts" asp-action="Index">Shifts</a>
                             </li>
                             <li class="selected_Availability">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Availability" asp-action="Index">Availabilities</a>
@@ -123,7 +108,7 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="selected_Personal">
+        <div class="selected_Personal container">
             &copy; 2019 - Gride - <a asp-area="" asp-controller="User" asp-action="Index">@User.Identity.Name</a>
         </div>
     </footer>

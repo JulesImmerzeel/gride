@@ -1,498 +1,927 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Gride.Data;
+using Gride.Gen;
+using Gride.Models;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Gride.Data;
-using Gride.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
-namespace Gride.Views.Shift
+using Newtonsoft.Json;
+
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Gride.Controllers
 {
-    public class ShiftsController : Controller
-    {
+    [Authorize]
+	public class ShiftsController : Controller
+	{
         private readonly ApplicationDbContext _context;
+        public Schedule schedule = new Schedule();
+        private readonly SignInManager<IdentityUser> signInManager;
+        private readonly UserManager<IdentityUser> userManager;
 
-        public ShiftsController(ApplicationDbContext context)
+		public ShiftsController(ApplicationDbContext context,
+                                SignInManager<IdentityUser> signInManager,
+                                UserManager<IdentityUser> userManager)
         {
+            this.signInManager = signInManager;
+            this.userManager = userManager;
             _context = context;
         }
 
-        // GET: Shifts
-        public async Task<IActionResult> Index()
+		// GET: Shifts
+        public async Task<IActionResult> Index(int? id)
         {
-            return View(await _context.Shift.OrderBy(s => s.Start).ToListAsync());
-        }
-
-        // GET: Shifts/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
-                return NotFound();
-            }
+               
+               EmployeeModel employee = _context.EmployeeModel
+                    .Single(e => e.EMail == User.Identity.Name);
 
-            var shift = await _context.Shift
-                .FirstOrDefaultAsync(m => m.ShiftID == id);
-            if (shift == null)
-            {
-                return NotFound();
-            }
+                List<Models.Shift> allShifts = _context.Shift.ToList();
 
-            return View(shift);
-        }
-
-        // GET: Shifts/Create
-        public IActionResult Create()
-        {
-            var shift = new Models.Shift();
-            shift.ShiftSkills = new List<ShiftSkills>();
-            shift.ShiftFunctions = new List<ShiftFunction>();
-            PopulateAssignedFunction(shift);
-            PopulateAssignedSkills(shift);
-            PopulateLocationsDropDownList();
-            return View();
-        }
-
-        private void PopulateSkills()
-        {
-            var allSkills = _context.Skill;
-            var viewModel = new List<ShiftSkillsData>();
-            foreach (var skill in allSkills)
-            {
-                viewModel.Add(new ShiftSkillsData
+            
+                if (id == null)
                 {
-                    SkillID = skill.SkillID,
-                    Name = skill.Name,
-                    Assigned = false
-                });
-            }
-            ViewData["Skills"] = viewModel;
-        }
-
-        private void PopulateFunctions()
-        {
-            var allFunctions = _context.Function;
-            var viewModel = new List<ShiftFunctionData>();
-            foreach (var function in allFunctions)
-            {
-                viewModel.Add(new ShiftFunctionData
-                {
-                    FunctionID = function.FunctionID,
-                    Name = function.Name,
-                    Assigned = false,
-                    MaxEmployees = 1
-                }) ;
-            }
-            ViewData["Functions"] = viewModel;
-        }
-
-        private void PopulateLocationsDropDownList(object selectedLocation = null)
-        {
-            var locationQuery = from l in _context.Locations
-                                orderby l.Name
-                                select l;
-            ViewBag.LocationID = new SelectList(locationQuery.AsNoTracking(), "LocationID", "Name", selectedLocation);
-        }
-
-        // POST: Shifts/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Start,End,LocationID,Location")] Models.Shift shift, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax)
-        {
-            if (selectedSkills != null)
-            {
-                shift.ShiftSkills = new List<ShiftSkills>();
-                foreach (var skill in selectedSkills)
-                {
-                    var skillToAdd = new ShiftSkills 
-                    { 
-                        ShiftID = shift.ShiftID, 
-                        Shift = shift, SkillID = int.Parse(skill), 
-                        Skill = _context.Skill.Single(s => s.SkillID == int.Parse(skill)) 
-                    };
-                    shift.ShiftSkills.Add(skillToAdd);
+                    id = schedule._weekNumber;
                 }
+
+                schedule.currentWeek = (int)id;
+                schedule.setWeek((int)id);
+                schedule.makeSchedule();
+                schedule.setShifts(allShifts);
+
+
+                return View(schedule);
             }
-            if (selectedFunctions != null)
+             else
             {
+                return Forbid();
+            }
+            
+        }
+
+		// GET: Shifts/Details/5
+		public async Task<IActionResult> Details(int? id)
+		{
+			if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
+                {
+                    return NotFound();
+
+                }
+
+                var shift = await _context.Shift
+                    .Include(s => s.ShiftFunctions).ThenInclude(s => s.Function)
+                    .Include(s => s.ShiftSkills).ThenInclude(s => s.Skill)
+                    .Include(s => s.Works).ThenInclude(s => s.Employee)
+                    .Include(s => s.Location)
+                    .FirstOrDefaultAsync(m => m.ShiftID == id);
+                if (shift == null)
+                {
+                    return NotFound();
+                }
+
+                ViewData["Shiftlength"] = (int)(shift.End - shift.Start).TotalHours;
+
+                return View(shift);
+            }
+            else
+            {
+                return Forbid();
+            }
+		}
+
+		// GET: Shifts/Create
+		public IActionResult Create()
+		{
+			if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                var shift = new Models.Shift();
+                shift.ShiftSkills = new List<ShiftSkills>();
                 shift.ShiftFunctions = new List<ShiftFunction>();
-                int cnt = 0;
+                PopulateAssignedFunction(shift);
+                PopulateAssignedSkills(shift);
+                PopulateLocationsDropDownList();
+                return View();
+            }
+            else
+            {
+                return Forbid();
+            }
+		}
+
+		private void PopulateSkills()
+		{
+			var allSkills = _context.Skill;
+			var viewModel = new List<ShiftSkillsData>();
+			foreach (var skill in allSkills)
+			{
+				viewModel.Add(new ShiftSkillsData
+				{
+					SkillID = skill.SkillID,
+					Name = skill.Name,
+					Assigned = false
+				});
+			}
+			ViewData["Skills"] = viewModel;
+		}
+
+		private void PopulateFunctions()
+		{
+			var allFunctions = _context.Function;
+			var viewModel = new List<ShiftFunctionData>();
+			foreach (var function in allFunctions)
+			{
+				viewModel.Add(new ShiftFunctionData
+				{
+					FunctionID = function.FunctionID,
+					Name = function.Name,
+					Assigned = false,
+					MaxEmployees = 1
+				});
+			}
+			ViewData["Functions"] = viewModel;
+		}
+
+		private void PopulateLocationsDropDownList(object selectedLocation = null)
+		{
+			var locationQuery = from l in _context.Locations
+								orderby l.Name
+								select l;
+			ViewBag.LocationID = new SelectList(locationQuery.AsNoTracking(), "LocationID", "Name", selectedLocation);
+		}
+
+		private void AssignStaff(Shift shift)
+		{
+			Dictionary<int, List<EmployeeModel>> results = new Dictionary<int, List<EmployeeModel>>();
+			// look for each function this shift has
+			foreach (int func in from shiftF in _context.ShiftFunctions
+								  where shiftF.ShiftID == shift.ShiftID
+								  select shiftF.FunctionID)
+			{
+				// Adds already assigned people to the list
+				results.Add(func, (from work in _context.Works
+								   where work.FunctionID == func && work.ShiftID == shift.ShiftID
+								   select work.Employee).ToList());
+			}
+			Generator.Generate(shift, _context, ref results, settings: GeneratorSettings.PreferHigerExp);
+			foreach (int funcID in results.Keys)
+			{
+				foreach (EmployeeModel employee in results[funcID])
+				{
+					Work w = new Work
+					{
+						FunctionID = funcID,
+						Function = _context.Function.ToList().Find(x => x.FunctionID == funcID),
+						EmployeeID = employee.ID,
+						Employee = _context.EmployeeModel.ToList().Find(x => x.ID == employee.ID),
+						ShiftID = shift.ShiftID,
+						Shift = shift,
+					};
+					_context.Add(w);
+				}
+			}
+			_context.SaveChanges();
+		}
+
+		// POST: Shifts/Create
+		// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Create([Bind("Start,End,LocationID,Location")] Shift shift, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax)
+		{
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+			if (selectedSkills != null)
+			{
+				shift.ShiftSkills = new List<ShiftSkills>();
+				foreach (var skill in selectedSkills)
+				{
+					var skillToAdd = new ShiftSkills
+					{
+						ShiftID = shift.ShiftID,
+						Shift = shift,
+						SkillID = int.Parse(skill),
+						Skill = _context.Skill.Single(s => s.SkillID == int.Parse(skill))
+					};
+					shift.ShiftSkills.Add(skillToAdd);
+				}
+			}
+			if (selectedFunctions != null)
+			{
+                shift.ShiftFunctions = new List<ShiftFunction>();
                 foreach (var function in selectedFunctions)
                 {
-                    var functionToAdd = new ShiftFunction { ShiftID = shift.ShiftID, Shift = shift, FunctionID = int.Parse(function),
-                        Function = _context.Function.Single(f => f.FunctionID == int.Parse(function)), MaxEmployees = selectedFunctionsMax[cnt]
+                    int functionID = int.Parse(function);
+                    int maxCnt = functionID - 1;
+                    var functionToAdd = new ShiftFunction
+                    {
+                        ShiftID = shift.ShiftID,
+                        Shift = shift,
+                        FunctionID = functionID,
+                        Function = _context.Function.Single(f => f.FunctionID == int.Parse(function)),
+                        MaxEmployees = selectedFunctionsMax[maxCnt]
                     };
                     shift.ShiftFunctions.Add(functionToAdd);
-                    cnt++;
                 }
-            }
-            if (ModelState.IsValid)
-            {
+			}
+			if (ModelState.IsValid)
+			{
                 _context.Add(shift);
+                await _context.SaveChangesAsync();
+                if (shift.Weekly)
+                {
+                    ICollection<Shift> children = CreateChildren(shift);
+                    foreach (Shift child in children)
+                    {
+                        _context.Add(child);
+                        child.ShiftFunctions = new List<ShiftFunction>();
+                        foreach (ShiftFunction sf in shift.ShiftFunctions)
+                        {
+                            ShiftFunction shiftFunction = new ShiftFunction
+                            {
+                                Function = sf.Function,
+                                FunctionID = sf.FunctionID,
+                                MaxEmployees = sf.MaxEmployees,
+                                ShiftID = child.ShiftID
+                            };
+                            child.ShiftFunctions.Add(shiftFunction);
+                        }
+                        child.ShiftSkills = new List<ShiftSkills>();
+                        foreach (ShiftSkills ss in shift.ShiftSkills)
+                        {
+                            ShiftSkills shiftSkills = new ShiftSkills
+                            {
+                                Skill = ss.Skill,
+                                SkillID = ss.SkillID,
+                                ShiftID = child.ShiftID
+                            };
+                            child.ShiftSkills.Add(shiftSkills);
+                        }
+                    }
+                    await _context.SaveChangesAsync();
+                    shift.ShiftChildren = children;
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             PopulateLocationsDropDownList(shift);
             return View(shift);
+            }
+            else{
+                return Forbid();
+            }
         }
 
-
-        // GET: Shifts/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        private ICollection<Shift> CreateChildren(Shift shift)
         {
-            if (id == null)
+            Shift tmpShift = new Shift();
+            tmpShift.Start = shift.Start;
+            tmpShift.End = shift.End;
+            tmpShift.Weekly = true;
+            tmpShift.Location = shift.Location;
+            tmpShift.LocationID = shift.LocationID;
+            tmpShift.ParentShiftID = shift.ShiftID;
+            ICollection<Shift> children = new List<Shift>();
+            for (int i = 1; i < 52; i++)
             {
-                return NotFound();
+                Shift child = new Shift();
+                child.Weekly = true;
+                child.Location = tmpShift.Location;
+                child.LocationID = tmpShift.LocationID;
+                child.ParentShiftID = tmpShift.ParentShiftID;
+                child.Start = shift.Start.AddDays(7 * i);
+                child.End = shift.End.AddDays(7 * i);
+                children.Add(child);
             }
-
-            var shift = await _context.Shift
-                .Include(s => s.ShiftFunctions).ThenInclude(s => s.Function)
-                .Include(s => s.ShiftSkills).ThenInclude(s => s.Skill)
-                .Include(s => s.Works).ThenInclude(s => s.Employee)
-                .Include(s => s.Location)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.ShiftID == id);
-            if (shift == null)
-            {
-                return NotFound();
-            }
-            PopulateLocationsDropDownList(shift.LocationID);
-            PopulateAssignedSkills(shift);
-            PopulateAssignedFunction(shift);
-            PopulateAssignedEmployees(shift);
-            return View(shift);
+            return children;
         }
 
-        private void PopulateAssignedEmployees(Models.Shift shift)
-        {
-            var allEmployees = _context.EmployeeModel;
-            var shiftEmployees = new HashSet<int>(shift.Works.Select(c => c.EmployeeID));
-            var viewModel = new List<WorkData>();
-            foreach (var employee in allEmployees)
+		// GET: Shifts/Edit/5
+		public async Task<IActionResult> Edit(int? id)
+		{
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
-                int delay = 0, overtime = 0;
-                if (_context.Works.FirstOrDefault(f => (f.EmployeeID == employee.ID) && (f.ShiftID == shift.ShiftID)) != null)
+                if (id == null)
                 {
-                    delay = _context.Works.FirstOrDefault(f => (f.EmployeeID == employee.ID) && (f.ShiftID == shift.ShiftID)).Delay;
-                    overtime = _context.Works.FirstOrDefault(f => (f.EmployeeID == employee.ID) && (f.ShiftID == shift.ShiftID)).Overtime;
+                    return NotFound();
                 }
-                viewModel.Add(new WorkData
-                {
-                    EmployeeID = employee.ID,
-                    Name = employee.Name + " " + employee.LastName,
-                    Assigned = shiftEmployees.Contains(employee.ID),
-                    Delay = delay,
-                    Overtime = overtime
-                });
-            }
-            ViewData["Employees"] = viewModel;
-        }
 
-        private void PopulateAssignedFunction(Models.Shift shift)
-        {
-            var allFunctions = _context.Function;
-            var shiftFunctions = new HashSet<int>(shift.ShiftFunctions.Select(c => c.FunctionID));
-            var viewModel = new List<ShiftFunctionData>();
-            foreach (var function in allFunctions)
-            {
-                int maxEmployees = 0;
-                if (_context.ShiftFunctions.FirstOrDefault(f => (f.FunctionID == function.FunctionID) && (f.ShiftID == shift.ShiftID)) != null)
+                var shift = await _context.Shift
+                    .Include(s => s.ShiftFunctions).ThenInclude(s => s.Function)
+                    .Include(s => s.ShiftSkills).ThenInclude(s => s.Skill)
+                    .Include(s => s.Works).ThenInclude(s => s.Employee)
+                    .Include(s => s.Location)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(m => m.ShiftID == id);
+                if (shift == null)
                 {
-                    maxEmployees = _context.ShiftFunctions.FirstOrDefault(f => (f.FunctionID == function.FunctionID) && (f.ShiftID == shift.ShiftID)).MaxEmployees;
+                    return NotFound();
                 }
-                viewModel.Add(new ShiftFunctionData
-                {
-                    FunctionID = function.FunctionID,
-                    Name = function.Name,
-                    Assigned = shiftFunctions.Contains(function.FunctionID),
-                    MaxEmployees = maxEmployees
-                });
-            }
-            ViewData["Functions"] = viewModel;
-        }
-
-        private void PopulateAssignedSkills(Models.Shift shift)
-        {
-            var allSkills = _context.Skill;
-            var shiftSkills = new HashSet<int>(shift.ShiftSkills.Select(c => c.SkillID));
-            var viewModel = new List<ShiftSkillsData>();
-            foreach (var skill in allSkills)
-            {
-                viewModel.Add(new ShiftSkillsData
-                {
-                    SkillID = skill.SkillID,
-                    Name = skill.Name,
-                    Assigned = shiftSkills.Contains(skill.SkillID)
-                });
-            }
-            ViewData["Skills"] = viewModel;
-        }
-
-        // POST: Shifts/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax, string[] selectedEmployees)
-        
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var shiftToUpdate = await _context.Shift
-                .Include(s => s.ShiftSkills)
-                    .ThenInclude(s => s.Skill)
-                .Include(s => s.ShiftFunctions)
-                    .ThenInclude(s => s.Function)
-                .Include(s => s.Works)
-                    .ThenInclude(s => s.Employee)
-                .Include(s => s.Location)
-                .FirstOrDefaultAsync(s => s.ShiftID == id);
-
-            if( await TryUpdateModelAsync<Models.Shift>(shiftToUpdate, "", 
-                s => s.Start, s=> s.End, s => s.LocationID))
-            {
-                if (String.IsNullOrWhiteSpace(shiftToUpdate.Location.Name))
-                {
-                    shiftToUpdate.Location = null;
-                }
-                UpdateShiftSkills(selectedSkills, shiftToUpdate);
-                UpdateShiftFunctions(selectedFunctions, selectedFunctionsMax, shiftToUpdate);
-                UpdateShiftEmployees(selectedEmployees, shiftToUpdate);
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateException /* ex */)
-                {
-                    //Log the error (uncomment ex variable name and write a log.)
-                    ModelState.AddModelError("", "Unable to save changes. " +
-                        "Try again, and if the problem persists, " +
-                        "see your system administrator.");
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            PopulateLocationsDropDownList(shiftToUpdate.LocationID);
-            PopulateAssignedSkills(shiftToUpdate);
-            PopulateAssignedFunction(shiftToUpdate);
-            PopulateAssignedEmployees(shiftToUpdate);
-            return View(shiftToUpdate);
-        }
-
-        private void UpdateShiftEmployees(string[] selectedEmployees, Models.Shift shiftToUpdate)
-        {
-            if (selectedEmployees == null)
-            {
-                shiftToUpdate.Works = new List<Work>();
-                return;
-            }
-
-            var selectedEmployeesHS = new HashSet<string>(selectedEmployees);
-            if (shiftToUpdate.Works != null)
-            {
-                var shiftEmployees = new HashSet<int>
-                (shiftToUpdate.Works.Select(c => c.Employee.ID));
-                foreach (var employee in _context.EmployeeModel)
-                {
-                    if (selectedEmployeesHS.Contains(employee.ID.ToString()))
-                    {
-                        if (!shiftEmployees.Contains(employee.ID))
-                        {
-                            shiftToUpdate.Works.Add(new Work 
-                            { 
-                                ShiftID = shiftToUpdate.ShiftID, 
-                                EmployeeID = employee.ID,
-                                Employee = employee,
-                                Shift = shiftToUpdate,
-                                Overtime = 0,
-                                Delay = 0
-                            });
-                        }
-                    }
-                    else
-                    {
-
-                        if (shiftEmployees.Contains(employee.ID))
-                        {
-                            Work workToRemove = shiftToUpdate.Works.FirstOrDefault(i => i.EmployeeID == employee.ID);
-                            _context.Remove(workToRemove);
-                        }
-                    }
-                }
+                PopulateLocationsDropDownList(shift.LocationID);
+                PopulateAssignedSkills(shift);
+                PopulateAssignedFunction(shift);
+                PopulateAssignedEmployees(shift);
+                return View(shift);
             }
             else
             {
-                shiftToUpdate.Works = new List<Work>();
-                foreach (var employee in _context.EmployeeModel)
-                {
-                    if (selectedEmployeesHS.Contains(employee.ID.ToString()))
-                    {
-                        shiftToUpdate.Works.Add(new Work
-                        {
-                            ShiftID = shiftToUpdate.ShiftID,
-                            Shift = shiftToUpdate,
-                            EmployeeID = employee.ID,
-                            Employee = employee,
-                            Delay = 0,
-                            Overtime = 0
-                        });
-                    }
-                }
+                return Forbid();
             }
-        }
+		}
 
-        private void UpdateShiftSkills(string[] selectedSkills, Models.Shift shiftToUpdate)
-        {
-            if (selectedSkills == null)
-            {
-                shiftToUpdate.ShiftSkills = new List<ShiftSkills>();
-                return;
-            }
+		private void PopulateAssignedEmployees(Shift shift)
+		{
+			var allEmployees = _context.EmployeeModel;
+			var shiftEmployees = new HashSet<int>(shift.Works.Select(c => c.EmployeeID));
+			var viewModel = new List<WorkData>();
+			foreach (var employee in allEmployees)
+			{
+				int delay = 0, overtime = 0;
+				if (_context.Works.FirstOrDefault(f => (f.EmployeeID == employee.ID) && (f.ShiftID == shift.ShiftID)) != null)
+				{
+					delay = _context.Works.FirstOrDefault(f => (f.EmployeeID == employee.ID) && (f.ShiftID == shift.ShiftID)).Delay;
+					overtime = _context.Works.FirstOrDefault(f => (f.EmployeeID == employee.ID) && (f.ShiftID == shift.ShiftID)).Overtime;
+				}
+				if (shiftEmployees.Contains(employee.ID))
+					viewModel.Add(new WorkData
+					{
+						EmployeeID = employee.ID,
+						Name = employee.Name + " " + employee.LastName,
+						Assigned = true,
+						Delay = delay,
+						Overtime = overtime
+					});
+			}
+			ViewData["Employees"] = viewModel;
+		}
 
-            var selectedSkillsHS = new HashSet<string>(selectedSkills);
-            if (shiftToUpdate.ShiftSkills != null)
-            {
-                var shiftSkills = new HashSet<int>
-                (shiftToUpdate.ShiftSkills.Select(c => c.Skill.SkillID));
-                foreach (var skill in _context.Skill)
-                {
-                    if (selectedSkillsHS.Contains(skill.SkillID.ToString()))
-                    {
-                        if (!shiftSkills.Contains(skill.SkillID))
-                        {
-                            shiftToUpdate.ShiftSkills.Add(new ShiftSkills { ShiftID = shiftToUpdate.ShiftID, SkillID = skill.SkillID });
-                        }
-                    }
-                    else
-                    {
+		private void PopulateAssignedFunction(Shift shift)
+		{
+			var allFunctions = _context.Function;
+			var shiftFunctions = new HashSet<int>(shift.ShiftFunctions.Select(c => c.FunctionID));
+			var viewModel = new List<ShiftFunctionData>();
+			foreach (var function in allFunctions)
+			{
+				int maxEmployees = 0;
+				if (_context.ShiftFunctions.FirstOrDefault(f => (f.FunctionID == function.FunctionID) && (f.ShiftID == shift.ShiftID)) != null)
+				{
+					maxEmployees = _context.ShiftFunctions.FirstOrDefault(f => (f.FunctionID == function.FunctionID) && (f.ShiftID == shift.ShiftID)).MaxEmployees;
+				}
+				viewModel.Add(new ShiftFunctionData
+				{
+					FunctionID = function.FunctionID,
+					Name = function.Name,
+					Assigned = shiftFunctions.Contains(function.FunctionID),
+					MaxEmployees = maxEmployees
+				});
+			}
+			ViewData["Functions"] = viewModel;
+		}
 
-                        if (shiftSkills.Contains(skill.SkillID))
-                        {
-                            ShiftSkills skillToRemove = shiftToUpdate.ShiftSkills.FirstOrDefault(i => i.SkillID == skill.SkillID);
-                            _context.Remove(skillToRemove);
-                        }
-                    }
-                }
-            } else
-            {
-                shiftToUpdate.ShiftSkills = new List<ShiftSkills>();
-                foreach (var skill in _context.Skill)
-                {
-                    if (selectedSkillsHS.Contains(skill.SkillID.ToString()))
-                    {
-                        shiftToUpdate.ShiftSkills.Add(new ShiftSkills { 
-                            ShiftID = shiftToUpdate.ShiftID,
-                            Shift = shiftToUpdate,
-                            SkillID = skill.SkillID,
-                            Skill = skill
-                        });
-                    }
-                }
-            }
-            
+		private void PopulateAssignedSkills(Shift shift)
+		{
+			var allSkills = _context.Skill;
+			var shiftSkills = new HashSet<int>(shift.ShiftSkills.Select(c => c.SkillID));
+			var viewModel = new List<ShiftSkillsData>();
+			foreach (var skill in allSkills)
+			{
+				viewModel.Add(new ShiftSkillsData
+				{
+					SkillID = skill.SkillID,
+					Name = skill.Name,
+					Assigned = shiftSkills.Contains(skill.SkillID)
+				});
+			}
+			ViewData["Skills"] = viewModel;
+		}
 
-        }
-
-        private void UpdateShiftFunctions(string[] selectedFunctions, int[] selectedFunctionsMax, Models.Shift shiftToUpdate)
-        {
-            if (selectedFunctions == null || selectedFunctionsMax == null)
-            {
-                shiftToUpdate.ShiftFunctions = new List<ShiftFunction>();
-                return;
-            }
-
-            var selectedFunctionsHS = new HashSet<string>(selectedFunctions);
-            if (shiftToUpdate.ShiftFunctions != null)
-            {
-                var shiftFunctions = new HashSet<int>
-                (shiftToUpdate.ShiftFunctions.Select(c => c.Function.FunctionID));
-                int cnt = 0;
-                foreach (var function in _context.Function)
-                {
-                    if (selectedFunctionsHS.Contains(function.FunctionID.ToString()))
-                    {
-                        if (!shiftFunctions.Contains(function.FunctionID))
-                        {
-                            shiftToUpdate.ShiftFunctions.Add(new ShiftFunction { ShiftID = shiftToUpdate.ShiftID, FunctionID = function.FunctionID, MaxEmployees = selectedFunctionsMax[cnt] });
-                        }
-                        else
-                        {
-                            shiftToUpdate.ShiftFunctions.Single(f => (f.FunctionID == function.FunctionID) && (f.ShiftID == shiftToUpdate.ShiftID)).MaxEmployees = selectedFunctionsMax[cnt];
-                        }
-                    }
-                    else
-                    {
-
-                        if (shiftFunctions.Contains(function.FunctionID))
-                        {
-                            ShiftFunction functionToRemove = shiftToUpdate.ShiftFunctions.FirstOrDefault(i => i.FunctionID == function.FunctionID);
-                            _context.Remove(functionToRemove);
-                        }
-                    }
-                    cnt++;
-                }
-            } else
-            {
-                shiftToUpdate.ShiftFunctions = new List<ShiftFunction>();
-                int cnt = 0;
-                foreach (var function in _context.Function)
-                {
-                    if (selectedFunctionsHS.Contains(function.FunctionID.ToString()))
-                    {
-                        shiftToUpdate.ShiftFunctions.Add(new ShiftFunction
-                        {
-                            ShiftID = shiftToUpdate.ShiftID,
-                            Shift = shiftToUpdate,
-                            FunctionID = function.FunctionID,
-                            Function = function,
-                            MaxEmployees  = selectedFunctionsMax[cnt]
-                        });
-                    }
-                    cnt++;
-                }
-            }
-
-        }
-
-        // GET: Shifts/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var shift = await _context.Shift
-                .FirstOrDefaultAsync(m => m.ShiftID == id);
-            if (shift == null)
-            {
-                return NotFound();
-            }
-
-            return View(shift);
-        }
-
-        // POST: Shifts/Delete/5
-        [HttpPost, ActionName("Delete")]
+		// POST: Shifts/Edit/5
+		// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> Edit(int? id, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax, string[] selectedEmployees)
+
         {
-            var shift = await _context.Shift.FindAsync(id);
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var shiftToUpdate = await _context.Shift
+                    .Include(s => s.ShiftSkills)
+                        .ThenInclude(s => s.Skill)
+                    .Include(s => s.ShiftFunctions)
+                        .ThenInclude(s => s.Function)
+                    .Include(s => s.Works)
+                        .ThenInclude(s => s.Employee)
+                    .Include(s => s.Location)
+                    .FirstOrDefaultAsync(s => s.ShiftID == id);
+
+                if (await TryUpdateModelAsync<Models.Shift>(shiftToUpdate, "",
+                    s => s.Start, s => s.End, s => s.LocationID))
+                {
+                    if (String.IsNullOrWhiteSpace(shiftToUpdate.Location.Name))
+                    {
+                        shiftToUpdate.Location = null;
+                    }
+                    UpdateShiftSkills(selectedSkills, shiftToUpdate);
+                    UpdateShiftFunctions(selectedFunctions, selectedFunctionsMax, shiftToUpdate);
+                    UpdateShiftEmployees(selectedEmployees, shiftToUpdate);
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateException /* ex */)
+                    {
+                        //Log the error (uncomment ex variable name and write a log.)
+                        ModelState.AddModelError("", "Unable to save changes. " +
+                            "Try again, and if the problem persists, " +
+                            "see your system administrator.");
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+                PopulateLocationsDropDownList(shiftToUpdate.LocationID);
+                PopulateAssignedSkills(shiftToUpdate);
+                PopulateAssignedFunction(shiftToUpdate);
+                PopulateAssignedEmployees(shiftToUpdate);
+                return View(shiftToUpdate);
+            }
+            else
+            {
+                return Forbid();
+            }
+        }
+
+		private void UpdateShiftEmployees(string[] selectedEmployees, Shift shiftToUpdate)
+		{
+			if (selectedEmployees == null)
+			{
+				shiftToUpdate.Works = new List<Work>();
+				return;
+			}
+
+			var selectedEmployeesHS = new HashSet<string>(selectedEmployees);
+			if (shiftToUpdate.Works != null)
+			{
+				var shiftEmployees = new HashSet<int>
+				(shiftToUpdate.Works.Select(c => c.Employee.ID));
+				foreach (var employee in _context.EmployeeModel)
+				{
+					if (selectedEmployeesHS.Contains(employee.ID.ToString()))
+					{
+						if (!shiftEmployees.Contains(employee.ID))
+						{
+							shiftToUpdate.Works.Add(new Work
+							{
+								ShiftID = shiftToUpdate.ShiftID,
+								EmployeeID = employee.ID,
+								Employee = employee,
+								Shift = shiftToUpdate,
+								Overtime = 0,
+								Delay = 0
+							});
+						}
+					}
+					else
+					{
+
+						if (shiftEmployees.Contains(employee.ID))
+						{
+							Work workToRemove = shiftToUpdate.Works.FirstOrDefault(i => i.EmployeeID == employee.ID);
+							_context.Remove(workToRemove);
+						}
+					}
+				}
+			}
+			else
+			{
+				shiftToUpdate.Works = new List<Work>();
+				foreach (var employee in _context.EmployeeModel)
+				{
+					if (selectedEmployeesHS.Contains(employee.ID.ToString()))
+					{
+						shiftToUpdate.Works.Add(new Work
+						{
+							ShiftID = shiftToUpdate.ShiftID,
+							Shift = shiftToUpdate,
+							EmployeeID = employee.ID,
+							Employee = employee,
+							Delay = 0,
+							Overtime = 0
+						});
+					}
+				}
+			}
+		}
+
+		private void UpdateShiftSkills(string[] selectedSkills, Shift shiftToUpdate)
+		{
+			if (selectedSkills == null)
+			{
+				shiftToUpdate.ShiftSkills = new List<ShiftSkills>();
+				return;
+			}
+
+			var selectedSkillsHS = new HashSet<string>(selectedSkills);
+			if (shiftToUpdate.ShiftSkills != null)
+			{
+				var shiftSkills = new HashSet<int>
+				(shiftToUpdate.ShiftSkills.Select(c => c.Skill.SkillID));
+				foreach (var skill in _context.Skill)
+				{
+					if (selectedSkillsHS.Contains(skill.SkillID.ToString()))
+					{
+						if (!shiftSkills.Contains(skill.SkillID))
+						{
+							shiftToUpdate.ShiftSkills.Add(new ShiftSkills { ShiftID = shiftToUpdate.ShiftID, SkillID = skill.SkillID });
+						}
+					}
+					else
+					{
+
+						if (shiftSkills.Contains(skill.SkillID))
+						{
+							ShiftSkills skillToRemove = shiftToUpdate.ShiftSkills.FirstOrDefault(i => i.SkillID == skill.SkillID);
+							_context.Remove(skillToRemove);
+						}
+					}
+				}
+			}
+			else
+			{
+				shiftToUpdate.ShiftSkills = new List<ShiftSkills>();
+				foreach (var skill in _context.Skill)
+				{
+					if (selectedSkillsHS.Contains(skill.SkillID.ToString()))
+					{
+						shiftToUpdate.ShiftSkills.Add(new ShiftSkills
+						{
+							ShiftID = shiftToUpdate.ShiftID,
+							Shift = shiftToUpdate,
+							SkillID = skill.SkillID,
+							Skill = skill
+						});
+					}
+				}
+			}
+		}
+
+		private void UpdateShiftFunctions(string[] selectedFunctions, int[] selectedFunctionsMax, Shift shiftToUpdate)
+		{
+			if (selectedFunctions == null || selectedFunctionsMax == null)
+			{
+				shiftToUpdate.ShiftFunctions = new List<ShiftFunction>();
+				return;
+			}
+
+			var selectedFunctionsHS = new HashSet<string>(selectedFunctions);
+			if (shiftToUpdate.ShiftFunctions != null)
+			{
+				var shiftFunctions = new HashSet<int>
+				(shiftToUpdate.ShiftFunctions.Select(c => c.Function.FunctionID));
+				int cnt = 0;
+				foreach (var function in _context.Function)
+				{
+					if (selectedFunctionsHS.Contains(function.FunctionID.ToString()))
+					{
+						if (!shiftFunctions.Contains(function.FunctionID))
+						{
+							shiftToUpdate.ShiftFunctions.Add(new ShiftFunction { ShiftID = shiftToUpdate.ShiftID, FunctionID = function.FunctionID, MaxEmployees = selectedFunctionsMax[cnt] });
+						}
+						else
+						{
+							shiftToUpdate.ShiftFunctions.Single(f => (f.FunctionID == function.FunctionID) && (f.ShiftID == shiftToUpdate.ShiftID)).MaxEmployees = selectedFunctionsMax[cnt];
+						}
+					}
+					else
+					{
+
+						if (shiftFunctions.Contains(function.FunctionID))
+						{
+							ShiftFunction functionToRemove = shiftToUpdate.ShiftFunctions.FirstOrDefault(i => i.FunctionID == function.FunctionID);
+							_context.Remove(functionToRemove);
+						}
+					}
+					cnt++;
+				}
+			}
+			else
+			{
+				shiftToUpdate.ShiftFunctions = new List<ShiftFunction>();
+				int cnt = 0;
+				foreach (var function in _context.Function)
+				{
+					if (selectedFunctionsHS.Contains(function.FunctionID.ToString()))
+					{
+						shiftToUpdate.ShiftFunctions.Add(new ShiftFunction
+						{
+							ShiftID = shiftToUpdate.ShiftID,
+							Shift = shiftToUpdate,
+							FunctionID = function.FunctionID,
+							Function = function,
+							MaxEmployees = selectedFunctionsMax[cnt]
+						});
+					}
+					cnt++;
+				}
+			}
+
+		}
+
+		// GET: Shifts/Delete/5
+		public async Task<IActionResult> Delete(int? id)
+		{
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var shift = await _context.Shift
+                    .FirstOrDefaultAsync(m => m.ShiftID == id);
+                if (shift == null)
+                {
+                    return NotFound();
+                }
+
+                return View(shift);
+            }
+            else
+            {
+                return Forbid();
+            }
+		}
+
+		// POST: Shifts/Delete/5
+		[HttpPost, ActionName("Delete")]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteConfirmed(int id)
+		{ 
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {            
+                var shift = await _context.Shift
+                .Include(s => s.ShiftChildren)
+                .Include(s => s.ShiftFunctions).ThenInclude(f => f.Function)
+                .Include(s => s.ShiftSkills).ThenInclude(s => s.Skill)
+                .Include(s => s.Location)
+                .FirstOrDefaultAsync(s => s.ShiftID == id);
+            if (shift.Weekly)
+            {
+                if (shift.ShiftChildren.Count() > 0)
+                {
+                    TransferShiftChildren(shift);
+                }
+            }
             _context.Shift.Remove(shift);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return Forbid();
+            }
         }
 
-        private bool ShiftExists(int id)
+        private void TransferShiftChildren(Shift shift)
         {
-            return _context.Shift.Any(e => e.ShiftID == id);
+            ICollection<Shift> children = shift.ShiftChildren;
+            Shift newParent = children.First();
+            children.Remove(newParent);
+            foreach (Shift c in children)
+            {
+                c.ParentShiftID = newParent.ShiftID;
+            }
+            newParent.ShiftChildren = children;
+            newParent.ParentShiftID = null;
         }
 
-    }
+		private bool ShiftExists(int id)
+		{
+			return _context.Shift.Any(e => e.ShiftID == id);
+		}
+	
+		public async Task<IActionResult> Generate()
+		{
+			return View();
+		}
+
+		/// <summary>
+		/// Generates a roster for the time given between <paramref name="start"/> and <paramref name="end"/> with the settings specified in <paramref name="Settings"/>
+		/// </summary>
+		/// <param name="Settings">a List of numbers</param>
+		/// <param name="start">the start date of the generation</param>
+		/// <param name="end">the end date of the generation</param>
+		/// <remarks>If <paramref name="start"/> is <see cref="null"/> then it is set to now.
+		/// If <paramref name="end"/> is <see cref="null"/> then it's set to 2 weeks from <paramref name="start"/></remarks>
+		/// <exception cref="ArgumentException">thrown when one of the Settings is wrong</exception>
+		/// <exception cref="ArgumentException">thrown when <paramref name="end"/> is earlier then <paramref name="start"/></exception>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Generate(int[] settings, int pairSettings, string avgExp, DateTime? start = null, DateTime? end = null)
+		{
+			// sets the value for start and end when they are null
+			if (!start.HasValue)
+				start = DateTime.Now;
+			if (!end.HasValue)
+				end = start.Value.AddDays(14);
+			if (end < start)
+				throw new ArgumentException();
+
+			// fixes some C# floating point parsing bullshit
+			float actAvgExp;
+			if(!float.TryParse(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator == "," ? avgExp.Replace('.', ','): avgExp.Replace(',','.'),out actAvgExp))
+				actAvgExp = 2;
+			
+			// sets the settings ready for use
+			GeneratorSettings genSettings = 0;
+			try
+			{
+				foreach (GeneratorSettings i in (from i in settings select (GeneratorSettings)i))
+					genSettings |= i;
+				genSettings |= (GeneratorSettings)pairSettings;
+			}
+			catch
+			{
+				throw new ArgumentException("one of the values passed to Settings isn't viable", nameof(settings));
+			}
+
+			Dictionary<int, Dictionary<int, List<EmployeeModel>>> results = new Dictionary<int, Dictionary<int, List<EmployeeModel>>>();
+
+			try
+			{
+				foreach (Shift shift in from shift in _context.Shift
+										where shift.Start >= start && shift.End <= end
+										select shift)
+				{
+					Dictionary<int, List<EmployeeModel>> thisShiftResults = new Dictionary<int, List<EmployeeModel>>();
+					// look for each function this shift has
+					foreach (int func in from shiftF in _context.ShiftFunctions
+										 where shiftF.ShiftID == shift.ShiftID
+										 select shiftF.FunctionID)
+					{
+						// Adds already assigned people to the list
+						thisShiftResults.Add(func, (from work in _context.Works
+													where work.FunctionID == func && work.ShiftID == shift.ShiftID
+													select work.Employee).ToList());
+					}
+					Generator.Generate(shift, _context, ref thisShiftResults, actAvgExp, genSettings);
+					results.Add(shift.ShiftID, thisShiftResults);
+				}
+			}
+			catch
+			{
+				throw new NotImplementedException("generator error handling not implemented yet");
+			}
+
+			// please someone find something better than this abomination
+			Dictionary<int, Dictionary<int, List<int>>> IDres = new Dictionary<int, Dictionary<int, List<int>>>();
+			Parallel.ForEach(results.Keys, new ParallelOptions { MaxDegreeOfParallelism = 10 }, sID =>
+			{
+				Dictionary<int, List<int>> ShiftList = new Dictionary<int, List<int>>();
+				foreach (int fID in results[sID].Keys)
+					ShiftList.Add(fID, (from emp in results[sID][fID]
+										select emp.ID).ToList());
+				lock (IDres)
+					IDres.Add(sID, ShiftList);
+			});
+			// I love it when things that are basically the same don't automatically convert
+			HttpContext.Session.Set("genRes", Encoding.Default.GetBytes(JsonConvert.SerializeObject(IDres)));
+			return RedirectToAction(nameof(Generated));
+		}
+
+		public async Task<IActionResult> Generated()
+		{
+			HttpContext.Session.TryGetValue("genRes", out byte[] bytes);
+			Dictionary<int, Dictionary<int, List<int>>> IDResult = JsonConvert.DeserializeObject<Dictionary<int, Dictionary<int, List<int>>>>(Encoding.Default.GetString(bytes)) ?? new Dictionary<int, Dictionary<int, List<int>>>();
+			Dictionary<int, Dictionary<int, List<EmployeeModel>>> actResult = new Dictionary<int, Dictionary<int, List<EmployeeModel>>>();
+			Parallel.ForEach(IDResult.Keys, new ParallelOptions { MaxDegreeOfParallelism = 10 }, sID =>
+			{
+				Dictionary<int, List<EmployeeModel>> ShiftList = new Dictionary<int, List<EmployeeModel>>();
+				foreach (int fID in IDResult[sID].Keys)
+					ShiftList.Add(fID, (from emp in IDResult[sID][fID]
+										select _context.EmployeeModel.First(x => x.ID == emp)).ToList());
+				lock (actResult)
+					actResult.Add(sID, ShiftList);
+			});
+			return View(actResult);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Generated(string[] selected)
+		{
+			foreach( string s in selected)
+			{
+				int[] IDs = (from id in s.Split(',')
+							 select int.Parse(id.Trim())).ToArray();
+				await _context.Works.AddAsync(new Work
+				{
+					Shift = _context.Shift.Single(x => x.ShiftID == IDs[0]),
+					ShiftID = IDs[0],
+					Function = _context.Function.Single(x => x.FunctionID == IDs[0]),
+					FunctionID = IDs[1],
+					Employee = _context.EmployeeModel.Single(x => x.ID == IDs[2]),
+				});
+			}
+			await _context.SaveChangesAsync();
+			HttpContext.Session.Remove("genRes");
+			return RedirectToAction(nameof(Index));
+		}
+
+		public async Task<IActionResult> AssignEmployee(int? id)
+		{
+			if (!id.HasValue)
+				return NotFound();
+			return View(id.Value);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> AssignEmployee(int? id, int? EmployeeID, int? FunctionID)
+		{
+			if (!id.HasValue)
+				return NotFound();
+			if (!EmployeeID.HasValue)
+				return NotFound(EmployeeID);
+			if (!FunctionID.HasValue)
+				return NotFound(FunctionID);
+			if (_context.Works.ToList().Exists(x => x.FunctionID == FunctionID && x.EmployeeID == EmployeeID))
+				return BadRequest("User is already assigned to this function with this shift");
+
+
+			_context.Works.Add(new Work
+			{
+				Employee = await _context.EmployeeModel.FirstAsync(x => x.ID == EmployeeID),
+				EmployeeID = EmployeeID.Value,
+				Shift = await _context.Shift.FirstAsync(x => x.ShiftID == id),
+				ShiftID = id.Value,
+				Function = await _context.Function.FirstAsync(x => x.FunctionID == FunctionID),
+				FunctionID = FunctionID.Value,
+			});
+			await _context.SaveChangesAsync();
+			return RedirectToAction(nameof(Details), new{id});
+		}
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteAllFollowing(int id)
+
+        {
+            var shift = await _context.Shift
+                .Include(s => s.ShiftChildren)
+                .Include(s => s.ShiftFunctions).ThenInclude(f => f.Function)
+                .Include(s => s.ShiftSkills).ThenInclude(s => s.Skill)
+                .Include(s => s.Location)
+                .FirstOrDefaultAsync(s => s.ShiftID == id);
+            if (shift.Weekly)
+            {
+                if (shift.ShiftChildren.Count() > 0)
+                {
+                    shift.ShiftChildren = new List<Shift>();
+                    _context.Shift.Remove(shift);
+                }
+                else
+                {
+                    Shift parentShift = _context.Shift
+                        .Include(s => s.ShiftChildren)
+                        .Single(s => s.ShiftID == shift.ParentShiftID);
+                    List<Shift> tmpChildren = new List<Shift>();
+                    List<Shift> children = parentShift.ShiftChildren.OrderBy(s => s.Start).ToList();
+                    bool foundChild = false;
+                    foreach (Shift child in children)
+                    {
+                        if (child.ShiftID == shift.ShiftID)
+                        {
+                            foundChild = true;
+                        }
+                        if (foundChild)
+                        {
+                            _context.Remove(child);
+                        } else
+                        {
+                            tmpChildren.Add(child);
+                        }
+                    }
+                    parentShift.ShiftChildren = tmpChildren;
+                }
+            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+	}
 }

@@ -1,19 +1,23 @@
-﻿@model IEnumerable<Gride.Models.Shift>
+﻿@model Schedule
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
-@inject ApplicationDbContext _context
-
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    string day = "";
+    string start = "";
+    int acceptableWeek = DateTime.Now.DayOfYear / 7 + 2;
+    @inject ApplicationDbContext _context
 }
+<h1>Your shifts</h1>
 
 <h1>Shifts</h1>
 @if (SignInManager.IsSignedIn(User)  && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
 {
     <p>
         <a asp-action="Create">Create New</a>
+		<a asp-action="Generate" style="float:right;">Generate Roster</a>
     </p>
 }
 <style>
@@ -22,33 +26,60 @@
             color: black;
         }
 </style>
+
+@Html.ActionLink("back", "Index", new { id = Model.currentWeek - 1 }, null)
+@Model._weekNumber
+@Model.month
+@Html.ActionLink("forward", "Index", new { id = Model.currentWeek + 1 }, null)
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Start)
+                Day
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.End)
+                Start
+            </th>
+            <th>
+                End
+            </th>
+            <th>
+                Weekly
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model._shifts)
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Start)
+                    @{
+                        start = item.Start.DayOfWeek.ToString();
+                        if (day != start)
+                        {
+                            day = start;
+                            <text>@day</text>
+                        }
+                    }
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.End)
+                    @item.Start.TimeOfDay
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.ShiftID">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ShiftID">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ShiftID">Delete</a>
+                    @item.End.TimeOfDay
                 </td>
+                <td>
+                    @item.Weekly
+                </td>
+                <td>
+                    @if (_context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.ShiftID">Edit</a> <text>|</text>
+                        <a asp-action="Delete" asp-route-id="@item.ShiftID"> Delete </a>
+                    }
+                </td>
+
             </tr>
         }
     </tbody>

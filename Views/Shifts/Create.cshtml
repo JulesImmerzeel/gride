@@ -16,86 +16,89 @@
 <h4>Shift</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Start" class="control-label"></label>
-                <input asp-for="Start" class="form-control" />
-                <span asp-validation-for="Start" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="End" class="control-label"></label>
-                <input asp-for="End" class="form-control" />
-                <span asp-validation-for="End" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Location" class="control-label"></label>
-                <select asp-for="LocationID" class="form-control" asp-items="ViewBag.LocationID">
-                    <option value="">-- Select Location --</option>
-                </select>
-                <span asp-validation-for="LocationID" class="text-danger" />
-            </div>
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <table>
-                        <tr>
-                            @{
-                                int cnt = 0;
-                                List<Gride.Models.ShiftSkillsData> skills = ViewBag.Skills;
+	<div class="col-md-10">
+		<form asp-action="Create" class="w-75">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<div class="form-group">
+				<label asp-for="Start" class="control-label"></label>
+				<input asp-for="Start" class="form-control" />
+				<span asp-validation-for="Start" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="End" class="control-label"></label>
+				<input asp-for="End" class="form-control" />
+				<span asp-validation-for="End" class="text-danger"></span>
+			</div>
+			<div class="form-check">
+				<input asp-for="Weekly" class="form-check-input" />
+				<label asp-for="Weekly" class="form-check-label"></label>
+			</div>
+			<div class="form-group">
+				<label asp-for="Location" class="control-label"></label>
+				<select asp-for="LocationID" class="form-control" asp-items="ViewBag.LocationID">
+					<option value="">-- Select Location --</option>
+				</select>
+				<span asp-validation-for="LocationID" class="text-danger" />
+			</div>
+			<div class="form-group">
+				<label class="control-label">Skills</label>
+				<div class="col-md-offset-2 col-md-10">
+					<table>
+						<tr>
+							@{
+								int cnt = 0;
+								List<Gride.Models.ShiftSkillsData> skills = ViewBag.Skills;
+								foreach (var skill in skills)
+								{
+								<tr class="w-100">
+									<td>
+										<input type="checkbox"
+											   name="selectedSkills"
+											   value="@skill.SkillID"
+											   @(Html.Raw(skill.Assigned ? @"checked=""checked""" : "")) />
+										@skill.Name
+									</td>
+								</tr>
+							}
+							@:</tr>
+							}
+					</table>
+				</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label">Functions</label>
+					<div class="col-md-offset-2 col-md-10">
+						<table>
+							<tr>
+								@{
+									int c = 0;
+									List<Gride.Models.ShiftFunctionData> functions = ViewBag.Functions;
 
-                                foreach (var skill in skills)
-                                {
-                                    if (cnt++ % 3 == 0)
-                                    {
-                                    @:</tr><tr>
-                                    }
-                                    @:<td>
-                                        <input type="checkbox"
-                                               name="selectedSkills"
-                                               value="@skill.SkillID"
-                                               @(Html.Raw(skill.Assigned ? "checked=\"checked\"" : "")) />
-                                        @skill.Name
-                                    @:</td>
-                                }
-                            @:</tr>
-                            }
-                    </table>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <table>
-                        <tr>
-                            @{
-                                int c = 0;
-                                List<Gride.Models.ShiftFunctionData> functions = ViewBag.Functions;
-
-                                foreach (var function in functions)
-                                {
-                                    @:</tr><tr>
-                                    @:<td>
-                                        <input type="checkbox"
-                                               name="selectedFunctions"
-                                               value="@function.FunctionID"
-                                               @(Html.Raw(function.Assigned ? "checked=\"checked\"" : "")) />
-                                        @function.Name
-                                    @:</td>
-                                    @:<td>
-                                        <input name="selectedFunctionsMax"
-                                               value="@function.MaxEmployees" />
-                                    @:</td>
-                                    }
-                            @:</tr>
-                            }
-                    </table>
-                </div>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+									foreach (var function in functions)
+									{
+									@:</tr><tr class="w-100">
+										@:<td class="w-75">
+											<input type="checkbox"
+												   name="selectedFunctions"
+												   value="@function.FunctionID"
+												   @(Html.Raw(function.Assigned ? @"checked=""checked""" : "")) />
+											@function.Name
+										@:</td>
+										@:<td class="w-25">
+											<input name="selectedFunctionsMax"
+												   value="@function.MaxEmployees" />
+										@:</td>
+									}
+								@:</tr>
+								}
+						</table>
+					</div>
+				</div>
+				<div class="form-group">
+					<input type="submit" value="Create" class="btn btn-primary" />
+				</div>
+		</form>
+	</div>
 </div>
 
 <div>

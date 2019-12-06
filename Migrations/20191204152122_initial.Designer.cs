@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gride.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191114114702_initial")]
+    [Migration("20191204152122_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -98,7 +98,7 @@ namespace Gride.Migrations
 
                     b.HasIndex("FunctionID");
 
-                    b.ToTable("EmployeeFunction");
+                    b.ToTable("EmployeeFunctions");
                 });
 
             modelBuilder.Entity("Gride.Models.EmployeeLocations", b =>
@@ -152,6 +152,8 @@ namespace Gride.Migrations
 
                     b.Property<string>("ProfileImage");
 
+                    b.Property<int?>("SupervisorID");
+
                     b.HasKey("ID");
 
                     b.ToTable("EmployeeModel");
@@ -173,7 +175,7 @@ namespace Gride.Migrations
 
                     b.HasIndex("SkillID");
 
-                    b.ToTable("EmployeeSkill");
+                    b.ToTable("EmployeeSkills");
                 });
 
             modelBuilder.Entity("Gride.Models.Function", b =>
@@ -248,11 +250,19 @@ namespace Gride.Migrations
 
                     b.Property<int>("LocationID");
 
+                    b.Property<int?>("ParentShiftID");
+
+                    b.Property<int?>("ShiftID1");
+
                     b.Property<DateTime>("Start");
+
+                    b.Property<bool>("Weekly");
 
                     b.HasKey("ShiftID");
 
                     b.HasIndex("LocationID");
+
+                    b.HasIndex("ShiftID1");
 
                     b.ToTable("Shift");
                 });
@@ -322,6 +332,8 @@ namespace Gride.Migrations
 
                     b.Property<int>("EmployeeID");
 
+                    b.Property<int>("FunctionID");
+
                     b.Property<int>("Overtime");
 
                     b.Property<int>("ShiftID");
@@ -329,6 +341,8 @@ namespace Gride.Migrations
                     b.HasKey("WorkID");
 
                     b.HasIndex("EmployeeID");
+
+                    b.HasIndex("FunctionID");
 
                     b.HasIndex("ShiftID");
 
@@ -576,6 +590,10 @@ namespace Gride.Migrations
                         .WithMany()
                         .HasForeignKey("LocationID")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Gride.Models.Shift")
+                        .WithMany("ShiftChildren")
+                        .HasForeignKey("ShiftID1");
                 });
 
             modelBuilder.Entity("Gride.Models.ShiftFunction", b =>
@@ -609,6 +627,11 @@ namespace Gride.Migrations
                     b.HasOne("Gride.Models.EmployeeModel", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Gride.Models.Function", "Function")
+                        .WithMany()
+                        .HasForeignKey("FunctionID")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Gride.Models.Shift", "Shift")

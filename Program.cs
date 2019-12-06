@@ -17,8 +17,8 @@ namespace Gride
         public static void Main(string[] args)
         {
             var host = CreateWebHostBuilder(args).Build();
-
-            using (var scope = host.Services.CreateScope())
+#if DEBUG
+			using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
 
@@ -33,7 +33,8 @@ namespace Gride
                     var logger = services.GetRequiredService<ILogger<Program>>();
                     logger.LogError(ex, "An error occurred creating the DB.");
                 }
-            }
+			}
+#endif
 
             host.Run();
         }
