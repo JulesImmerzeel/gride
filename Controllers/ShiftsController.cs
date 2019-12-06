@@ -744,7 +744,7 @@ namespace Gride.Controllers
 
 			// fixes some C# floating point parsing bullshit
 			float actAvgExp;
-			if(!float.TryParse(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator == "," ? avgExp.Replace('.', ','): avgExp.Replace(',','.'),out actAvgExp))
+			if(!float.TryParse(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator == "," ? avgExp?.Replace('.', ','): avgExp?.Replace(',','.'),out actAvgExp))
 				actAvgExp = 2;
 			
 			// sets the settings ready for use
