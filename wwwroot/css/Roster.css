@@ -6,6 +6,7 @@
     border-color: lightgray;
     border-style: solid;
     color: #000000;
+    display: table-row-group;
 }
 
 .roster td,  .roster th {
