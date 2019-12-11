@@ -58,6 +58,7 @@
                 <span asp-validation-for="Experience" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label class="control-label">Skills</label>
                 <div class="col-md-offset-2 col-md-10">
                     <table>
                         <tr>
@@ -82,55 +83,60 @@
                             @:</tr>
                             }
                         </table>
+                        <a asp-controller="Skills" asp-action="Create">Add other skill</a>
+                    </div>
+                </div>
+            <div class="form-group">
+                <label class="control-label">Functions</label>
+                <div class="col-md-offset-2 col-md-10">
+                    <table>
+                        <tr>
+                            @{
+                                int c = 0;
+                                List<Gride.Models.ShiftFunctionData> functions = ViewBag.Functions;
+
+                                foreach (var function in functions)
+                                {
+                                @:</tr><tr>
+                                    @:<td>
+                                        <input type="checkbox"
+                                               name="selectedFunctions"
+                                               value="@function.FunctionID"
+                                               @(Html.Raw(function.Assigned ? "checked=\"checked\"" : "")) />
+                                        @function.Name
+                                    @:</td>
+                                }
+                            @:</tr>
+                            }
+                        </table>
+                        <a asp-controller="Function" asp-action="Create">Add other function</a>
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="control-label">Locations</label>
                     <div class="col-md-offset-2 col-md-10">
                         <table>
                             <tr>
                                 @{
-                                    int c = 0;
-                                    List<Gride.Models.ShiftFunctionData> functions = ViewBag.Functions;
+                                    List<Gride.Models.LocationData> locations = ViewBag.Locations;
 
-                                    foreach (var function in functions)
+                                    foreach (var location in locations)
                                     {
                                     @:</tr><tr>
                                         @:<td>
                                             <input type="checkbox"
-                                                   name="selectedFunctions"
-                                                   value="@function.FunctionID"
-                                                   @(Html.Raw(function.Assigned ? "checked=\"checked\"" : "")) />
-                                            @function.Name
+                                                   name="selectedLocations"
+                                                   value="@location.LocationID"
+                                                   @(Html.Raw(location.Assigned ? "checked=\"checked\"" : "")) />
+                                            @location.Name
                                         @:</td>
                                     }
                                 @:</tr>
                                 }
                             </table>
+                            <a asp-controller="Location" asp-action="Create">Add other location</a>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="col-md-offset-2 col-md-10">
-                            <table>
-                                <tr>
-                                    @{
-                                        List<Gride.Models.LocationData> locations = ViewBag.Locations;
-
-                                        foreach (var location in locations)
-                                        {
-                                        @:</tr><tr>
-                                            @:<td>
-                                                <input type="checkbox"
-                                                       name="selectedLocations"
-                                                       value="@location.LocationID"
-                                                       @(Html.Raw(location.Assigned ? "checked=\"checked\"" : "")) />
-                                                @location.Name
-                                            @:</td>
-                                        }
-                                    @:</tr>
-                                    }
-                                </table>
-                            </div>
-                        </div>
                         <div class="form-group">
                             <div class="custom-file">
                                 <label asp-for="ProfileImage" class="control-label"></label>
