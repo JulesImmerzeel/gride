@@ -4,9 +4,16 @@
 @using System;
 @{ int day = (int)DateTime.Now.DayOfWeek; }
 
-<head>
-    <link href="~/css/Roster.css" rel="stylesheet" />
-</head>
+    <head>
+        <link href="~/css/Roster.css" rel="stylesheet" />
+        <script>
+    function scrollWin() {
+        document.getElementById("tbid").scrollBy(0, @Model.earliest);
+    }
+        </script>
+    </head>
+<body onload="scrollWin()">
+
 @Html.ActionLink("back", "Index", new { id = Model.currentWeek - 1 }, null)
 Week: @Model._weekNumber @Model.month
 <inline style="float:right;">@Html.ActionLink("forward", "Index", new { id = Model.currentWeek + 1 }, null)</inline>
@@ -167,11 +174,6 @@ else
     </table>
 
 }
-@Model.earliest 
-@Model.week[0][0]
-<button onclick="scrollWin()">Scroll!</button>
-<script>
-    function scrollWin() {
-        document.getElementById("tbid").scrollBy(0, @Model.earliest);
-    }
-</script>
+
+
+</body>
