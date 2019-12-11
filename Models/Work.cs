@@ -12,10 +12,12 @@ namespace Gride.Models
 		public int WorkID { get; set; }
 		public int EmployeeID { get; set; }
 		public int ShiftID { get; set; }
+		public int? FunctionID { get; set; }
 		public int Overtime { get; set; } = 0;
         public int Delay { get; set; } = 0;
 
         public EmployeeModel Employee { get; set; }
         public Shift Shift { get; set; }
+		public Function Function { get; set; }
     }
 }

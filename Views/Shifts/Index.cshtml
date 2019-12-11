@@ -1,5 +1,10 @@
-﻿@{
+﻿@model Schedule
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@{
     ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
     string day = "";
     string start = "";
     int acceptableWeek = DateTime.Now.DayOfYear / 7 + 2;
@@ -7,19 +12,25 @@
 }
 <h1>Your shifts</h1>
 
+<h1>Shifts</h1>
+@if (SignInManager.IsSignedIn(User)  && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+		<a asp-action="Generate" style="float:right;">Generate Roster</a>
+    </p>
+}
+<style>
+        .selected_Shift {
+            font-weight: bold;
+            color: black;
+        }
+</style>
 
 @Html.ActionLink("back", "Index", new { id = Model.currentWeek - 1 }, null)
 @Model._weekNumber
 @Model.month
 @Html.ActionLink("forward", "Index", new { id = Model.currentWeek + 1 }, null)
-
-<div class="row">
-    <div class="col-12">
-        <p>
-            <a asp-action="Create">Create New</a>
-        </p>
-    </div>
-</div>
 <table class="table">
     <thead>
         <tr>

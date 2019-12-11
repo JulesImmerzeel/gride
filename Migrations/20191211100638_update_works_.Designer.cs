@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gride.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191204143057_initial")]
-    partial class initial
+    [Migration("20191211100638_update_works_")]
+    partial class update_works_
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -332,6 +332,8 @@ namespace Gride.Migrations
 
                     b.Property<int>("EmployeeID");
 
+                    b.Property<int?>("FunctionID");
+
                     b.Property<int>("Overtime");
 
                     b.Property<int>("ShiftID");
@@ -339,6 +341,8 @@ namespace Gride.Migrations
                     b.HasKey("WorkID");
 
                     b.HasIndex("EmployeeID");
+
+                    b.HasIndex("FunctionID");
 
                     b.HasIndex("ShiftID");
 
@@ -624,6 +628,10 @@ namespace Gride.Migrations
                         .WithMany()
                         .HasForeignKey("EmployeeID")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Gride.Models.Function", "Function")
+                        .WithMany()
+                        .HasForeignKey("FunctionID");
 
                     b.HasOne("Gride.Models.Shift", "Shift")
                         .WithMany("Works")

@@ -1,0 +1,31 @@
+﻿@model int
+@{
+	ViewData["Title"] = "Assign employee";
+}
+@inject ApplicationDbContext _context
+
+<h1>Generator</h1>
+<div class="container">
+	<div class="row">
+		<div class="col-md-10">
+			<label class="control-label">Settings</label>
+			<form asp-action="AssignEmployee" class="w-75">
+				<div class="form-group">
+					<select name="EmployeeID">
+						@foreach(EmployeeModel emp in _context.EmployeeModel)
+						{
+							<option value="@emp.ID">@emp.Name @emp.LastName</option>
+						}
+					</select>
+					<select name="FunctionID">
+						@foreach(Function func in _context.ShiftFunctions.Where(x => x.ShiftID == Model).Select(x => x.Function))
+						{
+							<option value="@func.FunctionID">@func.Name</option>
+						}
+					</select>
+				</div>
+				<input type="submit" value="Assign" />
+			</form>
+		</div>
+	</div>
+</div>

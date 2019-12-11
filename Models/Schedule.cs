@@ -16,6 +16,7 @@ namespace Gride.Models
         public string month;
         public IEnumerable<Shift> _shifts;
         public IEnumerable<Availability> _availabilities;
+        public int earliest;
 
 
         public void setWeek(int weeks)
@@ -84,7 +85,7 @@ namespace Gride.Models
             IEnumerable<Shift> ordered = shifts.OrderBy(a => a.Start);
 
             _shifts = ordered;
-
+            List<int> starttimes = new List<int>();
             foreach (Shift a in ordered)
             {
                 int d = (int)a.Start.DayOfWeek - 1;
@@ -97,11 +98,17 @@ namespace Gride.Models
                     h++;
                     week[d][h] = h + ":00 - " + (h + 1) + ":00";
                 }
+                string x = a.Start.ToString("HH");
+                int y = Int32.Parse(x);
+                starttimes.Add(y);
+                earliest = starttimes.Min() * 75;
             }
+
         }
 
         public void setAvailabilities(ICollection<Availability> allAvailabilities)
         {
+            
             foreach (Availability a in allAvailabilities)
             {
                 if (a.Weekly)
@@ -112,6 +119,7 @@ namespace Gride.Models
                     a.Start = a.Start.AddDays(days);
                     a.End = a.End.AddDays(days);
                 }
+                
             }
             IEnumerable<Availability> availabilities = allAvailabilities.Where(a => (a.Start.DayOfYear / 7) == _weekNumber-1);
 
@@ -132,6 +140,7 @@ namespace Gride.Models
                     week[d][h] = h + ":00 - " + (h+1) + ":00";
                 }
             }
+           
         }
 
     }
