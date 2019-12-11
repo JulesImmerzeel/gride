@@ -5,9 +5,11 @@
     @inject ApplicationDbContext _context
     @inject SignInManager<IdentityUser> SignInManager
     @inject UserManager<IdentityUser> UserManager
+    @inject ApplicationDbContext _context
     ViewData["Title"] = "Home Page";
     @if (SignInManager.IsSignedIn(User))
     {
+
 
         List<String> goood = (from users in _context.EmployeeModel
                         where users.EMail == User.Identity.Name
@@ -21,7 +23,6 @@
         <partial name="/Views/Shared/_Schedule.cshtml" />
 
         <hr />
-
         <partial name="/Views/Shared/_WorkOverview.cshtml" />
     }
 
