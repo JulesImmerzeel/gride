@@ -39,6 +39,7 @@
                     <option value="">-- Select Location --</option>
                 </select>
                 <span asp-validation-for="LocationID" class="text-danger" />
+                <a asp-controller="Location" asp-action="Create">Add other location</a>
             </div>
             <div class="form-group">
                 <label class="control-label">Skills</label>
@@ -63,6 +64,7 @@
                             @:</tr>
                             }
                         </table>
+                        <a asp-controller="Skills" asp-action="Create">Add other skill</a>
                     </div>
                 </div>
                 <div class="form-group">
@@ -92,6 +94,7 @@
                                 @:</tr>
                                 }
                             </table>
+                            <a asp-controller="Skills" asp-action="Create">Add other skill</a>  
                         </div>
                     </div>
                     <div class="form-group">
