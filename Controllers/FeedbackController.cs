@@ -12,5 +12,15 @@ namespace Gride.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        public ActionResult Report(string reportName)
+        {
+            if (reportName != null)
+            {
+                return View();
+            }
+            return View();
+        }
     }
 }

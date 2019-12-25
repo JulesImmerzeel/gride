@@ -2,6 +2,15 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
+<h2>Feedback</h2>
 
-<p>Hello from our View Template!</p>
+<p>Fill in this form if you have any feedback or found any bugs.</p>
+
+@using (Html.BeginForm())
+{
+    <p>Title</p>
+    <input type="text" name="Title" />
+    <p>Feedback</p>
+    <input type="text" name="Comment"/>
+    <input type="submit" />
+}
