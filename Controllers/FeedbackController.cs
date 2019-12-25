@@ -18,8 +18,10 @@ namespace Gride.Controllers
         {
             if (reportName != null)
             {
+                Console.WriteLine("Title");
                 return View();
             }
+            Console.WriteLine("dag");
             return View();
         }
     }

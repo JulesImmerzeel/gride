@@ -8,9 +8,12 @@
 
 @using (Html.BeginForm())
 {
+    <form action="FeedbackController" method="POST">
     <p>Title</p>
     <input type="text" name="Title" />
     <p>Feedback</p>
-    <input type="text" name="Comment"/>
-    <input type="submit" />
+    <textarea type="text" name="Comment"/>
+    <p></p>
+    <input type="submit" value="Submit" class="btn btn-primary">
+    </form>
 }
