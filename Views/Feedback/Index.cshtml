@@ -19,6 +19,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.Title)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FeedbackPostDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fixed)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -30,6 +36,12 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FeedbackPostDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Fixed)
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
