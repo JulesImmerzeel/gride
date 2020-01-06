@@ -214,6 +214,18 @@ namespace Gride.Data
                     Experience = 4,
                     ProfileImage = "",
                     SupervisorID = 1
+                },
+                new EmployeeModel
+                {
+                    Name = "Gijs",
+                    LastName = "Puelinckx",
+                    DoB = new DateTime(2001, 05,24),
+                    Gender = 0,
+                    EMail = "0958956@hr.nl",
+                    PhoneNumber = "0646889367",
+                    Admin = true,
+                    Experience = 5,
+                    ProfileImage = "",
                 }
             };
                 foreach (EmployeeModel e in employees)
