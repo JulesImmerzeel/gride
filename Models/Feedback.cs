@@ -13,5 +13,6 @@ namespace Gride.Models
         public string FeedbackDescription { get; set; }
         [DataType(DataType.Date)]
         public DateTime FeedbackPostDate { get; set; }
+        public bool Fixed { get; set; }
     }
 }
