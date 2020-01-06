@@ -160,7 +160,7 @@ namespace Gride.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Fixed")] Feedback feedback)
+        public async Task<IActionResult> Edit(int id, [Bind("Id, Title, FeedbackDescription, FeedbackPostDate, Fixed")] Feedback feedback)
         {
             if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
