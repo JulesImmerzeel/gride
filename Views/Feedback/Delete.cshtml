@@ -10,11 +10,35 @@
     <h4>Feedback</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Title)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FeedbackDescription)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FeedbackDescription)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FeedbackPostDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FeedbackPostDate)
+        </dd>
+    </dl>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Fixed)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Fixed)
         </dd>
     </dl>
     

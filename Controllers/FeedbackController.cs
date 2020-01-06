@@ -135,5 +135,72 @@ namespace Gride.Controllers
                 return Forbid();
             }
         }
+
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var feedback = await _context.Feedback.FindAsync(id);
+                if (feedback == null)
+                {
+                    return NotFound();
+                }
+                return View(feedback);
+            }
+            else
+            {
+                return Forbid();
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Fixed")] Feedback feedback)
+        {
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id != feedback.Id)
+                {
+                    return NotFound();
+                }
+
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        _context.Update(feedback);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!FeedbackExists(feedback.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(feedback);
+
+            }
+            else
+            {
+                return Forbid();
+            }
+        }
+
+        private bool FeedbackExists(int id)
+        {
+            return _context.Feedback.Any(e => e.Id == id);
+        }
     }
 }
