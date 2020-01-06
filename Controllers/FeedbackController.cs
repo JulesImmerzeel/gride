@@ -28,17 +28,65 @@ namespace Gride.Controllers
             this.signInManager = signInManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            if (signInManager.IsSignedIn(User))
+            {
+                return View(await _context.Feedback.ToListAsync());
+            }
+            else
+            {
+                return Forbid();
+            }
         }
+
 
         public IActionResult Create()
         {
-            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
-            {
                 return View();
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id, Title, FeedbackDescription, FeedbackPostDate, Fixed")] Feedback feedback)
+        {
+            if (signInManager.IsSignedIn(User))
+            {
+                if (ModelState.IsValid)
+                {
+                    DateTime today = DateTime.Today;
+                    feedback.Fixed = false;
+                    feedback.FeedbackPostDate = today;
+                    _context.Add(feedback);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(feedback);
+            }
+            else
+            {
+                return Forbid();
+            }
+        }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (signInManager.IsSignedIn(User))
+            {
+
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var function = await _context.Feedback
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (function == null)
+                {
+                    return NotFound();
+                }
+
+                return View(function);
             }
             else
             {

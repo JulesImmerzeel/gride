@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<Gride.Models.Feedback>
+
+@{
     ViewData["Title"] = "Index";
 }
 
@@ -8,5 +10,37 @@
 
 <p>Thank you</p>
 
-
+<p>
+    <a asp-action="Create">Give Feedback</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+            </td>
+        </tr>
+        }
+        }
+        else
+        {
+            <p> There is no Feedback </p>
+        }
+    </tbody>
+</table>
 
