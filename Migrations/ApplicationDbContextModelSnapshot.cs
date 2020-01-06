@@ -182,13 +182,15 @@ namespace Gride.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("FeedbackDescription");
+                    b.Property<string>("FeedbackDescription")
+                        .IsRequired();
 
                     b.Property<DateTime>("FeedbackPostDate");
 
                     b.Property<bool>("Fixed");
 
-                    b.Property<string>("Title");
+                    b.Property<string>("Title")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
