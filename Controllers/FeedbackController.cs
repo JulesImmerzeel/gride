@@ -93,5 +93,47 @@ namespace Gride.Controllers
                 return Forbid();
             }
         }
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var function = await _context.Feedback
+                    .FirstOrDefaultAsync(m => m.Id == id);
+                if (function == null)
+                {
+                    return NotFound();
+                }
+
+                return View(function);
+            }
+            else
+            {
+                return Forbid();
+            }
+        }
+
+        // POST: Location/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                var feedback = await _context.Feedback.FindAsync(id);
+                _context.Feedback.Remove(feedback);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return Forbid();
+            }
+        }
     }
 }
