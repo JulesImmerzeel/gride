@@ -54,7 +54,7 @@ namespace Gride.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    DateTime today = DateTime.Today;
+                    DateTime today = DateTime.Now;
                     feedback.Fixed = false;
                     feedback.FeedbackPostDate = today;
                     _context.Add(feedback);
