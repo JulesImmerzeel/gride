@@ -36,7 +36,7 @@ namespace Gride.Controllers
         // GET: EmployeeModels
         public async Task<IActionResult> Index()
         {
-            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            if (User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)
             {
                 return View(await _context.EmployeeModel.ToListAsync());
             }
@@ -51,7 +51,7 @@ namespace Gride.Controllers
         // GET: EmployeeModels/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            if (User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)
             {
                 if (id == null)
                 {
@@ -110,7 +110,7 @@ namespace Gride.Controllers
         // GET: EmployeeModels/Create
         public IActionResult Create()
         {
-            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            if (User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)
             {
                 var employee = new EmployeeModel();
                 employee.EmployeeSkills = new List<EmployeeSkill>();
@@ -146,7 +146,7 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Name,LastName,DoB,Gender,EMail,PhoneNumber,Admin,LoginID,Experience,ProfileImage,SupervisorID")] EmployeeModel employeeModel, string[] selectedSkills, string[] selectedFunctions, string[] selectedLocations, EmployeeViewModel model)
         {
-            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            if (User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)
             {
                 //employeeModel = setSupervisor(employeeModel);
                 if (selectedSkills != null)
@@ -242,7 +242,7 @@ namespace Gride.Controllers
         // GET: EmployeeModels/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            if (User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)
             {
                 if (id == null)
             {
@@ -280,7 +280,7 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int? id, string[] selectedSkills, string[] selectedFunctions, string[] selectedLocations, EmployeeViewModel model)
         {
-            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            if (User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)
             {
                 if (id == null)
             {
@@ -350,7 +350,7 @@ namespace Gride.Controllers
         // GET: EmployeeModels/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            if (User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)
             {
                 if (id == null)
             {
@@ -377,7 +377,7 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            if (User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)
             {
                 var employeeModel = await _context.EmployeeModel.FindAsync(id);
             _context.EmployeeModel.Remove(employeeModel);
