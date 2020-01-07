@@ -135,7 +135,7 @@ namespace Gride.Controllers
                     // this way the actual worked hours are shown
                     foreach (Work w in works)
                     {
-                        if (w.Shift.Start.Year == 2019 && w.Shift.Start.Month == i)
+                        if (w.Shift.Start.Year == DateTime.Now.Year && w.Shift.Start.Month == i)
                         {
                             workOverview.AddHours((int)(w.Shift.End - w.Shift.Start).TotalHours);
                             workOverview.SubtractHours(w.Delay);
