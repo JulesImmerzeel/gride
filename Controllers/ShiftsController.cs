@@ -194,7 +194,7 @@ namespace Gride.Controllers
 		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Create([Bind("Start,End,LocationID,Location")] Shift shift, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax)
+		public async Task<IActionResult> Create([Bind("Start,End,Weekly,LocationID,Location")] Shift shift, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax)
 		{
 			if (User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)
 			{
@@ -802,12 +802,13 @@ namespace Gride.Controllers
 			HttpContext.Session.TryGetValue("genRes", out byte[] bytes);
 			Dictionary<int, Dictionary<int, List<int>>> IDResult = JsonConvert.DeserializeObject<Dictionary<int, Dictionary<int, List<int>>>>(Encoding.Default.GetString(bytes)) ?? new Dictionary<int, Dictionary<int, List<int>>>();
 			Dictionary<int, Dictionary<int, List<EmployeeModel>>> actResult = new Dictionary<int, Dictionary<int, List<EmployeeModel>>>();
+			List<EmployeeModel> employees = await _context.EmployeeModel.ToListAsync();
 			Parallel.ForEach(IDResult.Keys, new ParallelOptions { MaxDegreeOfParallelism = 10 }, sID =>
 			{
 				Dictionary<int, List<EmployeeModel>> ShiftList = new Dictionary<int, List<EmployeeModel>>();
 				foreach (int fID in IDResult[sID].Keys)
 					ShiftList.Add(fID, (from emp in IDResult[sID][fID]
-										select _context.EmployeeModel.First(x => x.ID == emp)).ToList());
+										select employees.First(x => x.ID == emp)).ToList());
 				lock (actResult)
 					actResult.Add(sID, ShiftList);
 			});
@@ -826,9 +827,10 @@ namespace Gride.Controllers
 				{
 					Shift = _context.Shift.Single(x => x.ShiftID == IDs[0]),
 					ShiftID = IDs[0],
-					Function = _context.Function.Single(x => x.FunctionID == IDs[0]),
+					Function = _context.Function.Single(x => x.FunctionID == IDs[1]),
 					FunctionID = IDs[1],
 					Employee = _context.EmployeeModel.Single(x => x.ID == IDs[2]),
+					EmployeeID = IDs[2],
 				});
 			}
 			await _context.SaveChangesAsync();
