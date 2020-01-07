@@ -151,7 +151,7 @@ namespace Gride.Gen
 					// takes the most experienced people and saves them
 					skill = skill.TakeLast(func.MaxEmployees).ToList();
 					cresult.AddRange(skill);
-					result.Add(func.FunctionID, skill);
+					result[func.FunctionID].AddRange(skill);
 					continue;
 				}
 

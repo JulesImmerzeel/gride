@@ -10,9 +10,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestGride", "..\UnitTes
 		{4D42936B-5115-44BD-9DB9-812321D6C6FC} = {4D42936B-5115-44BD-9DB9-812321D6C6FC}
 	EndProjectSection
 EndProject
+
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntergrationTest", "..\IntergrationTest\IntergrationTest.csproj", "{3D8141DC-CF71-4EEB-AEDF-D91D04BFF12D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrideTest", "..\GrideTest\GrideTest.csproj", "{1744F1AB-5237-42B1-A922-583BF93FB5BC}"
+
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrideTest", "..\GrideTest\GrideTest.csproj", "{74ED2BDF-CE3E-4148-985E-EDA9EAA4A2EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,6 +31,7 @@ Global
 		{9E7335EE-A9FB-4F52-8BF2-518B0E82B096}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E7335EE-A9FB-4F52-8BF2-518B0E82B096}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E7335EE-A9FB-4F52-8BF2-518B0E82B096}.Release|Any CPU.Build.0 = Release|Any CPU
+
 		{3D8141DC-CF71-4EEB-AEDF-D91D04BFF12D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3D8141DC-CF71-4EEB-AEDF-D91D04BFF12D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D8141DC-CF71-4EEB-AEDF-D91D04BFF12D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -36,6 +40,10 @@ Global
 		{1744F1AB-5237-42B1-A922-583BF93FB5BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1744F1AB-5237-42B1-A922-583BF93FB5BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1744F1AB-5237-42B1-A922-583BF93FB5BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74ED2BDF-CE3E-4148-985E-EDA9EAA4A2EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74ED2BDF-CE3E-4148-985E-EDA9EAA4A2EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74ED2BDF-CE3E-4148-985E-EDA9EAA4A2EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74ED2BDF-CE3E-4148-985E-EDA9EAA4A2EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
