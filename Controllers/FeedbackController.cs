@@ -30,7 +30,7 @@ namespace Gride.Controllers
 
         public async Task<IActionResult> Index()
         {
-            if (signInManager.IsSignedIn(User))
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
                 return View(await _context.Feedback.ToListAsync());
             }
@@ -71,7 +71,7 @@ namespace Gride.Controllers
 
         public async Task<IActionResult> Details(int? id)
         {
-            if (signInManager.IsSignedIn(User))
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
 
                 if (id == null)
