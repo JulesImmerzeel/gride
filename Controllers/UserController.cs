@@ -58,7 +58,8 @@ namespace Gride.Controllers
                                         .AsNoTracking()
                                         .FirstOrDefaultAsync(m => m.EMail == User.Identity.Name);
 
-            if (EmployeeModel.Equals(employee, null)){
+            if (EmployeeModel.Equals(employee, null))
+            {
                 return NotFound();
             }
 
@@ -181,13 +182,13 @@ namespace Gride.Controllers
                     {
                         if (!employeeLocations.Contains(location.LocationID))
                         {
-                           employeeToUpdate.EmployeeLocations.Add(new EmployeeLocations 
-                           { 
-                               EmployeeModelID = employeeToUpdate.ID,
-                               LocationID = location.LocationID,
-                               Employee = employeeToUpdate,
-                               Location = location
-                           });
+                            employeeToUpdate.EmployeeLocations.Add(new EmployeeLocations
+                            {
+                                EmployeeModelID = employeeToUpdate.ID,
+                                LocationID = location.LocationID,
+                                Employee = employeeToUpdate,
+                                Location = location
+                            });
                         }
                     }
                     else
@@ -225,7 +226,7 @@ namespace Gride.Controllers
         {
             EmployeeModel employee = await _context.EmployeeModel
                                         .Include(e => e.EmployeeSkills)
-                                            .ThenInclude( e => e.Skill)
+                                            .ThenInclude(e => e.Skill)
                                         .Include(f => f.EmployeeFunctions)
                                             .ThenInclude(f => f.Function)
                                         .Include(l => l.EmployeeLocations)
@@ -249,8 +250,8 @@ namespace Gride.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-            // GET: Employee/Delete/5
-            public async Task<IActionResult> Delete(uint? id)
+        // GET: Employee/Delete/5
+        public async Task<IActionResult> Delete(uint? id)
         {
             if (id == null)
             {
