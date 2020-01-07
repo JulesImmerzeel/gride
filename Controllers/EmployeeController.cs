@@ -38,7 +38,28 @@ namespace Gride.Controllers
         {
             if (User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)
             {
-                return View(await _context.EmployeeModel.ToListAsync());
+                var employees = await _context.EmployeeModel.ToListAsync();
+
+                foreach (EmployeeModel employee in employees)
+                {
+                    List<Work> works = _context.Works.Where(e => e.Employee == employee).Include(m => m.Employee).Include(s => s.Shift).ToList();
+
+                    var worked = new WorkOverview();
+
+                    foreach (Work w in works)
+                    {
+                        if (w.Shift.Start.Year == DateTime.Now.Year && w.Shift.Start.Month == DateTime.Now.Month)
+                        {
+                            worked.AddHours((int)(w.Shift.End - w.Shift.Start).TotalHours);
+                            worked.SubtractHours(w.Delay);
+                            worked.AddHours(w.Overtime);
+                        }
+                    }
+
+                    employee.Workoverview = worked;
+                }
+
+                return View(employees);
             }
 
             else
