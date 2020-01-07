@@ -23,6 +23,13 @@ namespace Gride.Controllers
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly UserManager<IdentityUser> userManager;
 
+        /// <summary>
+        /// Set context, enviorment, user manager and sing in manager.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="env"></param>
+        /// <param name="signInManager"></param>
+        /// <param name="userManager"></param>
         public EmployeeController(ApplicationDbContext context, IHostingEnvironment env,
                                   SignInManager<IdentityUser> signInManager,
                                   UserManager<IdentityUser> userManager)
@@ -33,7 +40,10 @@ namespace Gride.Controllers
             this.signInManager = signInManager;
         }
 
-        // GET: EmployeeModels
+        /// <summary>
+        /// GET: EmployeeModels
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
             if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
@@ -68,17 +78,23 @@ namespace Gride.Controllers
             }
         }
 
-
-        // GET: EmployeeModels/Details/5
+        /// <summary>
+        /// GET: EmployeeModels/Details/5
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Details(int? id)
         {
+            // check if user is loggen in and user is an admin.
             if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
+                // return not found if ID not given.
                 if (id == null)
                 {
                     return NotFound();
                 }
 
+                // Get employee model and include skills, functions and locations
                 var employeeModel = await _context.EmployeeModel
                                             .Include(e => e.EmployeeSkills)
                                                 .ThenInclude(e => e.Skill)
@@ -89,23 +105,34 @@ namespace Gride.Controllers
                                             .AsNoTracking()
                                             .FirstOrDefaultAsync(m => m.ID == id);
 
+                //add supervisor to viewbag
                 ViewBag.Supervisor = _context.EmployeeModel.FirstOrDefault(s => s.ID == employeeModel.SupervisorID);
+
+                // if employee model is not found, return not found.
                 if (employeeModel == null)
                 {
                     return NotFound();
                 }
 
+                // get all works associated with this employee
                 List<Work> works = _context.Works.Where(e => e.Employee == employeeModel).Include(m => m.Employee).Include(s => s.Shift).ToList();
-                var workOverviewlist = new List<WorkOverview>();
+                var workOverviewlist = new List<WorkOverview>(); // create a list containing work overview
 
+
+                // fill the list with 12 items (every item represents a month of the year).
+                // a WorkOverview is created for every month of the year,
+                // it will add an item to the list and calculate the users worked hours for that given month.
                 for (int i = 1; i <= 12; i++)
                 {
+                    // create new work overview and set month to current itterations number
                     var workOverview = new WorkOverview
                     {
-                        Month = i
+                        Month = i //set month to i
                     };
 
-
+                    // go trough each users work and add total worked hours
+                    // the worked hours calculated by adding and subtracting the delay and overtime
+                    // this way the actual worked hours are shown
                     foreach (Work w in works)
                     {
                         if (w.Shift.Start.Year == 2019 && w.Shift.Start.Month == i)
@@ -124,11 +151,14 @@ namespace Gride.Controllers
                 return View(employeeModel);
             } else
             {
-                return Forbid();
+                return Forbid(); // user is either not logged nor an admin, show forbidden page.
             }
         }
 
-        // GET: EmployeeModels/Create
+        /// <summary>
+        /// GET: EmployeeModels/Create
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Create()
         {
             if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
