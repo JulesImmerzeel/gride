@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Gride.Migrations
 {
-    public partial class initial : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -479,7 +479,7 @@ namespace Gride.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     EmployeeID = table.Column<int>(nullable: false),
                     ShiftID = table.Column<int>(nullable: false),
-                    FunctionID = table.Column<int>(nullable: false),
+                    FunctionID = table.Column<int>(nullable: true),
                     Overtime = table.Column<int>(nullable: false),
                     Delay = table.Column<int>(nullable: false)
                 },
@@ -497,7 +497,7 @@ namespace Gride.Migrations
                         column: x => x.FunctionID,
                         principalTable: "Function",
                         principalColumn: "FunctionID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Works_Shift_ShiftID",
                         column: x => x.ShiftID,
