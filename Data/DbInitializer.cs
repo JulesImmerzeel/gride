@@ -387,7 +387,6 @@ namespace Gride.Data
                 context.SaveChanges();
             }
 
-            /*
             if (!context.Shift.Any())
             {
                 InitialData initialdata = new InitialData();
@@ -420,7 +419,6 @@ namespace Gride.Data
                 }
                 context.SaveChanges();
             }
-            */
         }
     }
 }

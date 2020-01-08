@@ -8,10 +8,10 @@
 	<div class="row">
 		<div class="col-md-10">
 			<form asp-action="Generate" class="w-75">
-				<div class="form-group">
+				<div class="form-group" style="display:none;">
 					<table>
 						<tr class="w-100">
-							<td style="padding:5px; visibility:hidden;" class="align-baseline">
+							<td style="padding:5px;" class="align-baseline">
 								<input type="radio" name="pairSettings" value="@((int)GeneratorSettings.PreferHigerExp)" checked="checked"/> Prefer higher experience. <br />
 								<input type="radio" name="pairSettings" value="@((int)GeneratorSettings.PreferLowerExp)" /> Prefer lower experience. <br />
 							</td>
@@ -19,17 +19,17 @@
 					</table>
 				</div>
 				<div class="form-group">
-					<label class="control-label">average experience</label>
+					<label class="control-label">Average experience:</label>
 					<input type="number" name="avgExp" min=".5" max="30" step=".5" /><br />
-					<small>if left empty, the default average experience is 3 years.</small>
+					<small>If left empty, the default average experience is 3 years.</small>
 				</div>
 				<div class="form-group">
-					<label class="control-label">Start</label>
+					<label class="control-label">Start:</label>
 					<input type="datetime-local" class="form-control" name="start" /><br />
-					<small>if left empty, the default start date is today.</small>
-					<label class="control-label">End</label>
+					<small>If left empty, the default start date is today.</small>
+					<label class="control-label">End:</label>
 					<input type="datetime-local" class="form-control" name="end" /><br />
-					<small>if left empty, the default end date is 2 weeks after the start date.</small>
+					<small>If left empty, the default end date is 2 weeks after the start date.</small>
 				</div>
 				<input type="submit" value="Submit"/>
 			</form>

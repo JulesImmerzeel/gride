@@ -7,24 +7,54 @@
 
 <h1>Generated</h1>
 <form asp-action="Generated">
-	@foreach (int shiftID in Model.Keys)
-	{
-		Shift shift = _context.Shift.ToList().Find(x => x.ShiftID == shiftID);
-		<div>
-			<h2>@($"shift from {shift.Start} to {shift.End}")</h2>
-			@foreach (int functionID in Model[shiftID].Keys) {
-				Function function = _context.Function.ToList().Find(x => x.FunctionID == functionID);
-				<div>
-					<h3>@function.Name</h3>
-					<div class="form-group">
-						@foreach (EmployeeModel employee in Model[shiftID][functionID])
+	<table class="w-100 align-top">
+		<thead>
+			<td>
+				Shift
+			</td>
+			<td>
+				Function
+			</td>
+		</thead>
+		@foreach (int shiftID in Model.Keys)
+		{
+			Shift shift = _context.Shift.ToList().Find(x => x.ShiftID == shiftID);
+
+			<tr>
+				<td class="align-top">
+					<strong>@($"shift from {shift.Start} to {shift.End}")</strong>
+				</td>
+				<td>
+					<table class="w-100">
+						@foreach (int functionID in Model[shiftID].Keys)
 						{
-							<input type="checkbox" name="selected" checked="checked" value="@($"{shiftID}, {functionID}, {employee.ID}")" /> @(employee.Name + ' ' + employee.LastName) <br />
+
+							Function function = _context.Function.ToList().Find(x => x.FunctionID == functionID);
+							<tr>
+								<td class="w-50">
+									@function.Name
+								</td>
+								<td>
+
+									<table>
+										@foreach (EmployeeModel employee in Model[shiftID][functionID])
+										{
+											<tr>
+												<td>
+													<input type="checkbox" name="selected" checked="checked" value="@($"{shiftID}, {functionID}, {employee.ID}")" />
+													@(employee.Name + ' ' + employee.LastName)
+												</td>
+											</tr>
+										}
+									</table>
+								</td>
+							</tr>
 						}
-					</div>
-				</div>
-			}
-		</div>
-	}
-	<input type="submit" value="Conffirm" />
+					</table>
+				</td>
+			</tr>
+
+				}
+		</table>
+	<input type="submit" value="Confirm" />
 </form>
