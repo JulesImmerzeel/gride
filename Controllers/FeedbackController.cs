@@ -12,9 +12,13 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Gride.Controllers
 {
+    //Alle paginas zijn beveiligd tegen users die niet zijn ingelogd.
+    //Alleen de create pagina en redirectcreate pagina zijn toegankelijk voor de users.
+    //alle paginaz zijn toegankelijk voor de admins.
     [Authorize]
     public class FeedbackController : Controller
     {
+        //Hier wordt er data opgehaald of een user is ingelogd en of een admin is.
         private readonly ApplicationDbContext _context;
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly UserManager<IdentityUser> userManager;
