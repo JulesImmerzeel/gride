@@ -6,8 +6,20 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
+/// <summary>
+/// EmployeeViewModel is a view model based on the Employee Model
+/// The only difference between the viewModel and the model is that
+/// the type of profile image is changed from "String" to "IFormFile".
+/// 
+/// This because, this viewmodel is used with changing the employee profile image.
+/// 
+/// Examples of this being implemented can be found in the edit task of both UserController and EmployeeCOntroller
+/// </summary>
 namespace Gride.ViewModels
 {
+    /// <summary>
+    /// Representes the view model of the employee model
+    /// </summary>
     public class EmployeeViewModel
     {
         public int ID { get; set; }
@@ -35,7 +47,7 @@ namespace Gride.ViewModels
         public int? SupervisorID { get; set; }
         public bool Admin { get; set; } = false;
         public float Experience { get; set; }
-        public IFormFile ProfileImage { get; set; } = null;
+        public IFormFile ProfileImage { get; set; } = null; // string is IFormFile.
 
         public ICollection<EmployeeSkill> EmployeeSkills { get; set; }
         public ICollection<EmployeeFunction> EmployeeFunctions { get; set; }

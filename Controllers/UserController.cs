@@ -10,6 +10,8 @@ using Gride.Models;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Authorization;
+using Gride.ViewModels;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Gride.Controllers
 {
@@ -17,10 +19,12 @@ namespace Gride.Controllers
     public class UserController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IHostingEnvironment _env;
 
-        public UserController(ApplicationDbContext context)
+        public UserController(ApplicationDbContext context, IHostingEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         // GET: Employee
@@ -127,7 +131,7 @@ namespace Gride.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, string[] selectedLocations)
+        public async Task<IActionResult> Edit(int? id, string[] selectedLocations, EmployeeViewModel model)
         {
             if (id == null)
             {
@@ -143,10 +147,32 @@ namespace Gride.Controllers
                     .ThenInclude(s => s.Location)
                 .FirstOrDefaultAsync(s => s.ID == _context.EmployeeModel.Single(e => e.EMail == User.Identity.Name).ID);
 
+            string uniqueFileName = employeeToUpdate.ProfileImage;
+
+            // If the Photo property on the incoming model object is not null, then the user
+            // has selected an image to upload.
+            if (model.ProfileImage != null)
+            {
+                // The image must be uploaded to the images folder in wwwroot
+                // To get the path of the wwwroot folder we are using the inject
+                // HostingEnvironment service provided by ASP.NET Core
+                string uploadsFolder = Path.Combine(_env.WebRootPath, "images");
+                // To make sure the file name is unique we are appending a new
+                // GUID value and and an underscore to the file name
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + model.ProfileImage.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                // Use CopyTo() method provided by IFormFile interface to
+                // copy the file to wwwroot/images folder
+                model.ProfileImage.CopyTo(new FileStream(filePath, FileMode.Create));
+            }
+
             if (await TryUpdateModelAsync<EmployeeModel>(employeeToUpdate, "",
                 e => e.Name, e => e.LastName, e => e.DoB, e => e.Gender, e => e.EMail, e => e.PhoneNumber, e => e.Admin, e => e.Experience, e => e.ProfileImage))
             {
                 UpdateEmployeeLocations(selectedLocations, employeeToUpdate);
+
+                employeeToUpdate.ProfileImage = uniqueFileName;
+
                 try
                 {
                     await _context.SaveChangesAsync();

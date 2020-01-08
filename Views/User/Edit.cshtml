@@ -13,7 +13,7 @@
 <hr />
 <div class="row">
     <td class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data" method="post">
             <table class="table">
                 <tr>
                     <td>@Html.DisplayNameFor(model => model.Name)</td>
@@ -132,9 +132,34 @@
                 <td>@Html.DisplayFor(model => model.Experience)</td>
                 <td><a asp-action="Request" asp-controller="User" asp-route-id="Experience">Request Change</a></td>
             </tr>
+
+            <tr>
+                <td>
+                @Html.DisplayNameFor(model => model.ProfileImage)
+            </td>
+                <td>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-6 custom-file">
+                                <label asp-for="ProfileImage" class="control-label"></label>
+                                <input asp-for="ProfileImage" type="file" class="form-control custom-file-input" />
+                            </div>
+                            
+                            <div class="col-6">
+                                <p>Current image:</p>
+                                @if (!String.IsNullOrEmpty(Model.ProfileImage))
+                                {
+                                    <img class="img img-profile" src="/images/@Model.ProfileImage" alt="Profile Image" />
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td></td>
+            </tr>
+
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ID" />
-            <input asp-for="ProfileImage" type="hidden" />
             <input asp-for="Name" type="hidden" />
             <input asp-for="LastName" type="hidden" />
             <input asp-for="Admin" type="hidden" />
