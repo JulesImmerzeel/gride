@@ -27,7 +27,7 @@ namespace Gride.Controllers
             _context = context;
             this.signInManager = signInManager;
         }
-
+        //Geeft the index pagina van de feedback.
         public async Task<IActionResult> Index()
         {
             if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
@@ -45,7 +45,7 @@ namespace Gride.Controllers
         {
             return View();
         }
-
+        //Geeft de create feeback pagina en neemt de feedback op in het database van feedback.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id, Title, FeedbackDescription, FeedbackPostDate, Fixed")] Feedback feedback)
@@ -54,6 +54,7 @@ namespace Gride.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    //Dit wordt ingevuld door de controller omdat dit info is die niet door een user ingevuld hoeft te worden.
                     DateTime today = DateTime.Now;
                     feedback.Fixed = false;
                     feedback.FeedbackPostDate = today;
@@ -68,7 +69,7 @@ namespace Gride.Controllers
                 return Forbid();
             }
         }
-
+        //Geeft de dtails feedback pagina van de geselecteerde feedback.
         public async Task<IActionResult> Details(int? id)
         {
             if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
@@ -93,7 +94,7 @@ namespace Gride.Controllers
                 return Forbid();
             }
         }
-
+        //Geeft de delete feedback pagina.
         public async Task<IActionResult> Delete(int? id)
         {
             if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
@@ -118,7 +119,7 @@ namespace Gride.Controllers
             }
         }
 
-        // POST: Location/Delete/5
+        //Delete feedback van de pagina.
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -197,7 +198,7 @@ namespace Gride.Controllers
                 return Forbid();
             }
         }
-
+        //Is de pagina die wordt gegeven na het creeren van feedback.
         public IActionResult RedirectCreate()
         {
             if (signInManager.IsSignedIn(User))
