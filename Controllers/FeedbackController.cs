@@ -59,7 +59,7 @@ namespace Gride.Controllers
                     feedback.FeedbackPostDate = today;
                     _context.Add(feedback);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(RedirectCreate));
                 }
                 return View(feedback);
             }
@@ -191,6 +191,18 @@ namespace Gride.Controllers
                 }
                 return View(feedback);
 
+            }
+            else
+            {
+                return Forbid();
+            }
+        }
+
+        public IActionResult RedirectCreate()
+        {
+            if (signInManager.IsSignedIn(User))
+            {
+                return View();
             }
             else
             {
