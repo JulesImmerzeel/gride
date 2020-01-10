@@ -1,4 +1,5 @@
 ﻿@model Gride.Models.EmployeeModel
+@using  System.IO
 
 @{
     ViewData["Title"] = "Edit";
@@ -60,7 +61,7 @@
             </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <p>Skills</p>
+                    <a href="/Skills/Create">Skills</a>
                     <table>
                         <tr>
                             @{
@@ -83,7 +84,7 @@
                 </div>
                 <div class="form-group">
                     <div class="col-md-offset-2 col-md-10">
-                        <p>Functions</p>
+                        <a href="/Function/Create">Functions</a>
                         <table>
                             <tr>
                                 @{
@@ -106,7 +107,7 @@
                     </div>
                     <div class="form-group">
                         <div class="col-md-offset-2 col-md-10">
-                            <p>Locations</p>
+                            <a href="/Location/Create">Locations</a>
                             <table>
                                 <tr>
                                     @{
@@ -127,22 +128,22 @@
                                 </table>
                             </div>
                         </div>
-                    <div class="form-group">
-                        <div class="custom-file">
-                            <label asp-for="ProfileImage" class="control-label"></label>
-                            <input asp-for="ProfileImage" type="file" class="form-control custom-file-input" />
-                        </div>
-                        <hr />
-                        <p>Current image:</p>
-                        <div class="row">
-                            <div class="col-12">
-                                @if (!String.IsNullOrEmpty(Model.ProfileImage))
-                                {
-                                    <img class="img img-profile" src="/images/@Model.ProfileImage" alt="Profile Image" />
-                                }
+                        <div class="form-group">
+                            <div class="custom-file">
+                                <label asp-for="ProfileImage" class="control-label"></label>
+                                <input asp-for="ProfileImage" type="file" class="form-control custom-file-input" />
+                            </div>
+                            <hr />
+                            <p>Current image:</p>
+                            <div class="row">
+                                <div class="col-12">
+                                    @if (!String.IsNullOrEmpty(Model.ProfileImage))
+                                    {
+                                        <img class="img img-profile" src="/images/@Model.ProfileImage" alt="Profile Image" />
+                                    }
+                                </div>
                             </div>
                         </div>
-                    </div>
                         <div class="form-group">
                             <label asp-for="SupervisorID" class="control-label"></label>
                             <select asp-for="SupervisorID" class="form-control" asp-items="ViewBag.SupervisorID">
@@ -154,22 +155,22 @@
                             <input type="submit" value="Save" class="btn btn-primary" />
                         </div>
                     </form>
-    </div>
-</div>
+                </div>
+            </div>
 
-<div>
-    <a asp-action="Index">Back to employees</a>
-</div>
+            <div>
+                <a asp-action="Index">Back to employees</a>
+            </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+            @section Scripts {
+                @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
-    <script>
-        $(document).ready(function () {
-            $('.custom-file-input').on("change", function () {
-                var fileName = $(this).val().split("\\").pop();
-                $(this).next('.custom-file-label').html(fileName);
-            });
-        });
-    </script>
-}
+                <script>
+                    $(document).ready(function () {
+                        $('.custom-file-input').on("change", function () {
+                            var fileName = $(this).val().split("\\").pop();
+                            $(this).next('.custom-file-label').html(fileName);
+                        });
+                    });
+                </script>
+            }

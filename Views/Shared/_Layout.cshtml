@@ -26,28 +26,36 @@
         .selected_Roster {
             color: black;
         }
+
         .selected_Shift {
             color: black;
         }
+
         .selected_Availability {
             color: black;
         }
+
         .selected_Employee {
             color: black;
         }
+
         .selected_Messages {
             color: black;
-        } 
-        .selected_Skills{
+        }
+
+        .selected_Skills {
             color: black;
         }
-        .selected_Function{
+
+        .selected_Function {
             color: black;
         }
-        .selected_Location{
+
+        .selected_Location {
             color: black;
-        } 
-        .selected_Works{
+        }
+
+        .selected_Works {
             color: black;
         }
     </style>
@@ -110,6 +118,14 @@
     <footer class="border-top footer text-muted">
         <div class="selected_Personal container">
             &copy; 2019 - Gride - <a asp-area="" asp-controller="User" asp-action="Index">@User.Identity.Name</a>
+            @if (SignInManager.IsSignedIn(User) && !_context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            {
+                <p><a href="/Feedback/Create">Click here</a> if you have any feedback!</p>
+            }
+            else if (SignInManager.IsSignedIn(User))
+            {
+                <p><a href="/Feedback">Click here</a> if you have any feedback!</p>
+            }
         </div>
     </footer>
 
@@ -132,6 +148,6 @@
         </script>
     </environment>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @RenderSection("scripts", required: false) 
+    @RenderSection("scripts", required: false)
 </body>
 </html>

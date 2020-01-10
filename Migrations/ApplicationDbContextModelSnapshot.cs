@@ -176,6 +176,27 @@ namespace Gride.Migrations
                     b.ToTable("EmployeeSkills");
                 });
 
+            modelBuilder.Entity("Gride.Models.Feedback", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("FeedbackDescription")
+                        .IsRequired();
+
+                    b.Property<DateTime>("FeedbackPostDate");
+
+                    b.Property<bool>("Fixed");
+
+                    b.Property<string>("Title")
+                        .IsRequired();
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Feedback");
+                });
+
             modelBuilder.Entity("Gride.Models.Function", b =>
                 {
                     b.Property<int>("FunctionID")

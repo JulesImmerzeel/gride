@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Gride.Models.Feedback>
+@inject ApplicationDbContext _context
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Feedback</h2>
+
+<p>
+    <a asp-action="Create">Give Feedback</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FeedbackPostDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Fixed)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FeedbackPostDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Fixed)
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <p> There is no Feedback </p>
+        }
+    </tbody>
+</table>
+
