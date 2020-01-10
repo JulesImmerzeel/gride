@@ -14,6 +14,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTestGride", "..\UnitTes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntergrationTest", "..\IntergrationTest\IntergrationTest.csproj", "{3D8141DC-CF71-4EEB-AEDF-D91D04BFF12D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrideTest", "..\GrideTest\GrideTest.csproj", "{1744F1AB-5237-42B1-A922-583BF93FB5BC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
