@@ -708,15 +708,15 @@ namespace Gride.Controllers
 			return _context.Shift.Any(e => e.ShiftID == id);
 		}
 
-		public async Task<IActionResult> Generate()
-		{
-			return View();
-		}
+		/// <summary>
+		/// Sends the data to the Generate Page
+		/// </summary>
+		public async Task<IActionResult> Generate() => View();
 
 		/// <summary>
 		/// Generates a roster for the time given between <paramref name="start"/> and <paramref name="end"/> with the settings specified in <paramref name="Settings"/>
 		/// </summary>
-		/// <param name="Settings">a List of numbers</param>
+		/// <param name="settings">a List of numbers</param>
 		/// <param name="start">the start date of the generation</param>
 		/// <param name="end">the end date of the generation</param>
 		/// <remarks>If <paramref name="start"/> is <see cref="null"/> then it is set to now.
@@ -735,7 +735,7 @@ namespace Gride.Controllers
 			if (end < start)
 				throw new ArgumentException();
 
-			// fixes some C# floating point parsing bullshit
+			// fixes some C# floating point parsing problems
 			float actAvgExp;
 			if (!float.TryParse(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator == "," ? avgExp?.Replace('.', ',') : avgExp?.Replace(',', '.'), out actAvgExp))
 				actAvgExp = 3;
@@ -781,7 +781,7 @@ namespace Gride.Controllers
 				throw new NotImplementedException("generator error handling not implemented yet");
 			}
 
-			// please someone find something better than this abomination
+			// the ids of every shift, function, and employee
 			Dictionary<int, Dictionary<int, List<int>>> IDres = new Dictionary<int, Dictionary<int, List<int>>>();
 			Parallel.ForEach(results.Keys, new ParallelOptions { MaxDegreeOfParallelism = 10 }, sID =>
 			{
@@ -792,15 +792,23 @@ namespace Gride.Controllers
 				lock (IDres)
 					IDres.Add(sID, ShiftList);
 			});
-			// I love it when things that are basically the same don't automatically convert
+			// Saves the data in the session
 			HttpContext.Session.Set("genRes", Encoding.Default.GetBytes(JsonConvert.SerializeObject(IDres)));
 			return RedirectToAction(nameof(Generated));
 		}
 
+		/// <summary>
+		/// Sends the data to the generated page
+		/// </summary>
 		public async Task<IActionResult> Generated()
 		{
+			// Gets the data from the session
 			HttpContext.Session.TryGetValue("genRes", out byte[] bytes);
+			// Empties the session
+			HttpContext.Session.Remove("genRes");
+			// Gets the data from the session as something we can use
 			Dictionary<int, Dictionary<int, List<int>>> IDResult = JsonConvert.DeserializeObject<Dictionary<int, Dictionary<int, List<int>>>>(Encoding.Default.GetString(bytes)) ?? new Dictionary<int, Dictionary<int, List<int>>>();
+			// Changes the IDResult in actual data we can use
 			Dictionary<int, Dictionary<int, List<EmployeeModel>>> actResult = new Dictionary<int, Dictionary<int, List<EmployeeModel>>>();
 			List<EmployeeModel> employees = await _context.EmployeeModel.ToListAsync();
 			Parallel.ForEach(IDResult.Keys, new ParallelOptions { MaxDegreeOfParallelism = 10 }, sID =>
@@ -812,15 +820,23 @@ namespace Gride.Controllers
 				lock (actResult)
 					actResult.Add(sID, ShiftList);
 			});
+			// Sends the data to the view
 			return View(actResult);
 		}
 
+		/// <summary>
+		/// Adds everyone from <paramref name="selected"/> in the database
+		/// </summary>
+		/// <param name="selected">The selected employees with shift and function</param>
+		/// <remarks>the form of the <see cref="string"/> in <paramref name="selected"/> is ShiftID, FunctionID, EmployeeID</remarks>
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Generated(string[] selected)
 		{
 			foreach (string s in selected)
 			{
+				// makes s in a integer data that can be used
+				// the form of IDs is [ShiftID, FunctionID, EmployeeID]
 				int[] IDs = (from id in s.Split(',')
 							 select int.Parse(id.Trim())).ToArray();
 				await _context.Works.AddAsync(new Work
@@ -834,10 +850,12 @@ namespace Gride.Controllers
 				});
 			}
 			await _context.SaveChangesAsync();
-			HttpContext.Session.Remove("genRes");
 			return RedirectToAction(nameof(Index));
 		}
 
+		/// <summary>
+		/// Sends the data to the page
+		/// </summary>
 		public async Task<IActionResult> AssignEmployee(int? id)
 		{
 			if (!User.Identity.IsAuthenticated || !_context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)
@@ -847,10 +865,17 @@ namespace Gride.Controllers
 			return View(id.Value);
 		}
 
+		/// <summary>
+		/// Adds the employee to the shift and function specified
+		/// </summary>
+		/// <param name="id">The shift id</param>
+		/// <param name="EmployeeID">The id of the employees</param>
+		/// <param name="FunctionID">The id of the function</param>
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> AssignEmployee(int? id, int? EmployeeID, int? FunctionID)
 		{
+			// Checks if the data is correct
 			if (!id.HasValue)
 				return NotFound();
 			if (!EmployeeID.HasValue)
@@ -860,6 +885,7 @@ namespace Gride.Controllers
 			if (_context.Works.ToList().Exists(x => x.FunctionID == FunctionID && x.EmployeeID == EmployeeID))
 				return BadRequest("User is already assigned to this function with this shift");
 
+			// Added the new employee to the works
 			_context.Works.Add(new Work
 			{
 				Employee = await _context.EmployeeModel.FirstAsync(x => x.ID == EmployeeID),
