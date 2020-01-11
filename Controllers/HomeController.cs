@@ -38,6 +38,7 @@ namespace Gride.Controllers
                    .Include(e => e.Shift)
                    .AsNoTracking()
                    .ToList();
+
                 var workOverviewlist = new List<WorkOverview>();
 
                 List<Shift> shifts = new List<Shift>();

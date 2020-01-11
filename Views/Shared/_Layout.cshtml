@@ -72,6 +72,8 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <partial name="_LoginPartial" />
                     <ul class="navbar-nav flex-grow-1">
+                        @{//Er wordt gecheckt of iemand is ingelogd en of een admin is om zo de navigatiebalk te creeren.
+                        }
                         @if (SignInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
                         {
                             <li class="selected_Roster">
