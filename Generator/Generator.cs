@@ -24,7 +24,7 @@ namespace Gride.Gen
 		// TODO: Make it so you can see who is assigned to what function
 		// TODO: Make it so you can get every exception that would have been thrown
 #if DEBUG 
-		public static void Generate(Shift shift, ApplicationDbContext _context, ref Dictionary<int, List<EmployeeModel>> result, float avgExp = 2, GeneratorSettings settings = GeneratorSettings.StopOnError | GeneratorSettings.PreferTrios)
+		public static void Generate(Shift shift, ApplicationDbContext _context, ref Dictionary<int, List<EmployeeModel>> result, float avgExp = 3, GeneratorSettings settings = GeneratorSettings.StopOnError | GeneratorSettings.PreferTrios)
 #else
 		public static void Generate(Shift shift, ApplicationDbContext _context, ref Dictionary<int, List<EmployeeModel>> result, float avgExp = 2, GeneratorSettings settings = GeneratorSettings.Default | GeneratorSettings.PreferTrios)
 #endif

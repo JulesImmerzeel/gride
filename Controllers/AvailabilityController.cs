@@ -148,7 +148,6 @@ namespace Gride.Controllers
             DateTime editableStart = DateTime.Now;
             editableStart = editableStart.AddDays(14);
             int weeknrEditableStart = editableStart.DayOfYear / 7;
-            int weeknr = 0;
             int currentwknr = DateTime.Now.DayOfYear / 7;
             if (id == null)
             {

@@ -738,7 +738,7 @@ namespace Gride.Controllers
 			// fixes some C# floating point parsing problems
 			float actAvgExp;
 			if (!float.TryParse(CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator == "," ? avgExp?.Replace('.', ',') : avgExp?.Replace(',', '.'), out actAvgExp))
-				actAvgExp = 2;
+				actAvgExp = 3;
 
 			// sets the settings ready for use
 			GeneratorSettings genSettings = 0;
