@@ -87,6 +87,11 @@ namespace Gride.Models
             }
         }
 
+        /// <summary>
+        /// vult de shifts voor de week die de gebruiker opvraagd om te zien.
+        /// gebruikt de week list en vervangt de null waardes vervolgens word in de view gekeken welke niet null zijn en die krijgen een andere kleur.
+        /// </summary>
+        /// <param name="allShifts"></param>
         public void setShifts(ICollection<Shift> allShifts)
         {
             IEnumerable<Shift> shifts = allShifts.Where(a => (a.Start.DayOfYear / 7) == _weekNumber - 1);
@@ -115,6 +120,10 @@ namespace Gride.Models
 
         }
 
+        /// <summary>
+        /// zelfde als setShift maar dan voor de availibilities.
+        /// </summary>
+        /// <param name="allAvailabilities"></param>
         public void setAvailabilities(ICollection<Availability> allAvailabilities)
         {
             
