@@ -70,7 +70,7 @@
                         }
 
                     }
-                    @{//De array wordt gesorteerd van klein naar groot, het kijkt naar het laatste getallentje
+                    @{//De array wordt gesorteerd van klein naar groot, het kijkt naar het laatste getal
                         // Dit wordt gedaan omdat een shift met 3 uur, ook 3 dezelfde links in de database zal hebben en deze moeten gesorteerd worden.
                     }
                     @{Array.Sort(shiftID_link_num);}
@@ -120,6 +120,8 @@
                                 <td id="@(d.ToString() + tdHour.ToString())" onclick="window.location = '@link_string'">@Model.week[d][tdHour]</td>
 
                                 <script>
+
+                                    //deze functie geeft de juiste aan de shifts mee dus 
                 cell = document.getElementById("@(d.ToString() + tdHour.ToString())")
                 if (cell.innerText != "" && window.location.pathname.includes("/Roster")) {
                     cell.style.backgroundColor = "#A80000";
