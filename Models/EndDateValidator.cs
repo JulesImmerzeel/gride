@@ -12,7 +12,11 @@ namespace Gride.Models
 
         private int day;
 
-
+        /// <summary>
+        /// Checks if the end date is not before the startdate and if the start and end date are on the same day. 
+        /// </summary>
+        /// <param name="value">Date</param>
+        /// <returns>ValidationResult</returns>
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {            
             if (validationContext.ObjectInstance is Availability)

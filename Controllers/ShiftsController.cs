@@ -38,6 +38,11 @@ namespace Gride.Controllers
 		}
 
 		// GET: Shifts
+		/// <summary>
+		/// Returns a page with a schedule where the shifts in a certain week are shown. 
+		/// </summary>
+		/// <param name="id">Weeknumber</param>
+		/// <returns>View</returns>
 		public async Task<IActionResult> Index(int? id)
 		{
 			if (User.Identity.IsAuthenticated && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
@@ -66,6 +71,11 @@ namespace Gride.Controllers
 		}
 
 		// GET: Shifts/Details/5
+		/// <summary>
+		/// Returns a page with the details of a certain shift. The time, location, skills required, functions and employees on the shift are shown.
+		/// </summary>
+		/// <param name="id">ShiftID</param>
+		/// <returns>View</returns>
 		public async Task<IActionResult> Details(int? id)
 		{
 			if (User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)
@@ -97,6 +107,10 @@ namespace Gride.Controllers
 		}
 
 		// GET: Shifts/Create
+		/// <summary>
+		/// Returns page with a form to create a new shift.
+		/// </summary>
+		/// <returns>View</returns>
 		public IActionResult Create()
 		{
 			if (User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)
@@ -114,7 +128,9 @@ namespace Gride.Controllers
 				return Forbid();
 			}
 		}
-
+		/// <summary>
+		/// Populates the create page with options to check all skills.
+		/// </summary>
 		private void PopulateSkills()
 		{
 			var allSkills = _context.Skill;
@@ -131,6 +147,9 @@ namespace Gride.Controllers
 			ViewData["Skills"] = viewModel;
 		}
 
+		/// <summary>
+		/// Populates the create page with options to check all functions.
+		/// </summary>
 		private void PopulateFunctions()
 		{
 			var allFunctions = _context.Function;
@@ -148,6 +167,10 @@ namespace Gride.Controllers
 			ViewData["Functions"] = viewModel;
 		}
 
+		/// <summary>
+		/// Populates the dropdownlist on the create page with all locations.
+		/// </summary>
+		/// <param name="selectedLocation"></param>
 		private void PopulateLocationsDropDownList(object selectedLocation = null)
 		{
 			var locationQuery = from l in _context.Locations
@@ -190,14 +213,21 @@ namespace Gride.Controllers
 		}
 
 		// POST: Shifts/Create
-		// To protect from overposting attacks, please enable the specific properties you want to bind to, for
-		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+		/// <summary>
+		/// Creates new shift.
+		/// </summary>
+		/// <param name="shift">shift we want to create</param>
+		/// <param name="selectedSkills">skills of the shift</param>
+		/// <param name="selectedFunctions">functions of the shift</param>
+		/// <param name="selectedFunctionsMax">maximum of employees of every function.</param>
+		/// <returns></returns>
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Create([Bind("Start,End,Weekly,LocationID,Location")] Shift shift, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax)
 		{
 			if (User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)
 			{
+				//Add skills to shift
 				if (selectedSkills != null)
 				{
 					shift.ShiftSkills = new List<ShiftSkills>();
@@ -215,6 +245,7 @@ namespace Gride.Controllers
 				}
 				if (selectedFunctions != null)
 				{
+					//Add functions to shift.
 					shift.ShiftFunctions = new List<ShiftFunction>();
 					foreach (var function in selectedFunctions)
 					{
@@ -237,6 +268,7 @@ namespace Gride.Controllers
 					await _context.SaveChangesAsync();
 					if (shift.Weekly)
 					{
+						//If the shift is weekly we want new shifts every week. This are the shiftchildren.
 						ICollection<Shift> children = CreateChildren(shift);
 						foreach (Shift child in children)
 						{
@@ -280,6 +312,13 @@ namespace Gride.Controllers
 			}
 		}
 
+		/// <summary>
+		/// Creates the children of a shift. Every child has the same start en end time, but on different days. 
+		/// The children have all different employees, so these can't be passed down from the parentShift.
+		/// Everything else is the same for the children.
+		/// </summary>
+		/// <param name="shift">Shift we want weekly children of.</param>
+		/// <returns>List with 52 shifts. One for every week for a year.</returns>
 		private ICollection<Shift> CreateChildren(Shift shift)
 		{
 			Shift tmpShift = new Shift();
@@ -305,6 +344,11 @@ namespace Gride.Controllers
 		}
 
 		// GET: Shifts/Edit/5
+		/// <summary>
+		/// Returns page on which we can edit a shift.
+		/// </summary>
+		/// <param name="id">ShiftID of shift we want to edit.</param>
+		/// <returns>View</returns>
 		public async Task<IActionResult> Edit(int? id)
 		{
 			if (User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)
@@ -336,7 +380,10 @@ namespace Gride.Controllers
 				return Forbid();
 			}
 		}
-
+		/// <summary>
+		/// Populates the edit page with options to check or uncheck the employees.
+		/// </summary>
+		/// <param name="shift">shift we want to change</param>
 		private void PopulateAssignedEmployees(Shift shift)
 		{
 			var allEmployees = _context.EmployeeModel;
@@ -362,7 +409,10 @@ namespace Gride.Controllers
 			}
 			ViewData["Employees"] = viewModel;
 		}
-
+		/// <summary>
+		/// Populates the edit page with options to check all functions.
+		/// </summary>
+		/// <param name="shift">Shift we want to change</param>
 		private void PopulateAssignedFunction(Shift shift)
 		{
 			var allFunctions = _context.Function;
@@ -385,7 +435,10 @@ namespace Gride.Controllers
 			}
 			ViewData["Functions"] = viewModel;
 		}
-
+		/// <summary>
+		/// Populates the create page with options to check all skills.
+		/// </summary>
+		/// <param name="shift">Shift we want to change</param>
 		private void PopulateAssignedSkills(Shift shift)
 		{
 			var allSkills = _context.Skill;
@@ -404,8 +457,15 @@ namespace Gride.Controllers
 		}
 
 		// POST: Shifts/Edit/5
-		// To protect from overposting attacks, please enable the specific properties you want to bind to, for
-		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+		/// <summary>
+		/// Edits a shift
+		/// </summary>
+		/// <param name="id">ShiftID of shift we want to change</param>
+		/// <param name="selectedSkills">skills of the shift</param>
+		/// <param name="selectedFunctions">functions of the shift</param>
+		/// <param name="selectedFunctionsMax">Maximum of employees of the functions of the shift.</param>
+		/// <param name="selectedEmployees">employees of the shift</param>
+		/// <returns>View</returns>
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(int? id, string[] selectedSkills, string[] selectedFunctions, int[] selectedFunctionsMax, string[] selectedEmployees)
@@ -463,6 +523,11 @@ namespace Gride.Controllers
 			}
 		}
 
+		/// <summary>
+		/// Edits the employees of a shift
+		/// </summary>
+		/// <param name="selectedEmployees">Employees of the shift</param>
+		/// <param name="shiftToUpdate">Shift we want to change</param>
 		private void UpdateShiftEmployees(string[] selectedEmployees, Shift shiftToUpdate)
 		{
 			if (selectedEmployees == null)
@@ -523,7 +588,11 @@ namespace Gride.Controllers
 				}
 			}
 		}
-
+		/// <summary>
+		/// Edits the skills of a shift.
+		/// </summary>
+		/// <param name="selectedSkills">skills of the shift</param>
+		/// <param name="shiftToUpdate">shift we want to change</param>
 		private void UpdateShiftSkills(string[] selectedSkills, Shift shiftToUpdate)
 		{
 			if (selectedSkills == null)
@@ -574,7 +643,12 @@ namespace Gride.Controllers
 				}
 			}
 		}
-
+		/// <summary>
+		/// Edits the functions of a shift
+		/// </summary>
+		/// <param name="selectedFunctions">functions of the shift</param>
+		/// <param name="selectedFunctionsMax">maximum of employees of the functions of the shift.</param>
+		/// <param name="shiftToUpdate">Shift we want to change</param>
 		private void UpdateShiftFunctions(string[] selectedFunctions, int[] selectedFunctionsMax, Shift shiftToUpdate)
 		{
 			if (selectedFunctions == null || selectedFunctionsMax == null)
@@ -636,6 +710,11 @@ namespace Gride.Controllers
 		}
 
 		// GET: Shifts/Delete/5
+		/// <summary>
+		/// Returns page with a shift we want to delete
+		/// </summary>
+		/// <param name="id">ShiftID of shift we want to delete</param>
+		/// <returns>View</returns>
 		public async Task<IActionResult> Delete(int? id)
 		{
 			if (User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)
@@ -661,6 +740,11 @@ namespace Gride.Controllers
 		}
 
 		// POST: Shifts/Delete/5
+		/// <summary>
+		/// Deletes a shift
+		/// </summary>
+		/// <param name="id">ShiftID of deleted shift.</param>
+		/// <returns></returns>
 		[HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int id)
@@ -690,6 +774,10 @@ namespace Gride.Controllers
 			}
 		}
 
+		/// <summary>
+		/// After deleting a shift we want the next child of that shift to become the parentshift.
+		/// </summary>
+		/// <param name="shift">shift we want to delete.</param>
 		private void TransferShiftChildren(Shift shift)
 		{
 			ICollection<Shift> children = shift.ShiftChildren;
@@ -703,6 +791,11 @@ namespace Gride.Controllers
 			newParent.ParentShiftID = null;
 		}
 
+		/// <summary>
+		/// Check if shift exists
+		/// </summary>
+		/// <param name="id">ShiftID of shift we searched for.</param>
+		/// <returns></returns>
 		private bool ShiftExists(int id)
 		{
 			return _context.Shift.Any(e => e.ShiftID == id);
@@ -873,6 +966,12 @@ namespace Gride.Controllers
 			return RedirectToAction(nameof(Details), new { id });
 		}
 
+
+		/// <summary>
+		/// Deletes all the following shifts of a weekly shift. In other words, it deletes all the following children of a shift.
+		/// </summary>
+		/// <param name="id">ShiftID of the first shift we want to delete.</param>
+		/// <returns>View</returns>
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteAllFollowing(int? id)

@@ -34,6 +34,10 @@ namespace Gride.Controllers
         }
 
         // GET: EmployeeModels
+        /// <summary>
+        /// Returns a page with all the employees of the company.
+        /// </summary>
+        /// <returns>View with a list of employees</returns>
         public async Task<IActionResult> Index()
         {
             if (User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)
@@ -70,6 +74,11 @@ namespace Gride.Controllers
 
 
         // GET: EmployeeModels/Details/5
+        /// <summary>
+        /// Returns a page with the details of an employee.
+        /// </summary>
+        /// <param name="id">EmployeeID. Defines the id of the employee</param>
+        /// <returns>View with employeedetails</returns>
         public async Task<IActionResult> Details(int? id)
         {
             if (User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin)

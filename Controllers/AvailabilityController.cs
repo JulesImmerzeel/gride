@@ -22,7 +22,12 @@ namespace Gride.Controllers
             _context = context;
         }
 
-        // GET: Availability
+        // GET: Availabilities
+        /// <summary>
+        /// Returns a page with all the availabilities of a employee in a certain week.
+        /// </summary>
+        /// <param name="id">weeknumber</param> is used to change the week that is shown.
+        /// <returns>List of availabilities</returns>
         public async Task<IActionResult> Index(int? id)
         {
             EmployeeModel employee = _context.EmployeeModel
@@ -56,14 +61,22 @@ namespace Gride.Controllers
         }
 
         // GET: Availability/Create
+        /// <summary>
+        /// Returns page where an administrator can make an employee.
+        /// </summary>
+        /// <returns>View</returns>
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Availability/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Returns a page after submitting the form on the create page. If there are errors in the form, the page with the form is shown again.
+        /// Otherwise we show the page with the newly made availability
+        /// </summary>
+        /// <param name="availability">the new availability</param>
+        /// <returns>View</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("AvailabilityID,Start, End, Weekly")] Availability availability)
@@ -92,6 +105,11 @@ namespace Gride.Controllers
         }
 
         // GET: Availability/Edit/5
+        /// <summary>
+        /// Returns the page where you can edit a availability.
+        /// </summary>
+        /// <param name="id">AvailabilityID. Is used to define the availability we are trying to edit.</param>
+        /// <returns>View with one availability</returns>
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -108,8 +126,13 @@ namespace Gride.Controllers
         }
 
         // POST: Availability/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Returns a page after submitting the form on the edit page. If there are errors in the form, the page with the form is shown again.
+        /// Otherwise we show the page with the edited made availability.
+        /// </summary>
+        /// <param name="id">AvailabilityID. Defines the availability thats been editted.</param>
+        /// <param name="availability">Edited availability</param>
+        /// <returns>View</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("AvailabilityID,Start,End, Weekly")] Availability availability)
@@ -143,6 +166,11 @@ namespace Gride.Controllers
         }
 
         // GET: Availability/Delete/5
+        /// <summary>
+        /// Returns a page with the availability we are trying to delete.
+        /// </summary>
+        /// <param name="id">AvailabilityID. Defines the availability thats been deleted.</param>
+        /// <returns>View with one availability</returns>
         public async Task<IActionResult> Delete(int? id)
         {
             DateTime editableStart = DateTime.Now;
@@ -165,6 +193,11 @@ namespace Gride.Controllers
         }
 
         // POST: Availability/Delete/5
+        /// <summary>
+        /// Deleting the availabilty. If it is deleted, we return the indexpage.
+        /// </summary>
+        /// <param name="id">AvailabilityID. Defines the availability thats been deleted.</param>
+        /// <returns>View</returns>
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -179,6 +212,11 @@ namespace Gride.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        /// <summary>
+        /// Checks if availability exists
+        /// </summary>
+        /// <param name="id">AvailabilityID. The id of the availabilty we are searching for.</param>
+        /// <returns>boolean</returns>
         private bool AvailabilityExists(int id)
         {
             return _context.Availabilities.Any(e => e.AvailabilityID == id);
