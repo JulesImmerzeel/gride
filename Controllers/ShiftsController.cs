@@ -804,7 +804,7 @@ namespace Gride.Controllers
 		/// <summary>
 		/// Sends the data to the Generate Page
 		/// </summary>
-		public async Task<IActionResult> Generate() => User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin ? View(): Forbid();
+		public async Task<IActionResult> Generate() => User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin ? (IActionResult)View(): (IActionResult)Forbid();
 
 		/// <summary>
 		/// Generates a roster for the time given between <paramref name="start"/> and <paramref name="end"/> with the settings specified in <paramref name="Settings"/>

@@ -41,7 +41,7 @@ namespace Gride.Controllers
         public async Task<IActionResult> Index()
         {
             // Check if user is logged in and admin
-            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            if (User.Identity.IsAuthenticated && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
                 var applicationDbContext = _context.Works.Include(w => w.Employee).Include(w => w.Shift);
                 return View(await applicationDbContext.ToListAsync());
@@ -61,7 +61,7 @@ namespace Gride.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             // check if user is logged in and is admin
-            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            if (User.Identity.IsAuthenticated && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
                 //if no id is given return not found view
                 if (id == null)
@@ -97,7 +97,7 @@ namespace Gride.Controllers
         public IActionResult Create(int ShiftId = 0)
         {
             // check if user is logged in and is admin
-            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            if (User.Identity.IsAuthenticated && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
                 // create selected list for employees
                 ViewData["EmployeeID"] = new SelectList(_context.EmployeeModel, "ID", "EMail");
@@ -123,7 +123,7 @@ namespace Gride.Controllers
         public async Task<IActionResult> Create([Bind("WorkID,EmployeeID,ShiftID,Overtime,Delay")] Work work)
         {
             // check if user is logged in and is admin
-            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            if (User.Identity.IsAuthenticated && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
                 // check if model is valid
                 if (ModelState.IsValid)
@@ -154,7 +154,7 @@ namespace Gride.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             // check if user is logged in and is an admin
-            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            if (User.Identity.IsAuthenticated && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
                 // if no id is given return not found view
                 if (id == null)
@@ -194,7 +194,7 @@ namespace Gride.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("WorkID,EmployeeID,ShiftID,Overtime,Delay")] Work work)
         {
             // check if user is logged in and an admin
-            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            if (User.Identity.IsAuthenticated && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
                 // if no id is given return not found view
                 if (id != work.WorkID)
@@ -247,7 +247,7 @@ namespace Gride.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             // check if user is logged in and is an admin
-            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            if (User.Identity.IsAuthenticated && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
                 // return not found if given id is null
                 if (id == null)
@@ -285,7 +285,7 @@ namespace Gride.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             // check if user is logged in and is an admin
-            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+            if (User.Identity.IsAuthenticated && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
                 var work = await _context.Works.FindAsync(id);
                 _context.Works.Remove(work);
