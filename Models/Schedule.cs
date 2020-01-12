@@ -18,7 +18,10 @@ namespace Gride.Models
         public IEnumerable<Availability> _availabilities;
         public int earliest;
 
-
+        /// <summary>
+        /// Deze functie zorgd de juiste dagen worden weergegeven in _schedule
+        /// </summary>
+        /// <param name="weeks"></param>
         public void setWeek(int weeks)
         {
 
