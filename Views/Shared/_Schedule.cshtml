@@ -6,12 +6,15 @@
 
 <head>
     <link href="~/css/Roster.css" rel="stylesheet" />
+   
     <script>
+    //deze functie focued de schedule window op de vroegste shift in die week
     function scrollWin() {
         document.getElementById("tbid").scrollBy(0, @Model.earliest);
     }
     </script>
 </head>
+ 
 <body onload="scrollWin()">
 
     @Html.ActionLink("back", "Index", new { id = Model.currentWeek - 1 }, null)
@@ -26,7 +29,7 @@
                     <tr>
                         @for (int i = 0; i < 7; i++)
                         {
-                            //geeft de huidige dag aan met een andere kleur
+                            //geeft de huidige dag in de header aan met een andere kleur
                             @if (Model.days[i].Date == DateTime.Now.Date)
                             {
                                 <th style="background-color:dimgray;">@Model.days[i].ToString("dddd") <br />@Model.days[i].ToString("dd")</th>
