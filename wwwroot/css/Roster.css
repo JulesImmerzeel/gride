@@ -1,4 +1,6 @@
-﻿.roster {
+﻿/*Alle css die word gebruikt door de schedule partial view*/
+
+.roster {
     width: 100%;
     background-color: #ffffff;
     border-collapse: collapse;
