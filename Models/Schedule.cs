@@ -62,6 +62,10 @@ namespace Gride.Models
             return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
         }
 
+        /// <summary>
+        /// Vult de nested list week in deze heeft als standaard waarde voor alles null en als er een shift in staat
+        /// de tijd van de shift als een string.
+        /// </summary>
         public void makeSchedule()
         {
             week[0] = new string[24];
@@ -72,6 +76,8 @@ namespace Gride.Models
             week[5] = new string[24];
             week[6] = new string[24];
 
+
+            //zet alle waardes op nul
             for (int day = 0; day < week.Length; day++)
             {
                 for (int hour = 0; hour < week[day].Length; hour++)
