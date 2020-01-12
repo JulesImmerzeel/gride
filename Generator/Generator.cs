@@ -26,7 +26,7 @@ namespace Gride.Gen
 #if DEBUG 
 		public static void Generate(Shift shift, ApplicationDbContext _context, ref Dictionary<int, List<EmployeeModel>> result, float avgExp = 2, GeneratorSettings settings = GeneratorSettings.StopOnError | GeneratorSettings.PreferTrios)
 #else
-		public static void Generate(Shift shift, ApplicationDbContext _context, out List<EmployeeModel> result, float avgExp = 2, GeneratorSettings settings = GeneratorSettings.Default | GeneratorSettings.PreferTrios)
+		public static void Generate(Shift shift, ApplicationDbContext _context, ref Dictionary<int, List<EmployeeModel>> result, float avgExp = 2, GeneratorSettings settings = GeneratorSettings.Default | GeneratorSettings.PreferTrios)
 #endif
 		{
 			// Checks if settings is viable
@@ -83,7 +83,7 @@ namespace Gride.Gen
 
 				int difference = result[func.FunctionID]?.Count() ?? 0;
 				// Checks if enough people are available for that time and location
-				if (func.MaxEmployees - difference > location.Count)
+				if (func.MaxEmployees - difference > location.Count && ((settings & GeneratorSettings.ForceSkills) == 0))
 				{
 					// if not enough people are available the result will be set and a NotEnoughStaffExption is thrown
 					cresult.AddRange(location);
