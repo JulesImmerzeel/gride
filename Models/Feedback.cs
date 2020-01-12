@@ -12,8 +12,10 @@ namespace Gride.Models
         [Required]
         public string Title { get; set; }
         [Required]
+        [Display(Name = "Message")]
         public string FeedbackDescription { get; set; }
         [DataType(DataType.DateTime)]
+        [Display(Name = "Date")]
         public DateTime FeedbackPostDate { get; set; }
         public bool Fixed { get; set; }
     }

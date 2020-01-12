@@ -18,7 +18,10 @@ namespace Gride.Models
         public IEnumerable<Availability> _availabilities;
         public int earliest;
 
-
+        /// <summary>
+        /// Deze functie zorgd de juiste dagen worden weergegeven in _schedule
+        /// </summary>
+        /// <param name="weeks"></param>
         public void setWeek(int weeks)
         {
 
@@ -59,6 +62,10 @@ namespace Gride.Models
             return CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(time, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
         }
 
+        /// <summary>
+        /// Vult de nested list week in deze heeft als standaard waarde voor alles null en als er een shift in staat
+        /// de tijd van de shift als een string.
+        /// </summary>
         public void makeSchedule()
         {
             week[0] = new string[24];
@@ -69,6 +76,8 @@ namespace Gride.Models
             week[5] = new string[24];
             week[6] = new string[24];
 
+
+            //zet alle waardes op nul
             for (int day = 0; day < week.Length; day++)
             {
                 for (int hour = 0; hour < week[day].Length; hour++)
@@ -78,6 +87,11 @@ namespace Gride.Models
             }
         }
 
+        /// <summary>
+        /// vult de shifts voor de week die de gebruiker opvraagd om te zien.
+        /// gebruikt de week list en vervangt de null waardes vervolgens word in de view gekeken welke niet null zijn en die krijgen een andere kleur.
+        /// </summary>
+        /// <param name="allShifts"></param>
         public void setShifts(ICollection<Shift> allShifts)
         {
             IEnumerable<Shift> shifts = allShifts.Where(a => (a.Start.DayOfYear / 7) == _weekNumber - 1);
@@ -106,6 +120,10 @@ namespace Gride.Models
 
         }
 
+        /// <summary>
+        /// zelfde als setShift maar dan voor de availibilities.
+        /// </summary>
+        /// <param name="allAvailabilities"></param>
         public void setAvailabilities(ICollection<Availability> allAvailabilities)
         {
             

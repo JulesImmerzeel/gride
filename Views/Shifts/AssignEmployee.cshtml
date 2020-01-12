@@ -12,12 +12,14 @@
 			<form asp-action="AssignEmployee" class="w-75">
 				<div class="form-group">
 					<select name="EmployeeID">
+						@{/*Adds every employee to the selection so that they can be selected*/}
 						@foreach(EmployeeModel emp in _context.EmployeeModel)
 						{
 							<option value="@emp.ID">@emp.Name @emp.LastName</option>
 						}
 					</select>
 					<select name="FunctionID">
+						@{/*Adds every function in the shift to the selection*/}
 						@foreach(Function func in _context.ShiftFunctions.Where(x => x.ShiftID == Model).Select(x => x.Function))
 						{
 							<option value="@func.FunctionID">@func.Name</option>

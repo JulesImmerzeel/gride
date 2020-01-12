@@ -7,36 +7,29 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-10">
-			<label class="control-label">Settings</label>
 			<form asp-action="Generate" class="w-75">
-				<div class="form-group">
+				<div class="form-group" style="display:none;">
 					<table>
 						<tr class="w-100">
-							<td style="padding:5px;">
-								<input type="checkbox" name="settings" value="@((int)GeneratorSettings.AllowDoubleBooking)" /> Allow double booking. <br />
-								<input type="checkbox" name="settings" value="@((int)GeneratorSettings.ForceSkills)" /> Force skills. <br />
-								<input type="checkbox" name="settings" value="@((int)GeneratorSettings.StopOnError)" /> Stop on error. <br />
-							</td>
 							<td style="padding:5px;" class="align-baseline">
-								<input type="radio" name="pairSettings" value="@((int)GeneratorSettings.PreferHigerExp)" /> Prefer higher experience. <br />
-								<input type="radio" name="pairSettings" value="@((int)GeneratorSettings.PreferLowerExp)" checked="checked" /> Prefer lower experience. <br />
-							</td>
-							<td style="padding:5px;" class="align-baseline">
-								<input type="radio" name="pairSettings" value="@((int)GeneratorSettings.PreferTrios)" /> Prefer pairs. <br />
-								<input type="radio" name="pairSettings" value="@((int)GeneratorSettings.PreferPairs)" /> Prefer higher experience. <br />
+								<input type="radio" name="pairSettings" value="@((int)GeneratorSettings.PreferHigerExp)" checked="checked"/> Prefer higher experience. <br />
+								<input type="radio" name="pairSettings" value="@((int)GeneratorSettings.PreferLowerExp)" /> Prefer lower experience. <br />
 							</td>
 						</tr>
 					</table>
 				</div>
 				<div class="form-group">
-					<label class="control-label">average experience</label>
-					<input type="number" name="avgExp" min=".5" max="30" step=".1" />
+					<label class="control-label">Average experience:</label>
+					<input type="number" name="avgExp" min=".5" max="30" step=".5" /><br />
+					<small>If left empty, the default average experience is 3 years.</small>
 				</div>
 				<div class="form-group">
-					<label class="control-label">Start</label>
+					<label class="control-label">Start:</label>
 					<input type="datetime-local" class="form-control" name="start" /><br />
-					<label class="control-label">End</label>
+					<small>If left empty, the default start date is today.</small>
+					<label class="control-label">End:</label>
 					<input type="datetime-local" class="form-control" name="end" /><br />
+					<small>If left empty, the default end date is 2 weeks after the start date.</small>
 				</div>
 				<input type="submit" value="Submit"/>
 			</form>

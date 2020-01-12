@@ -6,12 +6,15 @@
 
 <head>
     <link href="~/css/Roster.css" rel="stylesheet" />
+   
     <script>
+    //deze functie focued de schedule window op de vroegste shift in die week
     function scrollWin() {
         document.getElementById("tbid").scrollBy(0, @Model.earliest);
     }
     </script>
 </head>
+ 
 <body onload="scrollWin()">
 
     @Html.ActionLink("back", "Index", new { id = Model.currentWeek - 1 }, null)
@@ -26,7 +29,7 @@
                     <tr>
                         @for (int i = 0; i < 7; i++)
                         {
-                            //geeft de huidige dag aan met een andere kleur
+                            //geeft de huidige dag in de header aan met een andere kleur
                             @if (Model.days[i].Date == DateTime.Now.Date)
                             {
                                 <th style="background-color:dimgray;">@Model.days[i].ToString("dddd") <br />@Model.days[i].ToString("dd")</th>
@@ -67,7 +70,7 @@
                         }
 
                     }
-                    @{//De array wordt gesorteerd van klein naar groot, het kijkt naar het laatste getallentje
+                    @{//De array wordt gesorteerd van klein naar groot, het kijkt naar het laatste getal
                         // Dit wordt gedaan omdat een shift met 3 uur, ook 3 dezelfde links in de database zal hebben en deze moeten gesorteerd worden.
                     }
                     @{Array.Sort(shiftID_link_num);}
@@ -117,6 +120,8 @@
                                 <td id="@(d.ToString() + tdHour.ToString())" onclick="window.location = '@link_string'">@Model.week[d][tdHour]</td>
 
                                 <script>
+
+                                    //deze functie geeft de juiste aan de shifts mee zodat availibilties en roster een andere kleur hebben
                 cell = document.getElementById("@(d.ToString() + tdHour.ToString())")
                 if (cell.innerText != "" && window.location.pathname.includes("/Roster")) {
                     cell.style.backgroundColor = "#A80000";
@@ -151,6 +156,7 @@
                 </tr>
             </thead>
             <colgroup>
+                <!--zorgd dat alle kolommen even breed zijn in de tabel-->
                 <col span="7" style="width: 14.29%;">
             </colgroup>
             <tbody>

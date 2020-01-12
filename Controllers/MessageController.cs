@@ -41,29 +41,34 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Comment(int id)
         {
-            Comment comment = new Comment
+            string commentText = Request.Form["comment"];
+            if (commentText != "")
             {
-                Text = Request.Form["comment"],
-                Employee = _context.EmployeeModel
-                .Single(e => e.EMail == User.Identity.Name)
-            };
-            _context.Add(comment);
-            _context.SaveChanges();
-
-            Message message = _context.Messages.Single(m => m.MessageID == id);
-            if (message.Comments == null)
-            {
-                var comments = new Comment[]
+                Message message = _context.Messages.Single(m => m.MessageID == id);
+                Comment comment = new Comment
                 {
-                    comment
+                    Text = commentText,
+                    Employee = _context.EmployeeModel
+                    .Single(e => e.EMail == User.Identity.Name)
                 };
-                message.Comments = comments;
-            } else
-            {
-                message.Comments.Add(comment);
-            }
-            await _context.SaveChangesAsync();
+                _context.Add(comment);
+                _context.SaveChanges();
 
+                if (message.Comments == null)
+                {
+                    var comments = new Comment[]
+                    {
+                    comment
+                    };
+                    message.Comments = comments;
+                }
+                else
+                {
+                    message.Comments.Add(comment);
+                }
+                await _context.SaveChangesAsync();
+            }
+           
             return RedirectToAction(nameof(Index));
         }
 
@@ -194,7 +199,13 @@ namespace Gride.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var message = await _context.Messages.FindAsync(id);
+            var message = await _context.Messages
+                .Include(c => c.Comments)
+                .FirstAsync(m => m.MessageID == id);
+            foreach (Comment comment in message.Comments)
+            {
+                _context.Comments.Remove(comment);
+            }
             _context.Messages.Remove(message);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
