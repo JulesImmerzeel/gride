@@ -4,112 +4,124 @@
 @using System;
 @{ int day = (int)DateTime.Now.DayOfWeek; }
 
-    <head>
-        <link href="~/css/Roster.css" rel="stylesheet" />
-        <script>
+<head>
+    <link href="~/css/Roster.css" rel="stylesheet" />
+   
+    <script>
+    //deze functie focued de schedule window op de vroegste shift in die week
     function scrollWin() {
         document.getElementById("tbid").scrollBy(0, @Model.earliest);
     }
-        </script>
-    </head>
+    </script>
+</head>
+ 
 <body onload="scrollWin()">
 
-@Html.ActionLink("back", "Index", new { id = Model.currentWeek - 1 }, null)
-Week: @Model._weekNumber @Model.month
-<inline style="float:right;">@Html.ActionLink("forward", "Index", new { id = Model.currentWeek + 1 }, null)</inline>
+    @Html.ActionLink("back", "Index", new { id = Model.currentWeek - 1 }, null)
+    Week: @Model._weekNumber @Model.month
+    <inline style="float:right;">@Html.ActionLink("forward", "Index", new { id = Model.currentWeek + 1 }, null)</inline>
 
-@if (Model._shifts != null)
-{
-    <div id="scrolltable">
-        <table class="roster">
-            <thead>
-                <tr>
-                    @for (int i = 0; i < 7; i++)
-                    {
-                        //geeft de huidige dag aan met een andere kleur
-                        @if (Model.days[i].Date == DateTime.Now.Date)
+    @if (Model._shifts != null)
+    {
+        <div id="scrolltable">
+            <table class="roster">
+                <thead>
+                    <tr>
+                        @for (int i = 0; i < 7; i++)
                         {
-                            <th style="background-color:dimgray;">@Model.days[i].ToString("dddd") <br />@Model.days[i].ToString("dd")</th>
-                        }
-                        else
-                        {
-                            <th>@Model.days[i].ToString("dddd") <br />@Model.days[i].ToString("dd")</th>
-                        }
-                    }
-
-                </tr>
-            </thead>
-            <colgroup>
-                <col span="7" style="width: 14.29%;">
-            </colgroup>
-            <tbody id="tbid">
-                @{int shift_hours_all = 0;}
-                @{int shift_hours_all_2 = -1;}
-                @{int shift_hours_all_3 = -1;}
-                @{int k = 0;}
-                @{int lol = 0;}
-                @{string link_string;}
-                @foreach (Shift shift in Model._shifts)
-                {
-                    shift_hours_all = shift_hours_all + (int)(shift.End - shift.Start).TotalHours;
-                    shift_hours_all_2 = shift_hours_all_2 + (int)(shift.End - shift.Start).TotalHours;
-                    shift_hours_all_3 = shift_hours_all_3 + (int)(shift.End - shift.Start).TotalHours;
-                }
-                @{string[] shiftID_link_num = new string[shift_hours_all]; }
-                @{string[] tbID_id_num = new string[shift_hours_all]; }
-                @foreach (Shift shift in Model._shifts)
-                {
-                    int si = shift.ShiftID;
-                    for (int i = (int)(shift.End - shift.Start).TotalHours; i > 0; i = i - 1)
-                    {
-
-                        shiftID_link_num[shift_hours_all_3] = ("https://localhost:44368/Shifts/Details/" + si);
-                        shift_hours_all_3 = shift_hours_all_3 - 1;
-
-                    }
-
-                }
-                @{Array.Sort(shiftID_link_num);}
-
-
-                @for (int tdHour = 0; tdHour < 24; tdHour++)
-                {
-                    int[] tdDays = new int[] { 0, 1, 2, 3, 4, 5, 6 };
-
-                    foreach (int d in tdDays)
-                    {
-                        if (Model.week[d][tdHour] != null)
-                        {
-                            tbID_id_num[lol] = (d.ToString() + tdHour.ToString());
-                            lol = lol + 1;
-                        }
-                    }
-                }
-
-                @{Array.Sort(tbID_id_num);}
-
-                @for (int tdHour = 0; tdHour < 24; tdHour++)
-                {
-                    <tr class="roster "id="@(tdHour)">
-                        @{int[] tdDays = new int[] { 0, 1, 2, 3, 4, 5, 6 };}
-
-                        @foreach (int d in tdDays)
-                        {
-                            int b = Array.IndexOf(tbID_id_num, (d.ToString() + tdHour.ToString()));
-                            if (b == -1)
+                            //geeft de huidige dag in de header aan met een andere kleur
+                            @if (Model.days[i].Date == DateTime.Now.Date)
                             {
-                                link_string = "#";
-
+                                <th style="background-color:dimgray;">@Model.days[i].ToString("dddd") <br />@Model.days[i].ToString("dd")</th>
                             }
                             else
                             {
-                                link_string = shiftID_link_num[b];
+                                <th>@Model.days[i].ToString("dddd") <br />@Model.days[i].ToString("dd")</th>
                             }
+                        }
+
+                    </tr>
+                </thead>
+                <colgroup>
+                    <col span="7" style="width: 14.29%;">
+                </colgroup>
+                <tbody id="tbid">
+                    @{int shift_hours_all = 0;}
+                    @{int shift_hours_all_3 = -1;}
+                    @{int tb_Id = 0;}
+                    @{string link_string;}
+                    @foreach (Shift shift in Model._shifts)
+                    {
+                        //Berekent het totaal aantal uren van de shifts op de huidige pagina.
+                        shift_hours_all = shift_hours_all + (int)(shift.End - shift.Start).TotalHours;
+                        shift_hours_all_3 = shift_hours_all_3 + (int)(shift.End - shift.Start).TotalHours;
+                    }
+                    @{string[] shiftID_link_num = new string[shift_hours_all];}
+                    @{string[] tbID_id_num = new string[shift_hours_all];}
+                    @foreach (Shift shift in Model._shifts)
+                    {
+                        int id = shift.ShiftID;
+                        for (int i = (int)(shift.End - shift.Start).TotalHours; i > 0; i = i - 1)
+                        {
+                            //Hier worden de array's ingevuld met de links naar detailpagina van de shifts.
+                            shiftID_link_num[shift_hours_all_3] = ("https://localhost:44368/Shifts/Details/" + id);
+                            shift_hours_all_3 = shift_hours_all_3 - 1;
+
+                        }
+
+                    }
+                    @{//De array wordt gesorteerd van klein naar groot, het kijkt naar het laatste getal
+                        // Dit wordt gedaan omdat een shift met 3 uur, ook 3 dezelfde links in de database zal hebben en deze moeten gesorteerd worden.
+                    }
+                    @{Array.Sort(shiftID_link_num);}
 
 
-                            <td id="@(d.ToString() + tdHour.ToString())" onclick="window.location = '@link_string'">@Model.week[d][tdHour]</td>
+                    @for (int tdHour = 0; tdHour < 24; tdHour++)
+                    {
+                        int[] tdDays = new int[] { 0, 1, 2, 3, 4, 5, 6 };
 
-                            <script>
+                        foreach (int d in tdDays)
+                        {
+                            if (Model.week[d][tdHour] != null)
+                            {
+                                //Hier wordt ook een array ingevuld maar dan met het id van het kleurde vakje in het Roster.
+                                tbID_id_num[tb_Id] = (d.ToString() + tdHour.ToString());
+                                tb_Id = tb_Id + 1;
+                            }
+                        }
+                    }
+                    @{//De tbID_id_num wordt hier ook gesorteerd van klein naar groot om zo uiteindelijk, array shiftID_link_num  entbID_id_num aan elkaar te linken.
+                        //Beide array's worden gemaakt en gesorteerd om het juiste gekleurde vak de juiste detail id te geven.
+                    }
+                    @{Array.Sort(tbID_id_num);}
+
+                    @for (int tdHour = 0; tdHour < 24; tdHour++)
+                    {
+                        <tr class="roster " id="@(tdHour)">
+                            @{int[] tdDays = new int[] { 0, 1, 2, 3, 4, 5, 6 };}
+
+                            @foreach (int d in tdDays)
+                            {
+                                //Hier wordt er gekeken of het vakje gekleurd is in Roster of niet.
+                                int b = Array.IndexOf(tbID_id_num, (d.ToString() + tdHour.ToString()));
+                                if (b == -1)
+                                {
+                                    //Wordt er aan een niet gekleurd vakje # als link gegeven.
+                                    link_string = "#";
+
+                                }
+                                else
+                                {
+                                    //Dit is het gedeelte waar een link wordt toegewezen aan een gekleur vakje.
+                                    link_string = shiftID_link_num[b];
+                                }
+
+                                //dit is het gedeelte waarbij het vakje ook daadwerkelijk de link heeft toegewezen gekregen, zodat je naar de juiste detailspagina van de shift gaat.
+                                <td id="@(d.ToString() + tdHour.ToString())" onclick="window.location = '@link_string'">@Model.week[d][tdHour]</td>
+
+                                <script>
+
+                                    //deze functie geeft de juiste aan de shifts mee zodat availibilties en roster een andere kleur hebben
                 cell = document.getElementById("@(d.ToString() + tdHour.ToString())")
                 if (cell.innerText != "" && window.location.pathname.includes("/Roster")) {
                     cell.style.backgroundColor = "#A80000";
@@ -120,43 +132,43 @@ Week: @Model._weekNumber @Model.month
                     cell.style.backgroundColor = "#A80000";
                 }
 
-                            </script>
-                        }
-
-                    </tr>
+                                </script>
                             }
-            </tbody>
-        </table>
-    </div>
-}
 
-else
-
-{
-
-    <table class="roster">
-        <thead>
-            <tr>
-                @for (int i = 0; i < 7; i++)
-                {
-                    <th class="head">@Model.days[i].ToString("dddd") <br />@Model.days[i].ToString("dd")</th>
-                }
-
-            </tr>
-        </thead>
-        <colgroup>
-            <col span="7" style="width: 14.29%;">
-        </colgroup>
-        <tbody>
-            @for (int tdHour = 0; tdHour < 24; tdHour++)
-            {
-                <tr id="@(tdHour)">
-                    @{int[] tdDays = new int[] { 0, 1, 2, 3, 4, 5, 6 };
+                        </tr>
                     }
-                    @foreach (int d in tdDays)
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+
+    {
+
+        <table class="roster">
+            <thead>
+                <tr>
+                    @for (int i = 0; i < 7; i++)
                     {
-                        <td id="@(d.ToString() + tdHour.ToString())">@Model.week[d][tdHour]</td>
-                        <script>
+                        <th class="head">@Model.days[i].ToString("dddd") <br />@Model.days[i].ToString("dd")</th>
+                    }
+
+                </tr>
+            </thead>
+            <colgroup>
+                <!--zorgd dat alle kolommen even breed zijn in de tabel-->
+                <col span="7" style="width: 14.29%;">
+            </colgroup>
+            <tbody>
+                @for (int tdHour = 0; tdHour < 24; tdHour++)
+                {
+                    <tr id="@(tdHour)">
+                        @{int[] tdDays = new int[] { 0, 1, 2, 3, 4, 5, 6 };
+                        }
+                        @foreach (int d in tdDays)
+                        {
+                            <td id="@(d.ToString() + tdHour.ToString())">@Model.week[d][tdHour]</td>
+                            <script>
                             cell = document.getElementById("@(d.ToString() + tdHour.ToString())");
                             if (cell.innerText != "" && window.location.pathname.includes("/Roster")) {
                                 cell.style.backgroundColor = "#0300a8";
@@ -165,15 +177,15 @@ else
                         } else if (cell.innerText != "") {
                             cell.style.backgroundColor = "#0300a8";
                         }
-                        </script>
-                    }
-                </tr>
+                            </script>
                         }
+                    </tr>
+                }
 
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
-}
+    }
 
 
 </body>

@@ -1,4 +1,8 @@
 ﻿@model Gride.Models.Feedback
+@inject ApplicationDbContext _context
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Create";
@@ -29,7 +33,14 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    @if (_context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
+    {
+        <a asp-action="Index">Back to List</a>
+    }
+    else
+    {
+        <p>Thank you for your feedback!</p>
+    }
 </div>
 
 @section Scripts {

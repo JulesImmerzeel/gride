@@ -12,9 +12,13 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Gride.Controllers
 {
+    //Alle paginas zijn beveiligd tegen users die niet zijn ingelogd.
+    //Alleen de create pagina en redirectcreate pagina zijn toegankelijk voor de users.
+    //alle paginaz zijn toegankelijk voor de admins.
     [Authorize]
     public class FeedbackController : Controller
     {
+        //Hier wordt er data opgehaald of een user is ingelogd en of een admin is.
         private readonly ApplicationDbContext _context;
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly UserManager<IdentityUser> userManager;
@@ -27,10 +31,10 @@ namespace Gride.Controllers
             _context = context;
             this.signInManager = signInManager;
         }
-
+        //Geeft the index pagina van de feedback.
         public async Task<IActionResult> Index()
         {
-            if (signInManager.IsSignedIn(User))
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
                 return View(await _context.Feedback.ToListAsync());
             }
@@ -43,9 +47,9 @@ namespace Gride.Controllers
 
         public IActionResult Create()
         {
-                return View();
+            return View();
         }
-
+        //Geeft de create feeback pagina en neemt de feedback op in het database van feedback.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id, Title, FeedbackDescription, FeedbackPostDate, Fixed")] Feedback feedback)
@@ -54,12 +58,13 @@ namespace Gride.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    //Dit wordt ingevuld door de controller omdat dit info is die niet door een user ingevuld hoeft te worden.
                     DateTime today = DateTime.Now;
                     feedback.Fixed = false;
                     feedback.FeedbackPostDate = today;
                     _context.Add(feedback);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(RedirectCreate));
                 }
                 return View(feedback);
             }
@@ -68,10 +73,10 @@ namespace Gride.Controllers
                 return Forbid();
             }
         }
-
+        //Geeft de dtails feedback pagina van de geselecteerde feedback.
         public async Task<IActionResult> Details(int? id)
         {
-            if (signInManager.IsSignedIn(User))
+            if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
             {
 
                 if (id == null)
@@ -93,7 +98,7 @@ namespace Gride.Controllers
                 return Forbid();
             }
         }
-
+        //Geeft de delete feedback pagina.
         public async Task<IActionResult> Delete(int? id)
         {
             if (signInManager.IsSignedIn(User) && _context.EmployeeModel.Single(x => x.EMail == User.Identity.Name).Admin)
@@ -118,7 +123,7 @@ namespace Gride.Controllers
             }
         }
 
-        // POST: Location/Delete/5
+        //Delete feedback van de pagina.
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -191,6 +196,18 @@ namespace Gride.Controllers
                 }
                 return View(feedback);
 
+            }
+            else
+            {
+                return Forbid();
+            }
+        }
+        //Is de pagina die wordt gegeven na het creeren van feedback.
+        public IActionResult RedirectCreate()
+        {
+            if (signInManager.IsSignedIn(User))
+            {
+                return View();
             }
             else
             {
