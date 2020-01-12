@@ -22,11 +22,19 @@ namespace Gride.Models
             get { return worked; }
         }
 
+        /// <summary>
+        /// Add hours to total worded hours
+        /// </summary>
+        /// <param name="amount"></param>
         public void AddHours(int amount)
         {
             worked += amount;
         }
 
+        /// <summary>
+        /// Subtract hours from total worked hours
+        /// </summary>
+        /// <param name="amount"></param>
         public void SubtractHours(int amount)
         {
             if (worked - amount < 0)

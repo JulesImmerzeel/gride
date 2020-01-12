@@ -711,7 +711,7 @@ namespace Gride.Controllers
 		/// <summary>
 		/// Sends the data to the Generate Page
 		/// </summary>
-		public async Task<IActionResult> Generate() => View();
+		public async Task<IActionResult> Generate() => User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin ? View(): Forbid();
 
 		/// <summary>
 		/// Generates a roster for the time given between <paramref name="start"/> and <paramref name="end"/> with the settings specified in <paramref name="Settings"/>
@@ -802,6 +802,8 @@ namespace Gride.Controllers
 		/// </summary>
 		public async Task<IActionResult> Generated()
 		{
+			if(!(User.Identity.IsAuthenticated && _context.EmployeeModel.ToList().Find(x => x.EMail == User.Identity.Name).Admin))
+				return Forbid(); 
 			// Gets the data from the session
 			HttpContext.Session.TryGetValue("genRes", out byte[] bytes);
 			// Empties the session
